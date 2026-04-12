@@ -49,15 +49,19 @@ export function Carousel() {
     return () => clearInterval(id);
   }, [paused, next]);
 
-  // Keep active dot / thumbnail scrolled into view
+  // Keep active dot / thumbnail scrolled into view within their container
   useEffect(() => {
     const scrollActive = (ref: React.RefObject<HTMLDivElement | null>) => {
       const container = ref.current;
       if (!container) return;
       const active = container.children[current] as HTMLElement | undefined;
-      active?.scrollIntoView({
-        block: "nearest",
-        inline: "center",
+      if (!active) return;
+      // Scroll the container (not the page) so the active item is centred
+      const containerWidth = container.offsetWidth;
+      const activeOffsetLeft = active.offsetLeft;
+      const activeWidth = active.offsetWidth;
+      container.scrollTo({
+        left: activeOffsetLeft - containerWidth / 2 + activeWidth / 2,
         behavior: "smooth",
       });
     };
