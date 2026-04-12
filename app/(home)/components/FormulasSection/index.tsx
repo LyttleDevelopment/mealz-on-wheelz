@@ -3,16 +3,15 @@ import {
   Button,
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
   Container,
   Grid,
   Text,
 } from "@lyttle-development/ui";
-import { experiences } from "../data/constants";
-import { SectionHeading } from "./SectionHeading";
-import styles from "../page.module.scss";
+import { experiences } from "../../data/constants";
+import { SectionHeading } from "../SectionHeading";
+import styles from "./index.module.scss";
 
 export function FormulasSection() {
   return (
@@ -60,14 +59,16 @@ export function FormulasSection() {
                       <li key={highlight}>{highlight}</li>
                     ))}
                   </ul>
-                </CardContent>
-                <CardFooter className={styles.menuFooter}>
-                  <Button asChild variant="ghost">
+                  <Button
+                    asChild
+                    variant={"outline"}
+                    className={styles.menuButton}
+                  >
                     <a href="#reserveren">
-                      Bekijk formule <ArrowRight size={16} />
+                      Bekijk menu <ArrowRight size={16} />
                     </a>
                   </Button>
-                </CardFooter>
+                </CardContent>
               </Card>
             ),
           )}

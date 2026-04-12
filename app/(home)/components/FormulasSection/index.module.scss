@@ -1,0 +1,65 @@
+.section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 5rem 0;
+  height: 100vh;
+}
+
+.menuCard {
+  height: 100%;
+  background: transparent;
+}
+
+.menuCardHeader {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.menuIcon,
+.serviceIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--primary) 70%, white);
+  color: var(--background);
+}
+
+.menuSubtitle {
+  margin-top: 0.35rem;
+}
+
+.priceTag {
+  width: fit-content;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--secondary) 88%, white);
+  color: var(--secondary-foreground);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.menuContent {
+  display: grid;
+  gap: 1rem;
+}
+
+.featureList {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding-left: 1.1rem;
+  color: inherit;
+}
+
+.featureList li::marker {
+  color: var(--primary);
+}
+
+.menuFooter {
+  justify-content: flex-start;
+}

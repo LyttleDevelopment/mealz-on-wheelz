@@ -3,7 +3,7 @@ import styles from "./index.module.scss";
 
 export function HeroSection() {
   return (
-    <section id="home" className={styles.heroShell}>
+    <section className={styles.heroShell}>
       <article className={styles.heroContent}>
         <Heading as="h1" size="6xl" className={styles.heroTitle}>
           Mealz on Wheelz
