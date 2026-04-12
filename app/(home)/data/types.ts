@@ -7,8 +7,10 @@ export type NavigationItem = {
 
 export type Experience = {
   title: string;
+  category: string;
   subtitle: string;
   price: string;
+  priceBadges: string[];
   description: string;
   highlights: string[];
   icon: LucideIcon;

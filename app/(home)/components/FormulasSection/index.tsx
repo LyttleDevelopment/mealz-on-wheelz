@@ -1,12 +1,12 @@
-import { ArrowRight } from "lucide-react";
 import {
   Button,
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
-  CardTitle,
   Container,
   Grid,
+  Heading,
   Text,
 } from "@lyttle-development/ui";
 import { experiences } from "../../data/constants";
@@ -23,55 +23,37 @@ export function FormulasSection() {
         />
 
         <Grid columns={1} smColumns={2} lgColumns={4} gap="lg">
-          {experiences.map(
-            ({
-              icon: Icon,
-              title,
-              subtitle,
-              price,
-              description,
-              highlights,
-            }) => (
-              <Card key={title} className={styles.menuCard} size="sm">
-                <CardHeader className={styles.menuCardHeader}>
-                  <div className={styles.menuIcon}>
-                    <Icon size={18} />
-                  </div>
-                  <div>
-                    <CardTitle>{title}</CardTitle>
-                    <Text
-                      as="p"
-                      size="sm"
-                      tone="muted"
-                      className={styles.menuSubtitle}
-                    >
-                      {subtitle}
-                    </Text>
-                  </div>
-                  <div className={styles.priceTag}>{price}</div>
-                </CardHeader>
-                <CardContent className={styles.menuContent}>
-                  <Text as="p" size="sm" tone="muted">
-                    {description}
-                  </Text>
-                  <ul className={styles.featureList}>
-                    {highlights.map((highlight) => (
-                      <li key={highlight}>{highlight}</li>
-                    ))}
-                  </ul>
-                  <Button
-                    asChild
-                    variant={"outline"}
-                    className={styles.menuButton}
-                  >
-                    <a href="#reserveren">
-                      Bekijk menu <ArrowRight size={16} />
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
-            ),
-          )}
+          {experiences.map(({ icon: Icon, title, category, priceBadges }) => (
+            <Card key={title} className={styles.menuCard}>
+              <CardHeader className={styles.menuCardHeader}>
+                <div className={styles.menuIcon}>
+                  <Icon size={18} />
+                </div>
+                <Heading as="h3" size="2xl" className={styles.menuTitle}>
+                  {title}
+                </Heading>
+                <Text as="p" size="sm" tone="muted" className={styles.menuCategory}>
+                  {category}
+                </Text>
+              </CardHeader>
+
+              <CardContent className={styles.menuContent}>
+                <div className={styles.priceBadges}>
+                  {priceBadges.map((badge) => (
+                    <span key={badge} className={styles.priceTag}>
+                      {badge}
+                    </span>
+                  ))}
+                </div>
+              </CardContent>
+
+              <CardFooter className={styles.menuFooter}>
+                <Button variant="outline" className={styles.menuButton}>
+                  Bekijk menu →
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </Grid>
       </Container>
     </section>

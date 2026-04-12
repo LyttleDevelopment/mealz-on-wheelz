@@ -33,6 +33,8 @@ export const footerNavigation: NavigationItem[] = [
 export const experiences: Experience[] = [
   {
     title: "Italian Experience",
+    category: "Apéro + hoofdgerecht",
+    priceBadges: ["Hoofd v.a. €8"],
     subtitle: "Romig comfortfood met een streetfood twist.",
     price: "Vanaf €14 p.p.",
     description:
@@ -45,7 +47,9 @@ export const experiences: Experience[] = [
     icon: ChefHat,
   },
   {
-    title: "Tex Mex Experience",
+    title: "Tex-Mex Experience",
+    category: "Apéro + burgers",
+    priceBadges: ["Apéro €11,95", "Hoofd v.a. €10"],
     subtitle: "Vurig, kleurrijk en gemaakt om te delen.",
     price: "Vanaf €13 p.p.",
     description:
@@ -59,6 +63,8 @@ export const experiences: Experience[] = [
   },
   {
     title: "Barbecue Experience",
+    category: "Apéro + grill formules",
+    priceBadges: ["Apéro €11,95", "Hoofd v.a. €22,95"],
     subtitle: "Robuuste smaken met een premium uitstraling.",
     price: "Vanaf €18 p.p.",
     description:
@@ -72,6 +78,8 @@ export const experiences: Experience[] = [
   },
   {
     title: "Sweet Experience",
+    category: "Dessertbuffet",
+    priceBadges: ["€10,95, p.p."],
     subtitle: "Desserts en verwenmomenten voor elk publiek.",
     price: "Vanaf €9 p.p.",
     description:
