@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint app next.config.ts eslint.config.mjs",
-    "submodule:update": "bash ./packages/design-framework/setup/git-submodule-update.sh"
+    "submodule:update": "bash ./packages/design-framework/setup/git-submodule-update.sh",
+    "docker:setup": "npm run build",
+    "docker:build": "docker build -t mealz-on-weelz .",
+    "update": "npm update --save && npx npm-check-updates -u && npm install"
   },
   "dependencies": {
     "@lyttle-development/ui": "file:packages/design-framework/packages/ui",
