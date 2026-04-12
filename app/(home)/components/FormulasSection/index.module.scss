@@ -1,13 +1,14 @@
 .section {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 5rem 0;
-  min-height: 100vh;
+  padding: 3rem 0;
   height: 100%;
-  background: var(--background)
+  background: var(--background);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding: 5rem 0;
+    min-height: 100vh;
+  }
 }
 
 .menuCard {
@@ -64,4 +65,8 @@
 
 .menuFooter {
   justify-content: flex-start;
+}
+
+.menuButton {
+  width: 100%;
 }

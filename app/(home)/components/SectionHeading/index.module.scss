@@ -2,15 +2,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 0.9rem;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .sectionHeading {
+    margin-bottom: 4rem;
+  }
+}
+
+.eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--primary) 25%, var(--muted));
+  color: var(--secondary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .sectionTitle,
 .bookingTitle,
 .formTitle {
   margin: 0;
+  text-align: center;
 }
 
 .sectionDescription {

@@ -14,7 +14,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 6rem;
+  min-height: 4rem;
+}
+
+@media (min-width: 768px) {
+  .headerShell {
+    min-height: 6rem;
+  }
 }
 
 .brand {
@@ -27,11 +33,17 @@
 
 .brandLogo {
   display: block;
-  width: 6rem;
+  width: 3.5rem;
   height: auto;
   flex-shrink: 0;
   /* logo.svg has white paths — drop a warm glow to tie into the brand palette */
   filter: drop-shadow(0 2px 8px rgb(186 160 143 / 0.3));
+}
+
+@media (min-width: 768px) {
+  .brandLogo {
+    width: 6rem;
+  }
 }
 
 .brandText {

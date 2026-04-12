@@ -33,8 +33,8 @@ export function AboutSection() {
           <Image
             src={"/media/truck-kitchen.webp"}
             alt={"Truck Kitchen"}
-            width={500}
-            height={500}
+            width={800}
+            height={600}
             className={styles.image}
           />
         </article>

@@ -1,13 +1,7 @@
 .section {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 5rem 0;
-  min-height: 100vh;
+  padding: 3rem 0;
   height: 100%;
-  background: var(--background)
+  background: var(--background);
 }
 
 /* ── Two-column layout ─────────────────────────────────── */
@@ -21,6 +15,9 @@
 .formCard {
   background: color-mix(in oklab, var(--muted) 55%, transparent);
   border: 1px solid rgb(245 240 235 / 0.14);
+
+  /* Push form below the info heading on mobile */
+  order: 2;
 }
 
 .form {
@@ -43,6 +40,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  /* Show heading above the form on mobile */
+  order: 1;
 }
 
 /* ── Contact items ─────────────────────────────────────── */
@@ -84,9 +84,25 @@
 }
 
 /* ── Responsive ────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .section {
+    padding: 5rem 0;
+    min-height: 100vh;
+  }
+}
+
 @media (min-width: 1024px) {
   .layout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 4rem;
+  }
+
+  /* Restore DOM order on desktop — form left, info right */
+  .formCard {
+    order: 1;
+  }
+
+  .info {
+    order: 2;
   }
 }

@@ -6,14 +6,21 @@
   justify-content: center;
   align-items: center;
 
-  height: calc(100vh - 6rem);
-  //background-image: url("/media/working-in-truck.jpg");
-  // Background with a bit of a gradient overlay to make the text more readable
+  /* Mobile: use svh to avoid browser-chrome clipping; compensate for shell (4rem) + mobile nav (~3.5rem) */
+  min-height: calc(100svh - 7.5rem);
   background: linear-gradient(180deg, rgb(18 33 34 / 0.6), rgb(18 33 34 / 0.6)), url("/media/working-in-truck.webp");
   background-repeat: no-repeat;
   background-size: cover;
-  background-attachment: fixed;
+  background-attachment: scroll; /* fixed breaks on iOS Safari */
   background-position: center;
+}
+
+@media (min-width: 768px) {
+  .heroShell {
+    height: calc(100vh - 6rem);
+    min-height: unset;
+    background-attachment: fixed;
+  }
 }
 
 .heroContent {
@@ -30,11 +37,23 @@
   }
 
   > :nth-child(2) {
-    margin-top: 5rem;
+    margin-top: 2rem;
   }
 
   > :nth-child(3) {
-    margin-top: 3rem;
+    margin-top: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .heroContent {
+    > :nth-child(2) {
+      margin-top: 5rem;
+    }
+
+    > :nth-child(3) {
+      margin-top: 3rem;
+    }
   }
 }
 
