@@ -14,6 +14,8 @@ export function Carousel() {
   const [paused, setPaused] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const regionRef = useRef<HTMLDivElement>(null);
+  const dotsRef = useRef<HTMLDivElement>(null);
+  const thumbsRef = useRef<HTMLDivElement>(null);
 
   const total = IMAGES.length;
 
@@ -35,6 +37,18 @@ export function Carousel() {
     const id = setInterval(next, 4000);
     return () => clearInterval(id);
   }, [paused, next]);
+
+  // Keep active dot / thumbnail scrolled into view
+  useEffect(() => {
+    const scrollActive = (ref: React.RefObject<HTMLDivElement | null>) => {
+      const container = ref.current;
+      if (!container) return;
+      const active = container.children[current] as HTMLElement | undefined;
+      active?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    };
+    scrollActive(dotsRef);
+    scrollActive(thumbsRef);
+  }, [current]);
 
   // Keyboard navigation when the region is focused
   const handleKeyDown = useCallback(
@@ -173,6 +187,7 @@ export function Carousel() {
 
       {/* ── Dot indicators (mobile only) ── */}
       <div
+        ref={dotsRef}
         className={styles.carouselDots}
         role="tablist"
         aria-label="Selecteer afbeelding"
@@ -193,6 +208,7 @@ export function Carousel() {
 
       {/* ── Thumbnail strip (desktop, visible on carousel hover) ── */}
       <div
+        ref={thumbsRef}
         className={styles.carouselThumbs}
         role="tablist"
         aria-label="Selecteer afbeelding"
