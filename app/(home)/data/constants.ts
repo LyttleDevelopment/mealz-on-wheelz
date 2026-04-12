@@ -18,6 +18,14 @@ export const navigation: NavigationItem[] = [
   { label: "Reservatie", href: "#reserveren" },
 ];
 
+export const footerNavigation: NavigationItem[] = [
+  { label: "Home", href: "#home" },
+  { label: "Over ons", href: "#over-ons" },
+  { label: "Menu", href: "#menu" },
+  { label: "Diensten", href: "#diensten" },
+  { label: "Algemene voorwaarden", href: "#algemene-voorwaarden" },
+];
+
 export const experiences: Experience[] = [
   {
     title: "Italian Experience",

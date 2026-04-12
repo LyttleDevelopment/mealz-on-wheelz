@@ -1,0 +1,129 @@
+.footer {
+  background: var(--background);
+  border-top: 1px solid var(--border);
+  padding-top: 4rem;
+}
+
+/* ─── Grid ───────────────────────────────────────────── */
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1.6fr 1fr 1.4fr;
+    gap: 3rem;
+  }
+}
+
+/* ─── Brand ──────────────────────────────────────────── */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.brandLogo {
+  display: block;
+  width: 3rem;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 8px rgb(186 160 143 / 0.35));
+}
+
+.brandText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.tagline {
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  max-width: 28ch;
+}
+
+/* ─── Column heading ─────────────────────────────────── */
+.colTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 1.25rem;
+}
+
+/* ─── Quick links ────────────────────────────────────── */
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.link {
+  color: var(--muted-foreground);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--foreground);
+}
+
+/* ─── Social ─────────────────────────────────────────── */
+.socialDesc {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  margin: 0 0 1.25rem;
+}
+
+.socialButtons {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.socialBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--muted);
+  color: var(--foreground);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.socialBtn:hover {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+/* ─── Bottom bar ─────────────────────────────────────── */
+.footerBottom {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+.copyright {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
