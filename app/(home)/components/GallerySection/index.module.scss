@@ -165,7 +165,7 @@
   }
 }
 
-/* ── Dot indicators ── */
+/* ── Dot indicators (mobile only) ── */
 
 .carouselDots {
   position: absolute;
@@ -208,6 +208,86 @@
 
   &:hover:not([data-active="true"]) {
     background: rgb(255 255 255 / 0.7);
+  }
+}
+
+/* ── Thumbnail strip (desktop, shown on carousel hover) ── */
+
+.carouselThumbs {
+  /* hidden on mobile */
+  display: none;
+}
+
+.carouselThumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 4.75rem;
+  height: 3.25rem;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &[data-active="true"] {
+    border-color: white;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.4);
+  }
+
+  &:hover:not([data-active="true"]) {
+    border-color: rgb(255 255 255 / 0.55);
+    transform: scale(1.06) translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+.carouselThumbImage {
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  /* hide dots, show thumbnail strip */
+  .carouselDots {
+    display: none;
+  }
+
+  .carouselThumbs {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.65rem 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* gradient background for readability */
+    background: linear-gradient(to top, rgb(0 0 0 / 0.65) 60%, transparent);
+    /* hidden until carousel is hovered */
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .carousel:hover .carouselThumbs,
+  .carousel:focus-within .carouselThumbs {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

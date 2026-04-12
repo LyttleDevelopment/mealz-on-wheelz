@@ -171,7 +171,7 @@ export function Carousel() {
         </svg>
       </button>
 
-      {/* ── Dot indicators ── */}
+      {/* ── Dot indicators (mobile only) ── */}
       <div
         className={styles.carouselDots}
         role="tablist"
@@ -188,6 +188,35 @@ export function Carousel() {
             onClick={() => goTo(i)}
             data-active={i === current}
           />
+        ))}
+      </div>
+
+      {/* ── Thumbnail strip (desktop, visible on carousel hover) ── */}
+      <div
+        className={styles.carouselThumbs}
+        role="tablist"
+        aria-label="Selecteer afbeelding"
+      >
+        {IMAGES.map((img, i) => (
+          <button
+            key={img.src}
+            type="button"
+            role="tab"
+            className={styles.carouselThumb}
+            aria-selected={i === current}
+            aria-label={`Afbeelding ${i + 1} van ${total}`}
+            onClick={() => goTo(i)}
+            data-active={i === current}
+          >
+            <Image
+              src={img.src}
+              alt=""
+              fill
+              sizes="80px"
+              className={styles.carouselThumbImage}
+              tabIndex={-1}
+            />
+          </button>
         ))}
       </div>
 
