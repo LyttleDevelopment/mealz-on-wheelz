@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button, Input, NativeSelect, Switch, Textarea } from '@lyttle-development/ui';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import styles from './index.module.scss';
+import { useState } from "react";
+import {
+  Button,
+  Input,
+  NativeSelect,
+  Switch,
+  Textarea,
+} from "@lyttle-development/ui";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import styles from "./index.module.scss";
 
 // ─── Booking-specific experience data ───────────────────────────────────────
 
@@ -12,56 +18,56 @@ const MIN_GUESTS = 20;
 
 const BOOKING_EXPERIENCES = [
   {
-    title: 'Italian Experience',
-    cardSubtitle: 'Apéro €15,95 · Hoofd v.a. €8',
+    title: "Italian Experience",
+    cardSubtitle: "Apéro €15,95 · Hoofd v.a. €8",
     basePrice: 0,
     hasApero: true,
     aperoPrice: 15.95,
-    aperoDisplay: '€15,95 p.p.',
+    aperoDisplay: "€15,95 p.p.",
     hasMain: true,
-    mainLabel: 'Hoofdgerecht inbegrepen',
+    mainLabel: "Hoofdgerecht inbegrepen",
     mainPrice: 8,
-    mainPriceLabel: 'v.a. €8 p.p.',
+    mainPriceLabel: "v.a. €8 p.p.",
   },
   {
-    title: 'Tex-Mex Experience',
-    cardSubtitle: 'Apéro €11,95 · Burgers v.a. €10',
+    title: "Tex-Mex Experience",
+    cardSubtitle: "Apéro €11,95 · Burgers v.a. €10",
     basePrice: 0,
     hasApero: true,
     aperoPrice: 11.95,
-    aperoDisplay: '€11,95 p.p.',
+    aperoDisplay: "€11,95 p.p.",
     hasMain: true,
-    mainLabel: 'Burgers inbegrepen',
+    mainLabel: "Burgers inbegrepen",
     mainPrice: 10,
-    mainPriceLabel: 'v.a. €10 p.p.',
+    mainPriceLabel: "v.a. €10 p.p.",
   },
   {
-    title: 'Barbecue Experience',
-    cardSubtitle: 'Apéro €11,95 · Formules v.a. €22,95',
+    title: "Barbecue Experience",
+    cardSubtitle: "Apéro €11,95 · Formules v.a. €22,95",
     basePrice: 0,
     hasApero: true,
     aperoPrice: 11.95,
-    aperoDisplay: '€11,95 p.p.',
+    aperoDisplay: "€11,95 p.p.",
     hasMain: true,
-    mainLabel: 'Formules inbegrepen',
+    mainLabel: "Formules inbegrepen",
     mainPrice: 22.95,
-    mainPriceLabel: 'v.a. €22,95 p.p.',
+    mainPriceLabel: "v.a. €22,95 p.p.",
   },
   {
-    title: 'Sweet Experience',
-    cardSubtitle: '€10,95 p.p.',
+    title: "Sweet Experience",
+    cardSubtitle: "€10,95 p.p.",
     basePrice: 10.95,
     hasApero: false,
     aperoPrice: 0,
-    aperoDisplay: '',
+    aperoDisplay: "",
     hasMain: false,
-    mainLabel: '',
+    mainLabel: "",
     mainPrice: 0,
-    mainPriceLabel: '',
+    mainPriceLabel: "",
   },
 ] as const;
 
-type BookingExperience = typeof BOOKING_EXPERIENCES[number];
+type BookingExperience = (typeof BOOKING_EXPERIENCES)[number];
 
 // ─── State types ─────────────────────────────────────────────────────────────
 
@@ -85,20 +91,25 @@ interface ContactState {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function formatEuro(amount: number) {
-  return new Intl.NumberFormat('nl-BE', { style: 'currency', currency: 'EUR' }).format(amount);
+  return new Intl.NumberFormat("nl-BE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(amount);
 }
 
 function calcTotal(exp: ExperienceState) {
   const perPerson =
     exp.experience.basePrice +
-    (exp.includeApero && exp.experience.hasApero ? exp.experience.aperoPrice : 0) +
+    (exp.includeApero && exp.experience.hasApero
+      ? exp.experience.aperoPrice
+      : 0) +
     (exp.includeMain && exp.experience.hasMain ? exp.experience.mainPrice : 0);
   return STARTUP_COST + exp.guestCount * perPerson;
 }
 
 // ─── Stepper ─────────────────────────────────────────────────────────────────
 
-const STEPS = ['Experience', 'Uw gegevens', 'Bevestiging'] as const;
+const STEPS = ["Experience", "Uw gegevens", "Bevestiging"] as const;
 
 function Stepper({ current }: { current: number }) {
   return (
@@ -144,7 +155,9 @@ function ExperienceStep({
     <div className={styles.stepContent}>
       <div className={styles.stepIntro}>
         <h3 className={styles.stepTitle}>Kies uw experience</h3>
-        <p className={styles.stepDescription}>Selecteer een formule en stel uw opties in</p>
+        <p className={styles.stepDescription}>
+          Selecteer een formule en stel uw opties in
+        </p>
       </div>
 
       {/* Experience grid */}
@@ -165,7 +178,9 @@ function ExperienceStep({
             }
           >
             <span className={styles.experienceTitle}>{item.title}</span>
-            <span className={styles.experienceSubtitle}>{item.cardSubtitle}</span>
+            <span className={styles.experienceSubtitle}>
+              {item.cardSubtitle}
+            </span>
           </button>
         ))}
       </div>
@@ -180,7 +195,9 @@ function ExperienceStep({
             </div>
             <Switch
               checked={state.includeApero}
-              onCheckedChange={(checked) => onChange({ ...state, includeApero: checked })}
+              onCheckedChange={(checked) =>
+                onChange({ ...state, includeApero: checked })
+              }
             />
           </div>
         )}
@@ -192,7 +209,9 @@ function ExperienceStep({
             </div>
             <Switch
               checked={state.includeMain}
-              onCheckedChange={(checked) => onChange({ ...state, includeMain: checked })}
+              onCheckedChange={(checked) =>
+                onChange({ ...state, includeMain: checked })
+              }
             />
           </div>
         )}
@@ -206,7 +225,10 @@ function ExperienceStep({
             min={MIN_GUESTS}
             value={state.guestCount}
             onChange={(e) =>
-              onChange({ ...state, guestCount: Math.max(MIN_GUESTS, Number(e.target.value)) })
+              onChange({
+                ...state,
+                guestCount: Math.max(MIN_GUESTS, Number(e.target.value)),
+              })
             }
             className={styles.guestInput}
           />
@@ -219,7 +241,9 @@ function ExperienceStep({
           <span className={styles.priceBoxLabel}>Geschatte totaalprijs</span>
           <span className={styles.priceBoxAmount}>{formatEuro(total)}</span>
         </div>
-        <span className={styles.priceBoxNote}>Incl. {formatEuro(STARTUP_COST)} opstartkost</span>
+        <span className={styles.priceBoxNote}>
+          Incl. {formatEuro(STARTUP_COST)} opstartkost
+        </span>
       </div>
       <p className={styles.priceDisclaimer}>
         Dit is een schatting. De definitieve prijs wordt bevestigd na overleg.
@@ -235,11 +259,11 @@ function ExperienceStep({
 // ─── Step 2 – Contact ─────────────────────────────────────────────────────────
 
 const EVENT_TYPES = [
-  'Bedrijfsevenement',
-  'Privéfeest',
-  'Huwelijk',
-  'Festival',
-  'Andere',
+  "Bedrijfsevenement",
+  "Privéfeest",
+  "Huwelijk",
+  "Festival",
+  "Andere",
 ];
 
 function ContactStep({
@@ -253,8 +277,13 @@ function ContactStep({
   onNext: () => void;
   onBack: () => void;
 }) {
-  const set = <K extends keyof ContactState>(key: K) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+  const set =
+    <K extends keyof ContactState>(key: K) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) =>
       onChange({ ...state, [key]: e.target.value });
 
   return (
@@ -262,7 +291,8 @@ function ContactStep({
       <div className={styles.stepIntro}>
         <h3 className={styles.stepTitle}>Uw gegevens</h3>
         <p className={styles.stepDescription}>
-          Vul het formulier in, wij nemen contact met u op voor beschikbaarheid en prijs
+          Vul het formulier in, wij nemen contact met u op voor beschikbaarheid
+          en prijs
         </p>
       </div>
 
@@ -272,7 +302,7 @@ function ContactStep({
           <Input
             placeholder="John Doe"
             value={state.naam}
-            onChange={set('naam')}
+            onChange={set("naam")}
             required
           />
         </div>
@@ -282,7 +312,7 @@ function ContactStep({
             type="email"
             placeholder="john@example.com"
             value={state.email}
-            onChange={set('email')}
+            onChange={set("email")}
             required
           />
         </div>
@@ -292,16 +322,22 @@ function ContactStep({
             type="tel"
             placeholder="(555) 123-4567"
             value={state.telefoon}
-            onChange={set('telefoon')}
+            onChange={set("telefoon")}
             required
           />
         </div>
         <div className={styles.formField}>
           <label className={styles.formLabel}>Type event *</label>
-          <NativeSelect value={state.typeEvent} onChange={set('typeEvent')} required>
+          <NativeSelect
+            value={state.typeEvent}
+            onChange={set("typeEvent")}
+            required
+          >
             <option value="">Kies type event</option>
             {EVENT_TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
+              <option key={t} value={t}>
+                {t}
+              </option>
             ))}
           </NativeSelect>
         </div>
@@ -310,7 +346,7 @@ function ContactStep({
           <Input
             type="date"
             value={state.datum}
-            onChange={set('datum')}
+            onChange={set("datum")}
             required
           />
         </div>
@@ -319,7 +355,7 @@ function ContactStep({
           <Input
             placeholder="Adres"
             value={state.locatie}
-            onChange={set('locatie')}
+            onChange={set("locatie")}
             required
           />
         </div>
@@ -331,20 +367,24 @@ function ContactStep({
           rows={4}
           placeholder="Vertel ons meer over uw event, voedingsbeperkingen, menuvoorkeuren, opstellingsvereisten, enz."
           value={state.bijkomend}
-          onChange={set('bijkomend')}
+          onChange={set("bijkomend")}
         />
       </div>
 
       <div className={styles.alertBox}>
         <p>
-          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen bevestiging. Wij nemen
-          contact met u op binnen 24 uur om de beschikbaarheid te bevestigen en verdere details te
-          bespreken.
+          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen
+          bevestiging. Wij nemen contact met u op binnen 24 uur om de
+          beschikbaarheid te bevestigen en verdere details te bespreken.
         </p>
       </div>
 
       <div className={styles.buttonRow}>
-        <Button variant="outline" onClick={onBack} className={styles.backButton}>
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className={styles.backButton}
+        >
           <ArrowLeft size={16} /> Terug
         </Button>
         <Button onClick={onNext} className={styles.nextButton}>
@@ -372,17 +412,24 @@ function ConfirmationStep({
   const exp = experienceState.experience;
 
   const rows: { label: string; value: string }[] = [
-    { label: 'Experience', value: exp.title },
-    { label: 'Apéro', value: experienceState.includeApero ? 'Ja' : 'Nee' },
-    ...(exp.hasMain ? [{ label: exp.mainLabel, value: experienceState.includeMain ? 'Ja' : 'Nee' }] : []),
-    { label: 'Aantal gasten', value: String(experienceState.guestCount) },
-    { label: 'Geschatte prijs', value: formatEuro(total) },
-    { label: 'Naam', value: contactState.naam || '—' },
-    { label: 'E-mail', value: contactState.email || '—' },
-    { label: 'Telefoon', value: contactState.telefoon || '—' },
-    { label: 'Type event', value: contactState.typeEvent || '—' },
-    { label: 'Datum', value: contactState.datum || '—' },
-    { label: 'Locatie', value: contactState.locatie || '—' },
+    { label: "Experience", value: exp.title },
+    { label: "Apéro", value: experienceState.includeApero ? "Ja" : "Nee" },
+    ...(exp.hasMain
+      ? [
+          {
+            label: exp.mainLabel,
+            value: experienceState.includeMain ? "Ja" : "Nee",
+          },
+        ]
+      : []),
+    { label: "Aantal gasten", value: String(experienceState.guestCount) },
+    { label: "Geschatte prijs", value: formatEuro(total) },
+    { label: "Naam", value: contactState.naam || "—" },
+    { label: "E-mail", value: contactState.email || "—" },
+    { label: "Telefoon", value: contactState.telefoon || "—" },
+    { label: "Type event", value: contactState.typeEvent || "—" },
+    { label: "Datum", value: contactState.datum || "—" },
+    { label: "Locatie", value: contactState.locatie || "—" },
   ];
 
   return (
@@ -405,16 +452,24 @@ function ConfirmationStep({
 
       <div className={styles.alertBox}>
         <p>
-          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen bevestiging. Wij nemen
-          contact met u op binnen 24 uur.
+          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen
+          bevestiging. Wij nemen contact met u op binnen 24 uur.
         </p>
       </div>
 
       <div className={styles.buttonColumn}>
-        <Button variant="outline" onClick={onBack} className={styles.backButtonFull}>
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className={styles.backButtonFull}
+        >
           <ArrowLeft size={16} /> Terug
         </Button>
-        <Button onClick={onSubmit} className={styles.submitButton}>
+        <Button
+          variant="secondary"
+          onClick={onSubmit}
+          className={styles.submitButton}
+        >
           Dien reservatie-aanvraag in
         </Button>
       </div>
@@ -430,8 +485,8 @@ function SubmittedState() {
       <div className={styles.submittedIcon}>✓</div>
       <h3 className={styles.stepTitle}>Aanvraag verzonden!</h3>
       <p className={styles.stepDescription}>
-        Bedankt voor uw aanvraag. Wij nemen binnen 24 uur contact met u op om de beschikbaarheid
-        te bevestigen en verdere details te bespreken.
+        Bedankt voor uw aanvraag. Wij nemen binnen 24 uur contact met u op om de
+        beschikbaarheid te bevestigen en verdere details te bespreken.
       </p>
     </div>
   );
@@ -450,13 +505,13 @@ export function BookingForm() {
   });
 
   const [contactState, setContactState] = useState<ContactState>({
-    naam: '',
-    email: '',
-    telefoon: '',
-    typeEvent: '',
-    datum: '',
-    locatie: '',
-    bijkomend: '',
+    naam: "",
+    email: "",
+    telefoon: "",
+    typeEvent: "",
+    datum: "",
+    locatie: "",
+    bijkomend: "",
   });
 
   if (step === 4) {
@@ -497,4 +552,3 @@ export function BookingForm() {
     </div>
   );
 }
-

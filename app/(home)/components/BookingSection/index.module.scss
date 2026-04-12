@@ -10,6 +10,19 @@
   padding: clamp(1.5rem, 4vw, 2.25rem);
   color: #1e2939;
   box-shadow: 0 24px 56px rgb(0 0 0 / 0.18);
+
+  /* ── Re-scope design-system tokens for the light card context ── */
+  --foreground: #1e2939;
+  --muted-foreground: #6b7280;
+  --input: rgb(31 58 59 / 0.18);
+  --border: rgb(31 58 59 / 0.15);
+  --background: #ffffff;
+  --muted: rgb(31 58 59 / 0.06);
+  --ring: #1f3a3b;
+  --primary: #1f3a3b;
+  --primary-foreground: #f5f0eb;
+  --card: #ffffff;
+  --card-foreground: #1e2939;
 }
 
 /* ─── Stepper ────────────────────────────────────────────────────────────── */
@@ -301,13 +314,6 @@
 
 .submitButton {
   width: 100%;
-  background: #baa08f;
-  border-color: #baa08f;
-}
-
-.submitButton:hover {
-  background: #a8907e;
-  border-color: #a8907e;
 }
 
 /* ─── Summary / review ───────────────────────────────────────────────────── */
