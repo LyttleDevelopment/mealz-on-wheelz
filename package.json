@@ -6,7 +6,8 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint app next.config.ts eslint.config.mjs"
+    "lint": "eslint app next.config.ts eslint.config.mjs",
+    "submodule:update": "bash ./packages/design-framework/setup/git-submodule-update.sh"
   },
   "dependencies": {
     "@lyttle-development/ui": "file:packages/design-framework/packages/ui",
