@@ -375,7 +375,7 @@ export default function HomePage() {
 
           <Grid columns={1} mdColumns={3} gap="lg">
             {services.map(({icon: Icon, title, description}) => (
-              <Surface key={title} tone="accent" padding="lg" radius="xl" shadow="md" className={styles.serviceCard}>
+              <Surface key={title} tone="muted" padding="lg" radius="xl" shadow="md" className={styles.serviceCard}>
                 <div className={styles.serviceIcon}>
                   <Icon size={20} />
                 </div>
