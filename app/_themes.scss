@@ -1,0 +1,102 @@
+:root {
+  --background: #1f3a3b;
+  --foreground: #f5f0eb;
+  --card: #f3f3f5;
+  --card-foreground: #1e2939;
+  --popover: #f3f3f5;
+  --popover-foreground: #1e2939;
+
+  --primary: #baa08f;
+  --primary-foreground: #1f3a3b;
+
+  --secondary: #fbe9de;
+  --secondary-foreground: #1f3a3b;
+
+  --muted: #294748;
+  --muted-foreground: #d6ccc2;
+
+  --accent: #f5f0eb;
+  --accent-foreground: #3b2a1f;
+
+  --destructive: #b85c5c;
+
+  --border: rgb(245 240 235 / 14%);
+  --input: rgb(245 240 235 / 18%);
+  --ring: #baa08f;
+
+  --chart-1: #baa08f;
+  --chart-2: #fbe9de;
+  --chart-3: #3b2a1f;
+  --chart-4: #99a1af;
+  --chart-5: #717182;
+
+  --sidebar: #183031;
+  --sidebar-foreground: #f5f0eb;
+  --sidebar-primary: #baa08f;
+  --sidebar-primary-foreground: #1f3a3b;
+  --sidebar-accent: #294748;
+  --sidebar-accent-foreground: #f5f0eb;
+  --sidebar-border: rgb(245 240 235 / 10%);
+  --sidebar-ring: #baa08f;
+
+  --brand-base: #baa08f;
+  --brand-accent: #fbe9de;
+  --brand-strong: #1e2939;
+  --brand-purple: #1f3a3b;
+  --brand-coral: #baa08f;
+  --brand-dark-purple: #1e2939;
+  --brand-gradient-primary: linear-gradient(135deg, #1f3a3b 0%, #3b2a1f 100%);
+  --brand-gradient-accent: linear-gradient(135deg, #f5f0eb 0%, #baa08f 100%);
+}
+
+.dark {
+  --background: #162a2b;
+  --foreground: #f5f0eb;
+  --card: #203738;
+  --card-foreground: #f5f0eb;
+  --popover: #203738;
+  --popover-foreground: #f5f0eb;
+
+  --primary: #d1b7a3;
+  --primary-foreground: #162a2b;
+
+  --secondary: #294748;
+  --secondary-foreground: #f5f0eb;
+
+  --muted: #22393a;
+  --muted-foreground: #d6ccc2;
+
+  --accent: #3b2a1f;
+  --accent-foreground: #fbe9de;
+
+  --destructive: #d57979;
+
+  --border: rgb(245 240 235 / 12%);
+  --input: rgb(245 240 235 / 16%);
+  --ring: #d1b7a3;
+
+  --chart-1: #d1b7a3;
+  --chart-2: #fbe9de;
+  --chart-3: #baa08f;
+  --chart-4: #99a1af;
+  --chart-5: #717182;
+
+  --sidebar: #122122;
+  --sidebar-foreground: #f5f0eb;
+  --sidebar-primary: #d1b7a3;
+  --sidebar-primary-foreground: #162a2b;
+  --sidebar-accent: #22393a;
+  --sidebar-accent-foreground: #f5f0eb;
+  --sidebar-border: rgb(245 240 235 / 10%);
+  --sidebar-ring: #d1b7a3;
+
+  --brand-base: #d1b7a3;
+  --brand-accent: #fbe9de;
+  --brand-strong: #f5f0eb;
+  --brand-purple: #1f3a3b;
+  --brand-coral: #baa08f;
+  --brand-dark-purple: #162a2b;
+  --brand-gradient-primary: linear-gradient(135deg, #1f3a3b 0%, #162a2b 100%);
+  --brand-gradient-accent: linear-gradient(135deg, #baa08f 0%, #3b2a1f 100%);
+}
+

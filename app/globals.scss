@@ -1,0 +1,36 @@
+@use "../packages/design-framework/packages/ui/src/styles/globals.scss";
+//@use "./themes";
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgb(255 255 255 / 0.04), transparent 30%),
+    linear-gradient(180deg, color-mix(in oklab, var(--background) 96%, black), var(--background));
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.skip-link {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  transform: translateY(-200%);
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
