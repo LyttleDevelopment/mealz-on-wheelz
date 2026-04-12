@@ -148,6 +148,7 @@ function ExperienceStep({
   onChange: (s: ExperienceState) => void;
   onNext: () => void;
 }) {
+  const [guestInput, setGuestInput] = useState(String(state.guestCount));
   const total = calcTotal(state);
   const exp = state.experience;
 
@@ -223,13 +224,23 @@ function ExperienceStep({
           <Input
             type="number"
             min={MIN_GUESTS}
-            value={state.guestCount}
-            onChange={(e) =>
-              onChange({
-                ...state,
-                guestCount: Math.max(MIN_GUESTS, Number(e.target.value)),
-              })
-            }
+            value={guestInput}
+            onChange={(e) => {
+              const raw = e.target.value;
+              setGuestInput(raw);
+              const num = Number(raw);
+              if (!isNaN(num) && num >= MIN_GUESTS) {
+                onChange({ ...state, guestCount: num });
+              }
+            }}
+            onBlur={() => {
+              const clamped = Math.max(
+                MIN_GUESTS,
+                Number(guestInput) || MIN_GUESTS,
+              );
+              setGuestInput(String(clamped));
+              onChange({ ...state, guestCount: clamped });
+            }}
             className={styles.guestInput}
           />
         </div>
