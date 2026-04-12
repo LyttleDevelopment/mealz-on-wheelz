@@ -1,5 +1,5 @@
 import { Container, Text } from "@lyttle-development/ui";
-import styles from "../page.module.scss";
+import styles from "./index.module.scss";
 
 export function Footer() {
   const year = new Date().getFullYear();
