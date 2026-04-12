@@ -106,6 +106,7 @@ export function Carousel() {
 
   return (
     <div className={styles.carouselWrapper}>
+
       {/* ── Main carousel box ── */}
       <div
         ref={regionRef}
@@ -123,11 +124,7 @@ export function Carousel() {
         onTouchEnd={handleTouchEnd}
       >
         {/* ── Slide track ── */}
-        <div
-          className={styles.carouselTrack}
-          aria-live="polite"
-          aria-atomic="true"
-        >
+        <div className={styles.carouselTrack} aria-live="polite" aria-atomic="true">
           {images.map((img, i) => (
             <div
               key={img.src}
@@ -151,64 +148,27 @@ export function Carousel() {
           ))}
         </div>
 
-        {/* ── Gradient overlays for legibility ── */}
+        {/* ── Gradient overlays ── */}
         <div className={styles.carouselOverlayLeft} aria-hidden="true" />
         <div className={styles.carouselOverlayRight} aria-hidden="true" />
         <div className={styles.carouselOverlayBottom} aria-hidden="true" />
 
         {/* ── Prev button ── */}
-        <button
-          type="button"
-          className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
-          onClick={prev}
-          aria-label="Vorige afbeelding"
-        >
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+        <button type="button" className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`} onClick={prev} aria-label="Vorige afbeelding">
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
 
         {/* ── Next button ── */}
-        <button
-          type="button"
-          className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
-          onClick={next}
-          aria-label="Volgende afbeelding"
-        >
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+        <button type="button" className={`${styles.carouselBtn} ${styles.carouselBtnNext}`} onClick={next} aria-label="Volgende afbeelding">
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
 
         {/* ── Dot indicators (mobile only) ── */}
-        <div
-          ref={dotsRef}
-          className={styles.carouselDots}
-          role="tablist"
-          aria-label="Selecteer afbeelding"
-        >
+        <div ref={dotsRef} className={styles.carouselDots} role="tablist" aria-label="Selecteer afbeelding">
           {images.map((_, i) => (
             <button
               key={i}
@@ -223,36 +183,6 @@ export function Carousel() {
           ))}
         </div>
 
-        {/* ── Thumbnail strip (desktop, visible on carousel hover) ── */}
-        <div
-          ref={thumbsRef}
-          className={styles.carouselThumbs}
-          role="tablist"
-          aria-label="Selecteer afbeelding"
-        >
-          {images.map((img, i) => (
-            <button
-              key={img.src}
-              type="button"
-              role="tab"
-              className={styles.carouselThumb}
-              aria-selected={i === current}
-              aria-label={`Afbeelding ${i + 1} van ${total}`}
-              onClick={() => goTo(i)}
-              data-active={i === current}
-            >
-              <Image
-                src={img.src}
-                alt=""
-                fill
-                sizes="80px"
-                className={styles.carouselThumbImage}
-                tabIndex={-1}
-              />
-            </button>
-          ))}
-        </div>
-
         {/* ── Counter badge ── */}
         <div
           className={styles.carouselCounter}
@@ -262,16 +192,10 @@ export function Carousel() {
         >
           {current + 1} <span aria-hidden="true">/</span> {total}
         </div>
-      </div>
-      {/* end .carousel */}
+      </div>{/* end .carousel */}
 
-      {/* ── Thumbnail strip (desktop, always visible below carousel) ── */}
-      <div
-        ref={thumbsRef}
-        className={styles.carouselThumbs}
-        role="tablist"
-        aria-label="Selecteer afbeelding"
-      >
+      {/* ── Thumbnail strip — outside carousel, always visible on desktop ── */}
+      <div ref={thumbsRef} className={styles.carouselThumbs} role="tablist" aria-label="Selecteer afbeelding">
         {images.map((img, i) => (
           <button
             key={img.src}
@@ -283,17 +207,11 @@ export function Carousel() {
             onClick={() => goTo(i)}
             data-active={i === current}
           >
-            <Image
-              src={img.src}
-              alt=""
-              fill
-              sizes="80px"
-              className={styles.carouselThumbImage}
-              tabIndex={-1}
-            />
+            <Image src={img.src} alt="" fill sizes="80px" className={styles.carouselThumbImage} tabIndex={-1} />
           </button>
         ))}
       </div>
-    </div> /* end .carouselWrapper */
+
+    </div>/* end .carouselWrapper */
   );
 }
