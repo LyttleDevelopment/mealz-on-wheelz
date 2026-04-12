@@ -1,648 +1,231 @@
 .section {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   padding: 5rem 0;
-  min-height: 100vh;
-  height: 100%;
-  background: var(--background)
+  background: var(--background);
 }
 
-.page {
-  padding-bottom: 3rem;
-}
+/* ─────────────────────────────────────────
+   Carousel
+───────────────────────────────────────── */
 
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  border-bottom: 1px solid rgb(245 240 235 / 0.18);
-  background: color-mix(in oklab, var(--background) 90%, transparent);
-  backdrop-filter: blur(18px);
-}
-
-.headerShell {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  min-height: 6rem;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: inherit;
-  text-decoration: none;
-}
-
-.brandLogo {
-  display: block;
-  width: 6rem;
-  height: auto;
-  flex-shrink: 0;
-  /* logo.svg has white paths — drop a warm glow to tie into the brand palette */
-  filter: drop-shadow(0 2px 8px rgb(186 160 143 / 0.3));
-}
-
-.brandText {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  color: var(--foreground);
-  line-height: 1.1;
-}
-
-.brandText strong {
-  font-size: 0.98rem;
-}
-
-.brandText span {
-  color: color-mix(in oklab, var(--foreground) 68%, transparent);
-  font-size: 0.72rem;
-}
-
-.desktopNav {
-  display: none;
-  align-items: center;
-  gap: 0.35rem;
-  margin-right: 1rem;
-}
-
-.navLink,
-.mobileNavLink {
-  color: var(--foreground);
-  text-decoration: none;
-  transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
-}
-
-.navLink {
-  padding: 0.6rem 0.85rem;
-  border-radius: 999px;
-}
-
-.navLink:hover,
-.mobileNavLink:hover {
-  color: var(--foreground);
-}
-
-.mobileNav {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.85rem;
-  scrollbar-width: none;
-}
-
-.mobileNav::-webkit-scrollbar {
-  display: none;
-}
-
-.mobileNavLink {
-  flex: 0 0 auto;
-  padding: 0.55rem 0.85rem;
-  border: 1px solid rgb(245 240 235 / 0.22);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.06);
-  font-size: 0.9rem;
-}
-
-.heroShell {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  height: calc(100vh - 6rem);
-  background-image: url("/media/working-in-truck.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-}
-
-.heroContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  > :nth-child(2) {
-    margin-top: 5rem;
-  }
-
-  > :nth-child(3) {
-    margin-top: 3rem;
-  }
-}
-
-
-
-.heroEyebrow,
-.eyebrow,
-.panelEyebrow,
-.galleryLabel {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--primary) 25%, var(--muted));
-  color: var(--primary);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.heroTitle {
-  margin: 0;
-  color: white;
-  font-family: var(--font-berniertm), var(--font-display), Impact, sans-serif;
-  font-size: clamp(4.5rem, 22vw, 7.5rem);
-  line-height: 0.86;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-wrap: balance;
-}
-
-.heroText {
-  max-width: 40rem;
-  color: var(--foreground);
-}
-
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.heroFacts {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.heroFact {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid rgb(245 240 235 / 0.22);
-  border-radius: 1rem;
-  background: rgb(255 255 255 / 0.07);
-  color: var(--foreground);
-}
-
-.heroPanel {
-  align-self: stretch;
-  justify-content: center;
-  min-height: 100%;
-  background: linear-gradient(180deg, var(--secondary), color-mix(in oklab, var(--secondary) 78%, white));
-  color: var(--secondary-foreground);
-}
-
-.panelEyebrow {
-  background: rgb(31 58 59 / 0.16);
-  color: var(--secondary-foreground);
-}
-
-.panelTitle {
-  margin: 0;
-  color: var(--secondary-foreground);
-}
-
-.panelText {
-  color: color-mix(in oklab, var(--secondary-foreground) 88%, transparent);
-}
-
-.panelList {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.panelItem {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.9rem;
-  align-items: start;
-  padding: 0.9rem 0;
-  border-top: 1px solid rgb(31 58 59 / 0.12);
-}
-
-.panelItem:first-child {
-  border-top: 0;
-}
-
-.panelItem svg {
-  color: var(--background);
-}
-
-.panelItem strong,
-.contactItem strong,
-.statCard strong {
-  display: block;
-  margin-bottom: 0.2rem;
-}
-
-.panelItem span {
-  color: color-mix(in oklab, var(--secondary-foreground) 88%, transparent);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.contactItem span,
-.statCard span {
-  color: var(--muted-foreground);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.sectionHeading {
-  display: grid;
-  gap: 0.9rem;
-  margin-bottom: 1.75rem;
-}
-
-.sectionTitle,
-.bookingTitle,
-.formTitle {
-  margin: 0;
-}
-
-.sectionDescription {
-  max-width: 42rem;
-}
-
-.aboutGrid {
-  align-items: center;
-}
-
-.aboutContent {
-  max-width: 40rem;
-}
-
-.bodyCopy {
-  max-width: 38rem;
-}
-
-.statGrid {
-  display: grid;
-  gap: 1rem;
-}
-
-.statCard {
-  min-height: 100%;
-}
-
-.statCard strong {
-  color: var(--foreground);
-}
-
-.aboutVisual {
-  display: flex;
-  justify-content: center;
-}
-
-.aboutPhoto {
+.carousel {
   position: relative;
-  width: min(100%, 29rem);
-  min-height: 23rem;
-  border: 1px solid rgb(245 240 235 / 0.18);
-  border-radius: 1.75rem;
-  background:
-          linear-gradient(135deg, rgb(255 255 255 / 0.95), rgb(245 240 235 / 0.92)),
-          linear-gradient(180deg, transparent, rgb(0 0 0 / 0.02));
-  box-shadow: 0 24px 48px rgb(0 0 0 / 0.16);
+  width: 100%;
+  /* 4:3 on mobile, 16:9 on wider screens */
+  aspect-ratio: 4 / 3;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: var(--muted);
+  box-shadow:
+    0 24px 64px rgb(0 0 0 / 0.45),
+    0 0 0 1px rgb(245 240 235 / 0.1);
+  outline: none;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 4px;
+  }
 }
 
-.aboutPhoto::before {
-  content: "";
-  position: absolute;
-  inset: 1rem;
-  border: 1px solid rgb(31 58 59 / 0.08);
-  border-radius: 1.35rem;
-  background-image:
-          radial-gradient(circle at top left, rgb(186 160 143 / 0.2), transparent 45%),
-          linear-gradient(rgb(31 58 59 / 0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgb(31 58 59 / 0.04) 1px, transparent 1px);
-  background-size: auto, 1.25rem 1.25rem, 1.25rem 1.25rem;
+@media (min-width: 640px) {
+  .carousel {
+    aspect-ratio: 16 / 9;
+    border-radius: 1.75rem;
+  }
 }
 
-.aboutBadge {
-  position: absolute;
-  top: 1.1rem;
-  left: 1.1rem;
-  z-index: 1;
-  padding: 0.55rem 0.85rem;
-  border-radius: 999px;
-  background: var(--background);
-  color: var(--foreground);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
+/* ── Slide track ── */
 
-.aboutInset {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  max-width: 14rem;
-  padding: 1rem 1.1rem;
-  border-radius: 1.2rem;
-  background: var(--background);
-  color: var(--foreground);
-  box-shadow: 0 16px 32px rgb(0 0 0 / 0.16);
-}
-
-.aboutInset span {
-  display: block;
-  font-family: var(--font-berniertm), var(--font-display), Impact, sans-serif;
-  font-size: 1.6rem;
-  line-height: 0.95;
-  text-transform: uppercase;
-}
-
-.menuCard {
+.carouselTrack {
+  position: relative;
+  width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, color-mix(in oklab, var(--card) 94%, white), var(--card));
 }
 
-.menuCardHeader {
-  display: grid;
-  gap: 0.75rem;
+.carouselSlide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+
+  &[data-active="true"] {
+    opacity: 1;
+    z-index: 1;
+    pointer-events: auto;
+  }
 }
 
-.menuIcon,
-.serviceIcon {
+.carouselImage {
+  object-fit: cover;
+  user-select: none;
+}
+
+/* ── Gradient overlays ── */
+
+.carouselOverlayLeft,
+.carouselOverlayRight,
+.carouselOverlayBottom {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.carouselOverlayLeft {
+  top: 0;
+  left: 0;
+  width: 10%;
+  height: 100%;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.25), transparent);
+}
+
+.carouselOverlayRight {
+  top: 0;
+  right: 0;
+  width: 10%;
+  height: 100%;
+  background: linear-gradient(to left, rgb(0 0 0 / 0.25), transparent);
+}
+
+.carouselOverlayBottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent);
+}
+
+/* ── Prev / next buttons ── */
+
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
   display: inline-grid;
   place-items: center;
   width: 2.5rem;
   height: 2.5rem;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.18);
   border-radius: 999px;
-  background: color-mix(in oklab, var(--primary) 70%, white);
-  color: var(--background);
-}
-
-.menuSubtitle {
-  margin-top: 0.35rem;
-}
-
-.priceTag {
-  width: fit-content;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--secondary) 88%, white);
-  color: var(--secondary-foreground);
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.menuContent {
-  display: grid;
-  gap: 1rem;
-}
-
-.featureList {
-  display: grid;
-  gap: 0.65rem;
-  margin: 0;
-  padding-left: 1.1rem;
-  color: inherit;
-}
-
-.featureList li::marker {
-  color: var(--primary);
-}
-
-.menuFooter {
-  justify-content: flex-start;
-}
-
-.serviceCard {
-  min-height: 100%;
-}
-
-.serviceTitle {
-  margin: 0;
-  color: var(--foreground);
-}
-
-.galleryGrid {
-  display: grid;
-  gap: 1rem;
-}
-
-.galleryTile {
-  position: relative;
-  min-height: 16rem;
-  overflow: hidden;
-  border-radius: 1.75rem;
-  border: 1px solid rgb(245 240 235 / 0.18);
-}
-
-.galleryTile[data-tone="light"] {
-  background:
-          radial-gradient(circle at top right, rgb(186 160 143 / 0.42), transparent 36%),
-          linear-gradient(160deg, rgb(245 240 235 / 0.98), rgb(251 233 222 / 0.95));
-  color: var(--secondary-foreground);
-}
-
-.galleryTile[data-tone="dark"] {
-  background:
-          radial-gradient(circle at top right, rgb(255 255 255 / 0.08), transparent 30%),
-          linear-gradient(160deg, color-mix(in oklab, var(--background) 88%, black), var(--background));
+  background: rgb(0 0 0 / 0.4);
   color: white;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background: rgb(0 0 0 / 0.65);
+    border-color: rgb(255 255 255 / 0.3);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.93);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
 }
 
-.galleryTile::after {
-  content: "";
-  position: absolute;
-  inset: auto -12% -18% auto;
-  width: 10rem;
-  height: 10rem;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.12);
+.carouselBtnPrev {
+  left: 0.65rem;
 }
 
-.galleryTileInner {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 0.8rem;
-  height: 100%;
-  padding: 1.25rem;
-}
-
-.galleryLabel {
-  background: rgb(255 255 255 / 0.12);
-}
-
-.galleryTile[data-tone="light"] .galleryLabel {
-  background: rgb(31 58 59 / 0.16);
-  color: var(--secondary-foreground);
-}
-
-.galleryTitle {
-  margin: 0;
-  text-transform: uppercase;
-}
-
-.bookingBanner {
-  display: grid;
-  gap: 1.25rem;
-  padding: clamp(1.3rem, 4vw, 2rem);
-  border-radius: 2rem;
-  background: linear-gradient(145deg, rgb(245 240 235 / 0.98), rgb(251 233 222 / 0.92));
-  color: var(--secondary-foreground);
-  box-shadow: 0 24px 56px rgb(0 0 0 / 0.18);
-}
-
-.bookingContent {
-  display: grid;
-  gap: 1rem;
-}
-
-.bookingText {
-  color: color-mix(in oklab, var(--secondary-foreground) 90%, transparent);
-}
-
-.bookingPanel {
-  display: grid;
-  gap: 0.9rem;
-}
-
-.bookingStep {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.85rem;
-  align-items: start;
-  padding: 1rem;
-  border-radius: 1.25rem;
-  background: rgb(31 58 59 / 0.06);
-}
-
-.bookingStep span {
-  display: inline-grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  background: var(--background);
-  color: var(--foreground);
-  font-weight: 700;
-}
-
-.bookingStep p {
-  margin: 0;
-  line-height: 1.6;
-}
-
-.formCard {
-  background: linear-gradient(180deg, color-mix(in oklab, var(--card) 96%, white), var(--card));
-}
-
-.formTitle {
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
-}
-
-.contactForm {
-  display: grid;
-  gap: 1rem;
-}
-
-.contactContent {
-  max-width: 38rem;
-}
-
-.contactList {
-  display: grid;
-  gap: 0.9rem;
-}
-
-.contactItem {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.85rem;
-  align-items: start;
-  padding: 1rem 1.05rem;
-  border-radius: 1.2rem;
-  border: 1px solid rgb(245 240 235 / 0.2);
-  background: rgb(255 255 255 / 0.06);
-}
-
-.contactItem strong {
-  display: block;
-  margin-bottom: 0.2rem;
-  color: var(--foreground);
-}
-
-.contactItem svg {
-  color: var(--primary);
-}
-
-.noteCard {
-  background: rgb(255 255 255 / 0.09);
-}
-
-.footer {
-  padding-top: 1rem;
-}
-
-.footerShell {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgb(245 240 235 / 0.18);
+.carouselBtnNext {
+  right: 0.65rem;
 }
 
 @media (min-width: 640px) {
-  .heroFacts,
-  .statGrid,
-  .galleryGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .carouselBtn {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .carouselBtnPrev {
+    left: 1.1rem;
+  }
+
+  .carouselBtnNext {
+    right: 1.1rem;
   }
 }
 
-@media (min-width: 768px) {
-  .sectionHeading {
-    margin-bottom: 2.25rem;
+/* ── Dot indicators ── */
+
+.carouselDots {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  max-width: 88%;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.35);
+  backdrop-filter: blur(12px);
+}
+
+.carouselDot {
+  width: 0.45rem;
+  height: 0.45rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.4);
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    width 0.25s ease;
+
+  &[data-active="true"] {
+    background: white;
+    width: 1.1rem;
   }
 
-  .heroShell {
-    border-radius: 2.5rem;
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 
-  .desktopNav {
-    display: inline-flex;
-  }
-
-  .mobileNav {
-    display: none;
-  }
-
-  .footerShell {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  &:hover:not([data-active="true"]) {
+    background: rgb(255 255 255 / 0.7);
   }
 }
 
-@media (min-width: 1024px) {
-  .heroLayout,
-  .bookingBanner {
-    grid-template-columns: minmax(0, 1.2fr) minmax(20rem, 0.88fr);
-    align-items: center;
-  }
+/* ── Counter badge ── */
 
-  .galleryGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .galleryTile:nth-child(2),
-  .galleryTile:nth-child(3) {
-    min-height: 20rem;
-  }
+.carouselCounter {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  padding: 0.28rem 0.6rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.4);
+  backdrop-filter: blur(12px);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border: 1px solid rgb(255 255 255 / 0.14);
 }
 
