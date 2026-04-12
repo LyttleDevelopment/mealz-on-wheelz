@@ -1,0 +1,36 @@
+.section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 5rem 0;
+  height: 100vh;
+}
+
+.menuIcon,
+.serviceIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--primary) 70%, white);
+  color: var(--background);
+}
+
+.serviceCard {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > * {
+    text-align: center;
+  }
+}
+
+.serviceTitle {
+  margin: 0;
+  color: var(--foreground);
+}
