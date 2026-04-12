@@ -1,11 +1,384 @@
 .section {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
   padding: 5rem 0;
-  height: 100vh;
+}
+
+/* ─── Booking form card ──────────────────────────────────────────────────── */
+
+.formCard {
+  background: linear-gradient(160deg, rgb(245 240 235 / 0.98), rgb(251 233 222 / 0.95));
+  border-radius: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  color: #1e2939;
+  box-shadow: 0 24px 56px rgb(0 0 0 / 0.18);
+}
+
+/* ─── Stepper ────────────────────────────────────────────────────────────── */
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 2rem;
+}
+
+.stepItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.stepCircle {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: #d0cbc6;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.stepItem[data-active] .stepCircle,
+.stepItem[data-done] .stepCircle {
+  background: #1f3a3b;
+  color: #fff;
+}
+
+.stepItem[data-done] .stepCircle {
+  background: #baa08f;
+}
+
+.stepLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #9ca3af;
+  transition: color 0.2s;
+}
+
+.stepItem[data-active] .stepLabel {
+  color: #1e2939;
+  font-weight: 600;
+}
+
+.stepItem[data-done] .stepLabel {
+  color: #baa08f;
+}
+
+.stepLine {
+  height: 2px;
+  border-radius: 999px;
+  background: #d0cbc6;
+  transition: background 0.2s;
+  margin-right: 0.5rem;
+}
+
+.stepItem[data-active] .stepLine {
+  background: #1f3a3b;
+}
+
+.stepItem[data-done] .stepLine {
+  background: #baa08f;
+}
+
+/* ─── Step content ───────────────────────────────────────────────────────── */
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stepIntro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stepTitle {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e2939;
+}
+
+.stepDescription {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* ─── Experience cards ───────────────────────────────────────────────────── */
+
+.experienceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.experienceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.1rem;
+  border: 1.5px solid rgb(31 58 59 / 0.15);
+  border-radius: 1.1rem;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.experienceCard:hover {
+  border-color: rgb(31 58 59 / 0.35);
+}
+
+.experienceCard[data-selected] {
+  border-color: #1f3a3b;
+  background: rgb(31 58 59 / 0.04);
+}
+
+.experienceTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e2939;
+}
+
+.experienceSubtitle {
+  font-size: 0.82rem;
+  color: #baa08f;
+}
+
+/* ─── Options list ───────────────────────────────────────────────────────── */
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgb(31 58 59 / 0.1);
+}
+
+.optionRow:last-child {
+  border-bottom: none;
+}
+
+.optionLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e2939;
+}
+
+.optionPrice {
+  color: #baa08f;
+  font-weight: 400;
+}
+
+.guestInput {
+  width: 5rem;
+  text-align: center;
+}
+
+/* ─── Price summary box ──────────────────────────────────────────────────── */
+
+.priceBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.1rem 1.4rem;
+  border-radius: 1.1rem;
+  background: #1f3a3b;
+  color: #f5f0eb;
+}
+
+.priceBoxContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.priceBoxLabel {
+  font-size: 0.9rem;
+  color: rgb(245 240 235 / 0.7);
+}
+
+.priceBoxAmount {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.priceBoxNote {
+  font-size: 0.82rem;
+  color: #baa08f;
+}
+
+.priceDisclaimer {
+  margin: -0.5rem 0 0;
+  font-size: 0.82rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* ─── Contact form grid ──────────────────────────────────────────────────── */
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.formLabel {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1e2939;
+}
+
+/* ─── Alert / disclaimer box ─────────────────────────────────────────────── */
+
+.alertBox {
+  padding: 0.9rem 1.1rem;
+  border-radius: 0.85rem;
+  background: rgb(31 58 59 / 0.07);
+  font-size: 0.88rem;
+  color: #1e2939;
+  line-height: 1.6;
+}
+
+.alertBox p {
+  margin: 0;
+}
+
+/* ─── Button rows ────────────────────────────────────────────────────────── */
+
+.buttonRow {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.backButton {
+  flex: 0 0 auto;
+}
+
+.nextButton {
+  flex: 1;
+}
+
+.buttonColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.backButtonFull {
+  width: 100%;
+}
+
+.submitButton {
+  width: 100%;
+  background: #baa08f;
+  border-color: #baa08f;
+}
+
+.submitButton:hover {
+  background: #a8907e;
+  border-color: #a8907e;
+}
+
+/* ─── Summary / review ───────────────────────────────────────────────────── */
+
+.summaryBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0.5rem 1.1rem;
+  border-radius: 1.1rem;
+  background: rgb(31 58 59 / 0.06);
+}
+
+.summaryRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgb(31 58 59 / 0.08);
+  font-size: 0.92rem;
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.summaryLabel {
+  color: #1e2939;
+}
+
+.summaryValue {
+  font-weight: 500;
+  color: #1e2939;
+  text-align: right;
+}
+
+/* ─── Submitted state ────────────────────────────────────────────────────── */
+
+.submittedState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.submittedIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: #1f3a3b;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .experienceGrid,
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .buttonRow {
+    flex-direction: column;
+  }
 }
 
 .page {
