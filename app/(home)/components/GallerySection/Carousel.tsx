@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./index.module.scss";
 
-const SOURCE_IMAGES = Array.from({ length: 21 }, (_, i) => ({
+const SOURCE_IMAGES = Array.from({ length: 19 }, (_, i) => ({
   src: `/media/food-${i + 1}.webp`,
   alt: `Galerij afbeelding ${i + 1}`,
 }));
@@ -55,7 +55,11 @@ export function Carousel() {
       const container = ref.current;
       if (!container) return;
       const active = container.children[current] as HTMLElement | undefined;
-      active?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      active?.scrollIntoView({
+        block: "nearest",
+        inline: "center",
+        behavior: "smooth",
+      });
     };
     scrollActive(dotsRef);
     scrollActive(thumbsRef);
@@ -101,123 +105,167 @@ export function Carousel() {
   };
 
   return (
-    <div
-      ref={regionRef}
-      className={styles.carousel}
-      role="region"
-      aria-label="Galerij diavoorstelling"
-      aria-roledescription="carousel"
-      tabIndex={0}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
-      onKeyDown={handleKeyDown}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* ── Slide track ── */}
+    <div className={styles.carouselWrapper}>
+      {/* ── Main carousel box ── */}
       <div
-        className={styles.carouselTrack}
-        aria-live="polite"
-        aria-atomic="true"
+        ref={regionRef}
+        className={styles.carousel}
+        role="region"
+        aria-label="Galerij diavoorstelling"
+        aria-roledescription="carousel"
+        tabIndex={0}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)}
+        onBlur={() => setPaused(false)}
+        onKeyDown={handleKeyDown}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
-        {images.map((img, i) => (
-          <div
-            key={img.src}
-            className={styles.carouselSlide}
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`${i + 1} van ${total}`}
-            aria-hidden={i !== current}
-            data-active={i === current}
+        {/* ── Slide track ── */}
+        <div
+          className={styles.carouselTrack}
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {images.map((img, i) => (
+            <div
+              key={img.src}
+              className={styles.carouselSlide}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} van ${total}`}
+              aria-hidden={i !== current}
+              data-active={i === current}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 72rem"
+                className={styles.carouselImage}
+                priority={i === 0}
+                draggable={false}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* ── Gradient overlays for legibility ── */}
+        <div className={styles.carouselOverlayLeft} aria-hidden="true" />
+        <div className={styles.carouselOverlayRight} aria-hidden="true" />
+        <div className={styles.carouselOverlayBottom} aria-hidden="true" />
+
+        {/* ── Prev button ── */}
+        <button
+          type="button"
+          className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
+          onClick={prev}
+          aria-label="Vorige afbeelding"
+        >
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 72rem"
-              className={styles.carouselImage}
-              priority={i === 0}
-              draggable={false}
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+
+        {/* ── Next button ── */}
+        <button
+          type="button"
+          className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
+          onClick={next}
+          aria-label="Volgende afbeelding"
+        >
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+
+        {/* ── Dot indicators (mobile only) ── */}
+        <div
+          ref={dotsRef}
+          className={styles.carouselDots}
+          role="tablist"
+          aria-label="Selecteer afbeelding"
+        >
+          {images.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              className={styles.carouselDot}
+              aria-selected={i === current}
+              aria-label={`Afbeelding ${i + 1} van ${total}`}
+              onClick={() => goTo(i)}
+              data-active={i === current}
             />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* ── Gradient overlays for legibility ── */}
-      <div className={styles.carouselOverlayLeft} aria-hidden="true" />
-      <div className={styles.carouselOverlayRight} aria-hidden="true" />
-      <div className={styles.carouselOverlayBottom} aria-hidden="true" />
-
-      {/* ── Prev button ── */}
-      <button
-        type="button"
-        className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
-        onClick={prev}
-        aria-label="Vorige afbeelding"
-      >
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        {/* ── Thumbnail strip (desktop, visible on carousel hover) ── */}
+        <div
+          ref={thumbsRef}
+          className={styles.carouselThumbs}
+          role="tablist"
+          aria-label="Selecteer afbeelding"
         >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-      </button>
+          {images.map((img, i) => (
+            <button
+              key={img.src}
+              type="button"
+              role="tab"
+              className={styles.carouselThumb}
+              aria-selected={i === current}
+              aria-label={`Afbeelding ${i + 1} van ${total}`}
+              onClick={() => goTo(i)}
+              data-active={i === current}
+            >
+              <Image
+                src={img.src}
+                alt=""
+                fill
+                sizes="80px"
+                className={styles.carouselThumbImage}
+                tabIndex={-1}
+              />
+            </button>
+          ))}
+        </div>
 
-      {/* ── Next button ── */}
-      <button
-        type="button"
-        className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
-        onClick={next}
-        aria-label="Volgende afbeelding"
-      >
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        {/* ── Counter badge ── */}
+        <div
+          className={styles.carouselCounter}
+          aria-live="polite"
+          aria-atomic="true"
+          aria-label={`Afbeelding ${current + 1} van ${total}`}
         >
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </button>
-
-      {/* ── Dot indicators (mobile only) ── */}
-      <div
-        ref={dotsRef}
-        className={styles.carouselDots}
-        role="tablist"
-        aria-label="Selecteer afbeelding"
-      >
-        {images.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            role="tab"
-            className={styles.carouselDot}
-            aria-selected={i === current}
-            aria-label={`Afbeelding ${i + 1} van ${total}`}
-            onClick={() => goTo(i)}
-            data-active={i === current}
-          />
-        ))}
+          {current + 1} <span aria-hidden="true">/</span> {total}
+        </div>
       </div>
+      {/* end .carousel */}
 
-      {/* ── Thumbnail strip (desktop, visible on carousel hover) ── */}
+      {/* ── Thumbnail strip (desktop, always visible below carousel) ── */}
       <div
         ref={thumbsRef}
         className={styles.carouselThumbs}
@@ -246,17 +294,6 @@ export function Carousel() {
           </button>
         ))}
       </div>
-
-      {/* ── Counter badge ── */}
-      <div
-        className={styles.carouselCounter}
-        aria-live="polite"
-        aria-atomic="true"
-        aria-label={`Afbeelding ${current + 1} van ${total}`}
-      >
-        {current + 1} <span aria-hidden="true">/</span> {total}
-      </div>
-    </div>
+    </div> /* end .carouselWrapper */
   );
 }
-
