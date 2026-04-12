@@ -14,7 +14,7 @@ export function HeroSection() {
           meer. Kom langs of vraag een offerte en ontdek het zelf!
         </Text>
         <div className={styles.heroActions}>
-          <Button asChild variant="brand" size="lg">
+          <Button asChild variant="default" size="lg">
             <a href="#reserveren">Boek ons</a>
           </Button>
           <Button asChild variant="secondary" size="lg">
