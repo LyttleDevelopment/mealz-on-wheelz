@@ -4,12 +4,23 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./index.module.scss";
 
-const IMAGES = Array.from({ length: 21 }, (_, i) => ({
+const SOURCE_IMAGES = Array.from({ length: 21 }, (_, i) => ({
   src: `/media/food-${i + 1}.webp`,
   alt: `Galerij afbeelding ${i + 1}`,
 }));
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export function Carousel() {
+  // Shuffled once on mount via lazy state initialiser
+  const [images] = useState(() => shuffle(SOURCE_IMAGES));
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -17,7 +28,7 @@ export function Carousel() {
   const dotsRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
 
-  const total = IMAGES.length;
+  const total = images.length;
 
   const prev = useCallback(() => {
     setCurrent((c) => (c - 1 + total) % total);
@@ -111,7 +122,7 @@ export function Carousel() {
         aria-live="polite"
         aria-atomic="true"
       >
-        {IMAGES.map((img, i) => (
+        {images.map((img, i) => (
           <div
             key={img.src}
             className={styles.carouselSlide}
@@ -192,7 +203,7 @@ export function Carousel() {
         role="tablist"
         aria-label="Selecteer afbeelding"
       >
-        {IMAGES.map((_, i) => (
+        {images.map((_, i) => (
           <button
             key={i}
             type="button"
@@ -213,7 +224,7 @@ export function Carousel() {
         role="tablist"
         aria-label="Selecteer afbeelding"
       >
-        {IMAGES.map((img, i) => (
+        {images.map((img, i) => (
           <button
             key={img.src}
             type="button"
