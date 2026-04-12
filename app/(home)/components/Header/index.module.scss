@@ -1,0 +1,108 @@
+
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid rgb(245 240 235 / 0.18);
+  background: color-mix(in oklab, var(--background) 90%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.headerShell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 6rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brandLogo {
+  display: block;
+  width: 6rem;
+  height: auto;
+  flex-shrink: 0;
+  /* logo.svg has white paths — drop a warm glow to tie into the brand palette */
+  filter: drop-shadow(0 2px 8px rgb(186 160 143 / 0.3));
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  color: var(--foreground);
+  line-height: 1.1;
+}
+
+.brandText strong {
+  font-size: 0.98rem;
+}
+
+.brandText span {
+  color: color-mix(in oklab, var(--foreground) 68%, transparent);
+  font-size: 0.72rem;
+}
+
+.desktopNav {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: 1rem;
+}
+
+.navLink,
+.mobileNavLink {
+  color: var(--foreground);
+  text-decoration: none;
+  transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
+}
+
+.navLink {
+  padding: 0.6rem 0.85rem;
+  border-radius: 999px;
+}
+
+.navLink:hover,
+.mobileNavLink:hover {
+  color: var(--foreground);
+}
+
+.mobileNav {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.85rem;
+  scrollbar-width: none;
+}
+
+.mobileNav::-webkit-scrollbar {
+  display: none;
+}
+
+.mobileNavLink {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgb(245 240 235 / 0.22);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.06);
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .desktopNav {
+    display: inline-flex;
+  }
+
+  .mobileNav {
+    display: none;
+  }
+}
+

@@ -1,6 +1,6 @@
-import { Button, Container } from '@lyttle-development/ui';
-import { navigation } from '../data/constants';
-import styles from '../page.module.scss';
+import { Button, Container } from "@lyttle-development/ui";
+import { navigation } from "../../data/constants";
+import styles from "./index.module.scss";
 
 export function Header() {
   return (
@@ -34,7 +34,11 @@ export function Header() {
 
         <nav className={styles.mobileNav} aria-label="Snelle navigatie">
           {navigation.map((item) => (
-            <a key={item.href} href={item.href} className={styles.mobileNavLink}>
+            <a
+              key={item.href}
+              href={item.href}
+              className={styles.mobileNavLink}
+            >
               {item.label}
             </a>
           ))}
@@ -43,4 +47,3 @@ export function Header() {
     </header>
   );
 }
-
