@@ -1,5 +1,5 @@
 @use "../packages/design-framework/packages/ui/src/styles/globals.scss";
-//@use "./themes";
+@use "./themes";
 
 html {
   background: var(--background);
