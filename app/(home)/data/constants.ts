@@ -1,13 +1,17 @@
 import {
   CalendarDays,
   ChefHat,
+  Clock,
+  Mail,
+  MapPin,
   PartyPopper,
+  Phone,
   Sparkles,
   Store,
   Truck,
   UtensilsCrossed,
 } from "lucide-react";
-import type { Experience, GalleryTile, NavigationItem, Service } from "./types";
+import type { ContactInfo, Experience, GalleryTile, NavigationItem, Service } from "./types";
 
 export const navigation: NavigationItem[] = [
   { label: "Home", href: "#home" },
@@ -122,3 +126,27 @@ export const planningSteps = [
   "Wij stemmen timing, opstelling en menu af.",
   "Op de dag zelf rollen wij zorgeloos binnen en serveren we met flair.",
 ];
+
+export const contactInfo: ContactInfo[] = [
+  {
+    icon: MapPin,
+    label: "Plaats",
+    value: "Gent & heel Oost-Vlaanderen",
+  },
+  {
+    icon: Phone,
+    label: "Telefoonnummer",
+    value: "+32 (0)9 123 45 67",
+  },
+  {
+    icon: Mail,
+    label: "E-mail",
+    value: "hallo@mealzonwheelz.be",
+  },
+  {
+    icon: Clock,
+    label: "Contacttijden",
+    value: "Ma–Za: 10u – 21u\nZo: 12u – 19u",
+  },
+];
+

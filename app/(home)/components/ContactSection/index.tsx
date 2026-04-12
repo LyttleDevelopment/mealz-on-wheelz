@@ -1,10 +1,95 @@
-import { Container } from "@lyttle-development/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Heading,
+  Input,
+  Label,
+  Stack,
+  Text,
+  Textarea,
+} from "@lyttle-development/ui";
+import { contactInfo } from "../../data/constants";
 import styles from "./index.module.scss";
 
 export function ContactSection() {
   return (
     <section id="contact" className={styles.section}>
-      <Container>{/*  contact here*/}</Container>
+      <Container>
+        <div className={styles.layout}>
+          {/* ── Form ── */}
+          <Card className={styles.formCard}>
+            <CardContent>
+              <form className={styles.form}>
+                <div className={styles.field}>
+                  <Label htmlFor="naam">Naam</Label>
+                  <Input id="naam" type="text" placeholder="Jouw naam" />
+                </div>
+
+                <div className={styles.field}>
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input id="email" type="email" placeholder="your@email.com" />
+                </div>
+
+                <div className={styles.field}>
+                  <Label htmlFor="telefoon">Telefoonnummer</Label>
+                  <Input
+                    id="telefoon"
+                    type="tel"
+                    placeholder="+32 (0)9 123 45 67"
+                  />
+                </div>
+
+                <div className={styles.field}>
+                  <Label htmlFor="bericht">Bericht</Label>
+                  <Textarea
+                    id="bericht"
+                    placeholder="Vertel ons meer over uw vraag"
+                    rows={5}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  size="lg"
+                  className={styles.submitButton}
+                >
+                  Verstuur bericht
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* ── Info ── */}
+          <div className={styles.info}>
+            <Stack gap="lg">
+              <Heading as="h2" size="4xl">
+                Contacteer ons
+              </Heading>
+
+              <Text tone="muted" size="md">
+                Klaar om ons te boeken voor uw volgende evenement of wilt u
+                weten waar we binnenkort te vinden zijn? Vul het formulier in en
+                we nemen zo snel mogelijk contact met u op!
+              </Text>
+
+              <ul className={styles.contactList}>
+                {contactInfo.map(({ icon: Icon, label, value }) => (
+                  <li key={label} className={styles.contactItem}>
+                    <Icon size={18} />
+                    <div>
+                      <strong>{label}</strong>
+                      <span>{value}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </Stack>
+          </div>
+        </div>
+      </Container>
     </section>
   );
 }

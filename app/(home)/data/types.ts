@@ -25,3 +25,9 @@ export type GalleryTile = {
   note: string;
 };
 
+export type ContactInfo = {
+  label: string;
+  value: string;
+  icon: LucideIcon;
+};
+
