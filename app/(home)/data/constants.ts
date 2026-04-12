@@ -12,10 +12,10 @@ import type { Experience, GalleryTile, NavigationItem, Service } from "./types";
 export const navigation: NavigationItem[] = [
   { label: "Home", href: "#home" },
   { label: "Over ons", href: "#over-ons" },
-  { label: "Formules", href: "#formules" },
+  { label: "Menu", href: "#menu" },
   { label: "Diensten", href: "#diensten" },
   { label: "Galerij", href: "#galerij" },
-  { label: "Contact", href: "#contact" },
+  { label: "Reservatie", href: "#reserveren" },
 ];
 
 export const experiences: Experience[] = [

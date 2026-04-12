@@ -15,7 +15,7 @@ import styles from "./index.module.scss";
 
 export function FormulasSection() {
   return (
-    <section id="formules" className={styles.section}>
+    <section id="menu" className={styles.section}>
       <Container>
         <SectionHeading
           title="Onze formules"

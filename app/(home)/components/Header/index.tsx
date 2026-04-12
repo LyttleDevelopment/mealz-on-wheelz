@@ -27,7 +27,7 @@ export function Header() {
             </nav>
 
             <Button asChild variant="secondary" size="lg">
-              <a href="#reserveren">Contacteer ons</a>
+              <a href="#contact">Contacteer ons</a>
             </Button>
           </div>
         </div>

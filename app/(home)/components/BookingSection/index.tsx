@@ -1,6 +1,6 @@
-import { Button, Container, Heading, Text } from '@lyttle-development/ui';
-import { planningSteps } from '../data/constants';
-import styles from '../page.module.scss';
+import { Button, Container, Heading, Text } from "@lyttle-development/ui";
+import { planningSteps } from "../../data/constants";
+import styles from "./index.module.scss";
 
 export function BookingSection() {
   return (
@@ -12,11 +12,13 @@ export function BookingSection() {
               Reserveer je event
             </Text>
             <Heading as="h2" size="4xl" className={styles.bookingTitle}>
-              Vertel ons je datum, locatie en vibe — wij vertalen het naar een voorstel
+              Vertel ons je datum, locatie en vibe — wij vertalen het naar een
+              voorstel
             </Heading>
             <Text as="p" size="lg" className={styles.bookingText}>
-              Voor events, markten of privéfeesten denken we mee over menu, serviceflow en opstelling zodat de
-              ervaring even sterk aanvoelt als de branding.
+              Voor events, markten of privéfeesten denken we mee over menu,
+              serviceflow en opstelling zodat de ervaring even sterk aanvoelt
+              als de branding.
             </Text>
             <Button asChild variant="brand" size="lg">
               <a href="#contact">Start je aanvraag</a>
@@ -36,4 +38,3 @@ export function BookingSection() {
     </section>
   );
 }
-
