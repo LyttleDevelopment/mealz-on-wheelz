@@ -1,0 +1,23 @@
+.sectionHeading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 0.9rem;
+  margin-bottom: 1.75rem;
+}
+
+.sectionTitle,
+.bookingTitle,
+.formTitle {
+  margin: 0;
+}
+
+.sectionDescription {
+  max-width: 42rem;
+  text-align: center;
+}
+
+.aboutGrid {
+  align-items: center;
+}

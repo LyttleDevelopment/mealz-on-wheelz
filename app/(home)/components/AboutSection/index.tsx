@@ -1,4 +1,4 @@
-import { Container } from "@lyttle-development/ui";
+import { Container, Heading, Text } from "@lyttle-development/ui";
 import styles from "./index.module.scss";
 import Image from "next/image";
 
@@ -7,9 +7,11 @@ export function AboutSection() {
     <section id="over-ons" className={styles.section}>
       <Container className={styles.container}>
         <article className={styles.article}>
-          <h2>Over ons</h2>
+          <Heading as="h2" size="4xl">
+            Over ons
+          </Heading>
 
-          <p>
+          <Text as="p" size="sm">
             Mealz on wheelz is een foodtruck gevestigd in Moerbeke-Waas. Wij
             zijn gespecialiseerd in culinaire ervaringen: van heerlijke pasta's
             en authentieke streetfood tot smaakvolle BBQ-gerechten.
@@ -25,7 +27,7 @@ export function AboutSection() {
             catering voor een evenement, bij Mealz on Wheelz ben je aan het
             juiste adres. Ons toegewijd en ervaren team zorgt ervoor dat elke
             maaltijd een onvergetelijke ervaring wordt.
-          </p>
+          </Text>
         </article>
         <article className={styles.imageContainer}>
           <Image
