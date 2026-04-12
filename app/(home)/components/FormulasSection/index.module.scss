@@ -12,9 +12,7 @@
 }
 
 .menuCard {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  align-self: stretch; /* fill grid row height, overriding Card's align-self: start */
   background: transparent;
 }
 
@@ -47,7 +45,6 @@
 .menuContent {
   display: flex;
   flex-direction: column;
-  flex: 1;
   gap: 1rem;
   padding-top: 0;
 }
@@ -72,8 +69,8 @@
 }
 
 .menuFooter {
+  margin-top: auto; /* push footer to bottom of card */
   justify-content: flex-start;
-  margin-top: auto;
 }
 
 .menuButton {
