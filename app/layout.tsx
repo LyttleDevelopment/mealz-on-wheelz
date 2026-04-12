@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {Bebas_Neue, Inter} from 'next/font/google';
+import localFont from 'next/font/local';
 import type {ReactNode} from 'react';
 import {TooltipProvider} from '@lyttle-development/ui';
 import './globals.scss';
@@ -15,6 +16,16 @@ const displayFont = Bebas_Neue({
   variable: '--font-display',
   weight: '400',
   display: 'swap',
+});
+
+const berniertmFont = localFont({
+  src: [
+    {path: './fonts/berniertm/BERNIERTM-REGULAR.woff2'},
+    {path: './fonts/berniertm/BERNIERTM-REGULAR.woff'},
+  ],
+  variable: '--font-berniertm',
+  display: 'swap',
+  weight: '400',
 });
 
 export const metadata: Metadata = {
@@ -36,7 +47,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="nl" className={`${bodyFont.variable} ${displayFont.variable}`}>
+    <html lang="nl" className={`${bodyFont.variable} ${displayFont.variable} ${berniertmFont.variable}`}>
       <body>
         <a href="#main-content" className="skip-link">
           Spring naar de inhoud
@@ -46,4 +57,3 @@ export default function RootLayout({
     </html>
   );
 }
-
