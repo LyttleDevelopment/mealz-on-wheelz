@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Input,
@@ -149,8 +149,32 @@ function ExperienceStep({
   onNext: () => void;
 }) {
   const [guestInput, setGuestInput] = useState(String(state.guestCount));
+  const [showOptionError, setShowOptionError] = useState(false);
   const total = calcTotal(state);
   const exp = state.experience;
+
+  // For experiences without toggles (Sweet), no option requirement applies
+  const hasOptions = exp.hasApero || exp.hasMain;
+  const atLeastOneSelected =
+    !hasOptions || state.includeApero || state.includeMain;
+
+  // Sync local guestInput with parent state when it changes
+  useEffect(() => {
+    setGuestInput(String(state.guestCount));
+  }, [state.guestCount]);
+
+  // Clear error as soon as a valid option is selected
+  useEffect(() => {
+    if (atLeastOneSelected) setShowOptionError(false);
+  }, [atLeastOneSelected]);
+
+  function handleNext() {
+    if (!atLeastOneSelected) {
+      setShowOptionError(true);
+      return;
+    }
+    onNext();
+  }
 
   return (
     <div className={styles.stepContent}>
@@ -174,7 +198,7 @@ function ExperienceStep({
                 ...state,
                 experience: item,
                 includeApero: false,
-                includeMain: false,
+                includeMain: true,
               })
             }
           >
@@ -246,21 +270,38 @@ function ExperienceStep({
         </div>
       </div>
 
+      {showOptionError && (
+        <p className={styles.optionError}>
+          Selecteer minstens één optie (apéro of hoofdgerecht) om verder te
+          gaan.
+        </p>
+      )}
+
       {/* Price summary */}
       <div className={styles.priceBox}>
         <div className={styles.priceBoxContent}>
-          <span className={styles.priceBoxLabel}>Geschatte totaalprijs</span>
-          <span className={styles.priceBoxAmount}>{formatEuro(total)}</span>
+          <div>
+            <span className={styles.priceBoxLabel}>Geschatte totaalprijs</span>
+            <span className={styles.priceBoxNote}>
+              Incl. {formatEuro(STARTUP_COST)} opstartkost
+            </span>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span className={styles.priceBoxAmount}>{formatEuro(total)}</span>
+            {total > STARTUP_COST && (
+              <span className={styles.priceBoxNote}>
+                ± {formatEuro((total - STARTUP_COST) / state.guestCount)} p.p.
+                (excl. opstart)
+              </span>
+            )}
+          </div>
         </div>
-        <span className={styles.priceBoxNote}>
-          Incl. {formatEuro(STARTUP_COST)} opstartkost
-        </span>
       </div>
       <p className={styles.priceDisclaimer}>
         Dit is een schatting. De definitieve prijs wordt bevestigd na overleg.
       </p>
 
-      <Button className={styles.nextButton} onClick={onNext}>
+      <Button className={styles.nextButton} onClick={handleNext}>
         Verder naar uw gegevens <ArrowRight size={16} />
       </Button>
     </div>
@@ -511,7 +552,7 @@ export function BookingForm() {
   const [experienceState, setExperienceState] = useState<ExperienceState>({
     experience: BOOKING_EXPERIENCES[0],
     includeApero: false,
-    includeMain: false,
+    includeMain: true,
     guestCount: MIN_GUESTS,
   });
 
