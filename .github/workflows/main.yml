@@ -1,4 +1,4 @@
-name: MAIN Workflow
+name: Deploy to Portainer
 
 on:
   push:
