@@ -1157,3 +1157,18 @@
   font-size: 0.875rem;
   line-height: 1.5;
 }
+
+.errorSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  background-color: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: rgb(185, 28, 28);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+

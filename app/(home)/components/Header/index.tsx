@@ -89,7 +89,13 @@ export function Header() {
               href={item.href}
               className={styles.mobileNavLink}
               style={{ "--i": i } as React.CSSProperties}
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                setMenuOpen(false);
+                setTimeout(() => {
+                  const target = document.querySelector(item.href);
+                  if (target) target.scrollIntoView({ behavior: "smooth" });
+                }, 320);
+              }}
             >
               {item.label}
             </a>

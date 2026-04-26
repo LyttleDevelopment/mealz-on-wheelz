@@ -8,7 +8,7 @@ import {
   Switch,
   Textarea,
 } from "@lyttle-development/ui";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, AlertCircle } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import styles from "./index.module.scss";
 import {
@@ -154,6 +154,7 @@ function ExperienceStep({
 }) {
   const [guestInput, setGuestInput] = useState(String(state.guestCount));
   const [showOptionError, setShowOptionError] = useState(false);
+  const optionsRef = useRef<HTMLDivElement>(null);
   const exp = state.experience;
 
   const pricing = exp
@@ -171,6 +172,17 @@ function ExperienceStep({
   useEffect(() => {
     if (atLeastOneSelected) setShowOptionError(false);
   }, [atLeastOneSelected]);
+
+  // Scroll to options when an experience is first selected
+  const prevExpId = useRef<string | null>(null);
+  useEffect(() => {
+    if (exp && exp.id !== prevExpId.current) {
+      prevExpId.current = exp.id;
+      setTimeout(() => {
+        optionsRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 50);
+    }
+  }, [exp]);
 
   function handleNext() {
     if (!exp) return;
@@ -205,7 +217,7 @@ function ExperienceStep({
 
       {exp && (
         <>
-          <div className={styles.optionsList}>
+          <div className={styles.optionsList} ref={optionsRef}>
             {exp.hasApero && (
               <div className={styles.optionRow}>
                 <div className={styles.optionLabel}>
@@ -314,6 +326,7 @@ function ContactStep({
 }) {
   const [errors, setErrors] = useState<ContactErrors>({});
   const [touched, setTouched] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const set =
     <K extends keyof ContactState>(key: K) =>
@@ -331,22 +344,36 @@ function ContactStep({
     const errs = validateContact(state);
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
       return;
     }
     onNext();
   }
 
+  const errorCount = Object.values(errors).filter(Boolean).length;
+
   // Today's date as min value for the date picker
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className={styles.stepContent}>
+    <div className={styles.stepContent} ref={formRef}>
       <div className={styles.stepIntro}>
         <h3 className={styles.stepTitle}>Uw gegevens</h3>
         <p className={styles.stepDescription}>
           Vul het formulier in, wij nemen contact met u op voor beschikbaarheid en prijs
         </p>
       </div>
+
+      {touched && errorCount > 0 && (
+        <div className={styles.errorSummary} role="alert">
+          <AlertCircle size={18} />
+          <span>
+            Gelieve {errorCount === 1 ? "1 fout" : `${errorCount} fouten`} te corrigeren voor u verdergaat.
+          </span>
+        </div>
+      )}
 
       <div className={styles.formGrid}>
         {/* Name */}
