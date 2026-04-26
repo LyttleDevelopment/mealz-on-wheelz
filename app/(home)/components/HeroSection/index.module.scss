@@ -13,7 +13,6 @@
   background-size: cover;
   /* fixed breaks on iOS Safari */
   background-attachment: scroll;
-  background-attachment: fixed;
   background-position: center;
 }
 
@@ -21,6 +20,7 @@
 
 @media (min-width: 768px) {
   .heroShell {
+    background-attachment: fixed;
     height: calc(100vh - 4rem);
     min-height: unset;
   }
@@ -30,6 +30,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Add horizontal padding so content isn't flush to the viewport edges on
+     small screens. Use a responsive clamp so padding grows slightly with
+     viewport width; include safe-area insets for iOS. */
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-inline: clamp(1rem, 4vw, 3rem);
 
   > * {
     text-align: center;
@@ -50,6 +56,8 @@
 
 @media (min-width: 768px) {
   .heroContent {
+    /* Increase horizontal padding on tablet+ */
+    padding-inline: 3rem;
     > :nth-child(2) {
       margin-top: 5rem;
     }
