@@ -9,21 +9,18 @@ export async function verifyTurnstile(
 ): Promise<boolean> {
   const env = getBookingEnv();
 
-  // No secret key configured → skip verification entirely (warn in production)
-  if (!env.TURNSTILE_SECRET_KEY) {
-    if (process.env.NODE_ENV === "production") {
-      console.warn(
-        "[booking] Turnstile is disabled: TURNSTILE_SECRET_KEY is not set. Set it to enable bot protection in production.",
-      );
-    }
+  // Explicit bypass flag – honoured in any environment (not just dev).
+  // Set TURNSTILE_BYPASS_IN_DEV=true when Turnstile is not yet configured.
+  if (env.TURNSTILE_BYPASS_IN_DEV === "true") {
     return true;
   }
 
-  // Explicit dev bypass flag
-  if (
-    process.env.NODE_ENV !== "production" &&
-    env.TURNSTILE_BYPASS_IN_DEV === "true"
-  ) {
+  // No secret key → skip verification, warn so it's visible in logs
+  if (!env.TURNSTILE_SECRET_KEY) {
+    console.warn(
+      "[booking] Turnstile skipped: TURNSTILE_SECRET_KEY is not set. " +
+      "Set TURNSTILE_BYPASS_IN_DEV=true to silence this, or configure both keys.",
+    );
     return true;
   }
 

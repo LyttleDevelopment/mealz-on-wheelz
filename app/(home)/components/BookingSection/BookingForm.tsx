@@ -687,7 +687,10 @@ export function BookingForm() {
     setSubmitError(null);
 
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
-    const token = turnstileToken ?? (siteKey ? "" : "dev-bypass");
+    // If no site key is configured, no widget is shown → send empty token.
+    // The server will bypass verification when TURNSTILE_BYPASS_IN_DEV=true
+    // or when TURNSTILE_SECRET_KEY is not set.
+    const token = turnstileToken ?? "";
 
     const payload = {
       experienceId: experienceState.experience.id,

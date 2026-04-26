@@ -61,7 +61,7 @@ export const bookingRequestSchema = z.object({
   notes: z.string().max(2000, { message: "Opmerkingen zijn te lang." }).trim().optional(),
 
   // Anti-spam fields
-  turnstileToken: z.string().min(1, { message: "Turnstile-verificatie ontbreekt." }),
+  turnstileToken: z.string(), // may be empty when Turnstile is not configured
   website: z.string().max(0, { message: "Spam gedetecteerd." }), // honeypot – must be empty
   startedAt: z.number().int(),
 });
