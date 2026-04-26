@@ -197,8 +197,6 @@ function ExperienceStep({
               onChange({
                 ...state,
                 experience: item,
-                includeApero: false,
-                includeMain: true,
               })
             }
           >
