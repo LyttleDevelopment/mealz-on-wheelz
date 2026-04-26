@@ -18,7 +18,7 @@ function buildDescription(req: BookingRequest, bookingId: string, estimatedTotal
     `E-mail: ${req.email}`,
     `Telefoon: ${req.phone}`,
     `Type event: ${req.eventType}`,
-    `Locatie: ${req.streetName} ${req.houseNumber}, ${req.postalCode} ${req.city}${req.province ? `, ${req.province}` : ""}`,
+    `Locatie: ${req.streetName}, ${req.postalCode} ${req.city}${req.province ? `, ${req.province}` : ""}`,
     req.notes ? `Opmerkingen: ${req.notes}` : null,
   ];
   return lines.filter(Boolean).join("\n");

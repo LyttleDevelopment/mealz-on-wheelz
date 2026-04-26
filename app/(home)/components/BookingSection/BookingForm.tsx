@@ -38,7 +38,6 @@ interface ContactState {
   typeEvent: string;
   datum: string;
   straat: string;
-  huisnummer: string;
   postcode: string;
   gemeente: string;
   provincie: string;
@@ -88,7 +87,6 @@ function validateContact(s: ContactState): ContactErrors {
     e.datum = "Kies een geldige toekomstige datum.";
   }
   if (!s.straat.trim()) e.straat = "Straatnaam is verplicht.";
-  if (!s.huisnummer.trim()) e.huisnummer = "Huisnummer is verplicht.";
   if (!s.postcode.trim()) {
     e.postcode = "Postcode is verplicht.";
   } else if (!POSTCODE_RE.test(s.postcode.trim())) {
@@ -435,26 +433,13 @@ function ContactStep({
           <div className={`${styles.formField} ${styles.streetField}`}>
             <label className={styles.formLabel}>Straat</label>
             <Input
-              placeholder="Kerkstraat"
+              placeholder="Kerkstraat 12A"
               value={state.straat}
               onChange={set("straat")}
               data-invalid={errors.straat ? true : undefined}
               autoComplete="address-line1"
             />
             <FieldError msg={errors.straat} />
-          </div>
-
-          {/* House number */}
-          <div className={`${styles.formField} ${styles.houseNumField}`}>
-            <label className={styles.formLabel}>Nr.</label>
-            <Input
-              placeholder="12A"
-              value={state.huisnummer}
-              onChange={set("huisnummer")}
-              data-invalid={errors.huisnummer ? true : undefined}
-              autoComplete="address-line2"
-            />
-            <FieldError msg={errors.huisnummer} />
           </div>
 
           {/* Postal code */}
@@ -589,7 +574,7 @@ function ConfirmationStep({
     {
       label: "Locatie",
       value: contactState.straat
-        ? `${contactState.straat} ${contactState.huisnummer}, ${contactState.postcode} ${contactState.gemeente}${contactState.provincie ? `, ${contactState.provincie}` : ""}`
+        ? `${contactState.straat}, ${contactState.postcode} ${contactState.gemeente}${contactState.provincie ? `, ${contactState.provincie}` : ""}`
         : "—",
     },
   ];
@@ -685,7 +670,6 @@ export function BookingForm() {
     typeEvent: "",
     datum: "",
     straat: "",
-    huisnummer: "",
     postcode: "",
     gemeente: "",
     provincie: "",
@@ -716,7 +700,6 @@ export function BookingForm() {
       eventType: contactState.typeEvent,
       eventDate: contactState.datum,
       streetName: contactState.straat,
-      houseNumber: contactState.huisnummer,
       postalCode: contactState.postcode,
       city: contactState.gemeente,
       province: contactState.provincie || undefined,

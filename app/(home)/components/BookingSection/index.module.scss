@@ -1101,16 +1101,15 @@
 
 .addressGrid {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 1fr;
   grid-template-areas:
-    "street housenum"
+    "street street"
     "postcode city"
     "province province";
   gap: 0.75rem;
 }
 
 .streetField  { grid-area: street; }
-.houseNumField { grid-area: housenum; width: 6rem; }
 .postcodeField { grid-area: postcode; }
 .cityField     { grid-area: city; }
 .provinceField { grid-area: province; }
@@ -1120,14 +1119,9 @@
     grid-template-columns: 1fr;
     grid-template-areas:
       "street"
-      "housenum"
       "postcode"
       "city"
       "province";
-  }
-
-  .houseNumField {
-    width: 100%;
   }
 }
 

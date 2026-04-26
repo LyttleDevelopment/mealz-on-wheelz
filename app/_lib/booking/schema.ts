@@ -49,11 +49,6 @@ export const bookingRequestSchema = z.object({
     .min(2, { message: "Straatnaam is verplicht." })
     .max(120, { message: "Straatnaam is te lang." })
     .trim(),
-  houseNumber: z
-    .string()
-    .min(1, { message: "Huisnummer is verplicht." })
-    .max(20, { message: "Huisnummer is te lang." })
-    .trim(),
   postalCode: z
     .string()
     .regex(/^\d{4}$/, { message: "Voer een geldige Belgische postcode in (4 cijfers)." }),
