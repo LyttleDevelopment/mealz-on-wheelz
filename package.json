@@ -15,8 +15,6 @@
   "dependencies": {
     "@lyttle-development/ui": "file:packages/design-framework/packages/ui",
     "@marsidev/react-turnstile": "^1.5.0",
-    "@upstash/ratelimit": "^2.0.8",
-    "@upstash/redis": "^1.37.0",
     "googleapis": "^171.4.0",
     "lucide-react": "^1.8.0",
     "next": "^16.2.3",

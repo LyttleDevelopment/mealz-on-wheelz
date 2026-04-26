@@ -5,10 +5,6 @@ const envSchema = z.object({
   TURNSTILE_SECRET_KEY: z.string().optional(),
   TURNSTILE_BYPASS_IN_DEV: z.string().optional(),
 
-  // Upstash – both optional; rate limiting disabled when absent
-  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
-  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
-
   // Resend
   RESEND_API_KEY: z.string().min(1),
   BOOKING_FROM_EMAIL: z.string().email(),
@@ -28,8 +24,6 @@ export type BookingEnv = z.infer<typeof envSchema>;
 const STRIP_IF_EMPTY: (keyof BookingEnv)[] = [
   "TURNSTILE_SECRET_KEY",
   "TURNSTILE_BYPASS_IN_DEV",
-  "UPSTASH_REDIS_REST_URL",
-  "UPSTASH_REDIS_REST_TOKEN",
   "BOOKING_REPLY_TO",
   "BOOKING_NOTIFICATION_CC",
 ];
@@ -58,4 +52,3 @@ export function getBookingEnv(): BookingEnv {
   _env = parsed.data;
   return _env;
 }
-
