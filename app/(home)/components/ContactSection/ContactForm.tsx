@@ -89,7 +89,10 @@ export function ContactForm() {
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       setTimeout(() => {
-        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        formRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }, 50);
       return;
     }

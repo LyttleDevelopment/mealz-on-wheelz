@@ -8,7 +8,7 @@ import {
   Switch,
   Textarea,
 } from "@lyttle-development/ui";
-import { ArrowLeft, ArrowRight, AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import styles from "./index.module.scss";
 import {
@@ -110,7 +110,6 @@ const BELGIAN_PROVINCES = [
   "Luxemburg",
 ] as const;
 
-
 // ─── Stepper ──────────────────────────────────────────────────────────────────
 
 const STEPS = ["Experience", "Uw gegevens", "Bevestiging"] as const;
@@ -155,15 +154,22 @@ function ExperienceStep({
   const [guestInput, setGuestInput] = useState(String(state.guestCount));
   const [showOptionError, setShowOptionError] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
   const exp = state.experience;
 
   const pricing = exp
-    ? calcPricing(exp.id as ExperienceId, state.includeApero, state.includeMain, state.guestCount)
+    ? calcPricing(
+        exp.id as ExperienceId,
+        state.includeApero,
+        state.includeMain,
+        state.guestCount,
+      )
     : null;
   const total = pricing?.total ?? STARTUP_COST;
 
   const hasOptions = exp ? exp.hasApero || exp.hasMain : false;
-  const atLeastOneSelected = !hasOptions || state.includeApero || state.includeMain;
+  const atLeastOneSelected =
+    !hasOptions || state.includeApero || state.includeMain;
 
   useEffect(() => {
     setGuestInput(String(state.guestCount));
@@ -179,7 +185,10 @@ function ExperienceStep({
     if (exp && exp.id !== prevExpId.current) {
       prevExpId.current = exp.id;
       setTimeout(() => {
-        optionsRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        summaryRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }, 50);
     }
   }, [exp]);
@@ -197,7 +206,9 @@ function ExperienceStep({
     <div className={styles.stepContent}>
       <div className={styles.stepIntro}>
         <h3 className={styles.stepTitle}>Kies uw experience</h3>
-        <p className={styles.stepDescription}>Selecteer een formule en stel uw opties in</p>
+        <p className={styles.stepDescription}>
+          Selecteer een formule en stel uw opties in
+        </p>
       </div>
 
       <div className={styles.experienceGrid}>
@@ -210,7 +221,9 @@ function ExperienceStep({
             onClick={() => onChange({ ...state, experience: item })}
           >
             <span className={styles.experienceTitle}>{item.title}</span>
-            <span className={styles.experienceSubtitle}>{item.cardSubtitle}</span>
+            <span className={styles.experienceSubtitle}>
+              {item.cardSubtitle}
+            </span>
           </button>
         ))}
       </div>
@@ -226,7 +239,9 @@ function ExperienceStep({
                 </div>
                 <Switch
                   checked={state.includeApero}
-                  onCheckedChange={(checked) => onChange({ ...state, includeApero: checked })}
+                  onCheckedChange={(checked) =>
+                    onChange({ ...state, includeApero: checked })
+                  }
                 />
               </div>
             )}
@@ -234,11 +249,15 @@ function ExperienceStep({
               <div className={styles.optionRow}>
                 <div className={styles.optionLabel}>
                   <span>{exp.mainLabel}</span>
-                  <span className={styles.optionPrice}>{exp.mainPriceLabel}</span>
+                  <span className={styles.optionPrice}>
+                    {exp.mainPriceLabel}
+                  </span>
                 </div>
                 <Switch
                   checked={state.includeMain}
-                  onCheckedChange={(checked) => onChange({ ...state, includeMain: checked })}
+                  onCheckedChange={(checked) =>
+                    onChange({ ...state, includeMain: checked })
+                  }
                 />
               </div>
             )}
@@ -260,7 +279,10 @@ function ExperienceStep({
                   }
                 }}
                 onBlur={() => {
-                  const clamped = Math.max(MIN_GUESTS, Number(guestInput) || MIN_GUESTS);
+                  const clamped = Math.max(
+                    MIN_GUESTS,
+                    Number(guestInput) || MIN_GUESTS,
+                  );
                   setGuestInput(String(clamped));
                   onChange({ ...state, guestCount: clamped });
                 }}
@@ -271,30 +293,37 @@ function ExperienceStep({
 
           {showOptionError && (
             <p className={styles.optionError}>
-              Selecteer minstens één optie (apéro of hoofdgerecht) om verder te gaan.
+              Selecteer minstens één optie (apéro of hoofdgerecht) om verder te
+              gaan.
             </p>
           )}
 
-          <div className={styles.priceBox}>
+          <div className={styles.priceBox} ref={summaryRef}>
             <div className={styles.priceBoxContent}>
               <div>
-                <span className={styles.priceBoxLabel}>Geschatte totaalprijs</span>
+                <span className={styles.priceBoxLabel}>
+                  Geschatte totaalprijs
+                </span>
                 <span className={styles.priceBoxNote}>
                   Incl. {formatEuro(STARTUP_COST)} opstartkost
                 </span>
               </div>
               <div style={{ textAlign: "right" }}>
-                <span className={styles.priceBoxAmount}>{formatEuro(total)}</span>
+                <span className={styles.priceBoxAmount}>
+                  {formatEuro(total)}
+                </span>
                 {total > STARTUP_COST && (
                   <span className={styles.priceBoxNote}>
-                    ± {formatEuro((total - STARTUP_COST) / state.guestCount)} p.p. (excl. opstart)
+                    ± {formatEuro((total - STARTUP_COST) / state.guestCount)}{" "}
+                    p.p. (excl. opstart)
                   </span>
                 )}
               </div>
             </div>
           </div>
           <p className={styles.priceDisclaimer}>
-            Dit is een schatting. De definitieve prijs wordt bevestigd na overleg.
+            Dit is een schatting. De definitieve prijs wordt bevestigd na
+            overleg.
           </p>
 
           <Button className={styles.nextButton} onClick={handleNext}>
@@ -330,7 +359,11 @@ function ContactStep({
 
   const set =
     <K extends keyof ContactState>(key: K) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) => {
       const next = { ...state, [key]: e.target.value };
       onChange(next);
       // Clear this field's error once the user edits it (after first attempt)
@@ -345,7 +378,10 @@ function ContactStep({
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       setTimeout(() => {
-        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        formRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }, 50);
       return;
     }
@@ -362,7 +398,8 @@ function ContactStep({
       <div className={styles.stepIntro}>
         <h3 className={styles.stepTitle}>Uw gegevens</h3>
         <p className={styles.stepDescription}>
-          Vul het formulier in, wij nemen contact met u op voor beschikbaarheid en prijs
+          Vul het formulier in, wij nemen contact met u op voor beschikbaarheid
+          en prijs
         </p>
       </div>
 
@@ -370,7 +407,8 @@ function ContactStep({
         <div className={styles.errorSummary} role="alert">
           <AlertCircle size={18} />
           <span>
-            Gelieve {errorCount === 1 ? "1 fout" : `${errorCount} fouten`} te corrigeren voor u verdergaat.
+            Gelieve {errorCount === 1 ? "1 fout" : `${errorCount} fouten`} te
+            corrigeren voor u verdergaat.
           </span>
         </div>
       )}
@@ -506,7 +544,9 @@ function ContactStep({
 
           {/* Province – helper select, optional */}
           <div className={`${styles.formField} ${styles.provinceField}`}>
-            <label className={styles.formLabel}>Provincie <span className={styles.optionalHint}>(optioneel)</span></label>
+            <label className={styles.formLabel}>
+              Provincie <span className={styles.optionalHint}>(optioneel)</span>
+            </label>
             <NativeSelect
               value={state.provincie}
               onChange={set("provincie")}
@@ -536,14 +576,18 @@ function ContactStep({
 
       <div className={styles.alertBox}>
         <p>
-          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen bevestiging. Wij nemen
-          contact met u op binnen 24 uur om de beschikbaarheid te bevestigen en verdere details te
-          bespreken.
+          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen
+          bevestiging. Wij nemen contact met u op binnen 24 uur om de
+          beschikbaarheid te bevestigen en verdere details te bespreken.
         </p>
       </div>
 
       <div className={styles.buttonRow}>
-        <Button variant="outline" onClick={onBack} className={styles.backButton}>
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className={styles.backButton}
+        >
           <ArrowLeft size={16} /> Terug
         </Button>
         <Button onClick={handleNext} className={styles.nextButton}>
@@ -589,7 +633,12 @@ function ConfirmationStep({
     { label: "Experience", value: exp.title },
     { label: "Apéro", value: experienceState.includeApero ? "Ja" : "Nee" },
     ...(exp.hasMain
-      ? [{ label: exp.mainLabel, value: experienceState.includeMain ? "Ja" : "Nee" }]
+      ? [
+          {
+            label: exp.mainLabel,
+            value: experienceState.includeMain ? "Ja" : "Nee",
+          },
+        ]
       : []),
     { label: "Aantal gasten", value: String(experienceState.guestCount) },
     { label: "Geschatte prijs", value: formatEuro(pricing.total) },
@@ -613,7 +662,9 @@ function ConfirmationStep({
     <div className={styles.stepContent}>
       <div className={styles.stepIntro}>
         <h3 className={styles.stepTitle}>Controleer uw aanvraag</h3>
-        <p className={styles.stepDescription}>Alles correct? Dien dan uw reservatie-aanvraag in.</p>
+        <p className={styles.stepDescription}>
+          Alles correct? Dien dan uw reservatie-aanvraag in.
+        </p>
       </div>
 
       <div className={styles.summaryBox}>
@@ -627,8 +678,8 @@ function ConfirmationStep({
 
       <div className={styles.alertBox}>
         <p>
-          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen bevestiging. Wij nemen
-          contact met u op binnen 24 uur.
+          <strong>Let op:</strong> Dit is een reservatie-aanvraag, geen
+          bevestiging. Wij nemen contact met u op binnen 24 uur.
         </p>
       </div>
 
@@ -670,8 +721,8 @@ function SubmittedState() {
       <div className={styles.submittedIcon}>✓</div>
       <h3 className={styles.stepTitle}>Aanvraag verzonden!</h3>
       <p className={styles.stepDescription}>
-        Bedankt voor uw aanvraag. Wij nemen binnen 24 uur contact met u op om de beschikbaarheid te
-        bevestigen en verdere details te bespreken.
+        Bedankt voor uw aanvraag. Wij nemen binnen 24 uur contact met u op om de
+        beschikbaarheid te bevestigen en verdere details te bespreken.
       </p>
     </div>
   );
@@ -755,7 +806,9 @@ export function BookingForm() {
         );
       }
     } catch {
-      setSubmitError("Verbindingsfout. Controleer uw internetverbinding en probeer het opnieuw.");
+      setSubmitError(
+        "Verbindingsfout. Controleer uw internetverbinding en probeer het opnieuw.",
+      );
     } finally {
       setIsSubmitting(false);
     }

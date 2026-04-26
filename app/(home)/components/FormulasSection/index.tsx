@@ -32,7 +32,7 @@ export function FormulasSection() {
     setTimeout(() => {
       detailPanelRef.current?.scrollIntoView({
         behavior: "smooth",
-        block: "start",
+        block: "center",
       });
     }, 50);
   }, [selectedExperienceId]);
@@ -101,7 +101,11 @@ export function FormulasSection() {
         </div>
 
         {selectedExperience && activeTab && (
-          <div id={detailPanelId} className={styles.detailPanel} ref={detailPanelRef}>
+          <div
+            id={detailPanelId}
+            className={styles.detailPanel}
+            ref={detailPanelRef}
+          >
             <div className={styles.detailHeader}>
               <h3 className={styles.detailTitle}>{selectedExperience.title}</h3>
               <p className={styles.detailSubtitle}>
