@@ -1,16 +1,13 @@
 import {
-  Button,
   Card,
   CardContent,
   Container,
   Heading,
-  Input,
-  Label,
   Stack,
   Text,
-  Textarea,
 } from "@lyttle-development/ui";
 import { contactInfo } from "../../data/constants";
+import { ContactForm } from "./ContactForm";
 import styles from "./index.module.scss";
 
 export function ContactSection() {
@@ -21,44 +18,7 @@ export function ContactSection() {
           {/* ── Form ── */}
           <Card className={styles.formCard}>
             <CardContent>
-              <form className={styles.form}>
-                <div className={styles.field}>
-                  <Label htmlFor="naam">Naam</Label>
-                  <Input id="naam" type="text" placeholder="Jouw naam" />
-                </div>
-
-                <div className={styles.field}>
-                  <Label htmlFor="email">E-mail</Label>
-                  <Input id="email" type="email" placeholder="your@email.com" />
-                </div>
-
-                <div className={styles.field}>
-                  <Label htmlFor="telefoon">Telefoonnummer</Label>
-                  <Input
-                    id="telefoon"
-                    type="tel"
-                    placeholder="+32 (0)9 123 45 67"
-                  />
-                </div>
-
-                <div className={styles.field}>
-                  <Label htmlFor="bericht">Bericht</Label>
-                  <Textarea
-                    id="bericht"
-                    placeholder="Vertel ons meer over uw vraag"
-                    rows={5}
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="secondary"
-                  size="lg"
-                  className={styles.submitButton}
-                >
-                  Verstuur bericht
-                </Button>
-              </form>
+              <ContactForm />
             </CardContent>
           </Card>
 

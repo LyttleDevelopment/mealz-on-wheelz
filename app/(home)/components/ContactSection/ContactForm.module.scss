@@ -1,0 +1,131 @@
+/* ─── Contact form styles ─────────────────────────────────────────────────── */
+
+.form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.optional {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  margin-left: 0.25rem;
+}
+
+.fieldError {
+  display: block;
+  font-size: 0.8rem;
+  color: rgb(185, 28, 28);
+  line-height: 1.4;
+}
+
+.errorSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background-color: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: rgb(185, 28, 28);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.submitError {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: rgb(185, 28, 28);
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.turnstileWrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* ─── Success state ─────────────────────────────────────────────────────────── */
+
+.successState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.successIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: var(--secondary, #1f3a3b);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.successTitle {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.successText {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted-foreground);
+  max-width: 28rem;
+  line-height: 1.6;
+}
+
