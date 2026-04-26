@@ -25,7 +25,7 @@ function buildInternalHtml(req: BookingRequest, bookingId: string, estimatedTota
   <li><strong>Telefoon:</strong> ${req.phone}</li>
   <li><strong>Type event:</strong> ${req.eventType}</li>
   <li><strong>Datum:</strong> ${req.eventDate}</li>
-  <li><strong>Locatie:</strong> ${req.location}</li>
+  <li><strong>Locatie:</strong> ${req.streetName} ${req.houseNumber}, ${req.postalCode} ${req.city}${req.province ? `, ${req.province}` : ""}</li>
   ${req.notes ? `<li><strong>Opmerkingen:</strong> ${req.notes}</li>` : ""}
 </ul>
 `.trim();
@@ -43,7 +43,7 @@ function buildCustomerHtml(req: BookingRequest, bookingId: string, estimatedTota
   <li><strong>Booking ID:</strong> ${bookingId}</li>
   <li><strong>Formule:</strong> ${exp.title}</li>
   <li><strong>Datum:</strong> ${req.eventDate}</li>
-  <li><strong>Locatie:</strong> ${req.location}</li>
+  <li><strong>Locatie:</strong> ${req.streetName} ${req.houseNumber}, ${req.postalCode} ${req.city}${req.province ? `, ${req.province}` : ""}</li>
   <li><strong>Aantal gasten:</strong> ${req.guestCount}</li>
   <li><strong>Geschatte prijs:</strong> ${formatEuro(estimatedTotal)} (incl. opstartkost)</li>
 </ul>

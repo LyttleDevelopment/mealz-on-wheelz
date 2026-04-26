@@ -1063,7 +1063,75 @@
   }
 }
 
-// ─── Anti-spam / submission ──────────────────────────────────────────────────
+// ─── Field-level validation ───────────────────────────────────────────────────
+
+.fieldError {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: rgb(185, 28, 28);
+  line-height: 1.4;
+}
+
+.optionalHint {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-left: 0.25rem;
+}
+
+.formFieldFull {
+  grid-column: 1 / -1;
+}
+
+/* ─── Address grid ───────────────────────────────────────────────────────────── */
+
+.addressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+
+  > .formLabel {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1e2939;
+    margin-bottom: 0;
+  }
+}
+
+.addressGrid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "street housenum"
+    "postcode city"
+    "province province";
+  gap: 0.75rem;
+}
+
+.streetField  { grid-area: street; }
+.houseNumField { grid-area: housenum; width: 6rem; }
+.postcodeField { grid-area: postcode; }
+.cityField     { grid-area: city; }
+.provinceField { grid-area: province; }
+
+@media (max-width: 640px) {
+  .addressGrid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "street"
+      "housenum"
+      "postcode"
+      "city"
+      "province";
+  }
+
+  .houseNumField {
+    width: 100%;
+  }
+}
+
+// ─── Anti-spam / submission ───────────────────────────────────────────────────
 
 .honeypot {
   position: absolute;

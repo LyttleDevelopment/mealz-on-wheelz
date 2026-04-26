@@ -43,11 +43,26 @@ export const bookingRequestSchema = z.object({
       (d) => new Date(d) > new Date(),
       { message: "De evenementdatum moet in de toekomst liggen." },
     ),
-  location: z
+  // Location (Belgium)
+  streetName: z
     .string()
-    .min(2, { message: "Locatie is verplicht." })
-    .max(250, { message: "Locatie is te lang." })
+    .min(2, { message: "Straatnaam is verplicht." })
+    .max(120, { message: "Straatnaam is te lang." })
     .trim(),
+  houseNumber: z
+    .string()
+    .min(1, { message: "Huisnummer is verplicht." })
+    .max(20, { message: "Huisnummer is te lang." })
+    .trim(),
+  postalCode: z
+    .string()
+    .regex(/^\d{4}$/, { message: "Voer een geldige Belgische postcode in (4 cijfers)." }),
+  city: z
+    .string()
+    .min(2, { message: "Gemeente is verplicht." })
+    .max(80, { message: "Gemeente is te lang." })
+    .trim(),
+  province: z.string().max(60).trim().optional(),
   notes: z.string().max(2000, { message: "Opmerkingen zijn te lang." }).trim().optional(),
 
   // Anti-spam fields

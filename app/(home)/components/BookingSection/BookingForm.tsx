@@ -37,9 +37,80 @@ interface ContactState {
   telefoon: string;
   typeEvent: string;
   datum: string;
-  locatie: string;
+  straat: string;
+  huisnummer: string;
+  postcode: string;
+  gemeente: string;
+  provincie: string;
   bijkomend: string;
 }
+
+// ─── Validation helpers ───────────────────────────────────────────────────────
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const POSTCODE_RE = /^\d{4}$/;
+
+/** Strip non-digit characters and check length is plausible for BE/EU numbers */
+function isValidPhone(v: string) {
+  const digits = v.replace(/\D/g, "");
+  return digits.length >= 8 && digits.length <= 15;
+}
+
+function isValidFutureDate(v: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return false;
+  // Compare date-only (ignore time) to today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return d >= today;
+}
+
+type ContactErrors = Partial<Record<keyof ContactState, string>>;
+
+function validateContact(s: ContactState): ContactErrors {
+  const e: ContactErrors = {};
+  if (!s.naam.trim()) e.naam = "Naam is verplicht.";
+  if (!s.email.trim()) {
+    e.email = "E-mailadres is verplicht.";
+  } else if (!EMAIL_RE.test(s.email.trim())) {
+    e.email = "Vul een geldig e-mailadres in.";
+  }
+  if (!s.telefoon.trim()) {
+    e.telefoon = "Telefoonnummer is verplicht.";
+  } else if (!isValidPhone(s.telefoon)) {
+    e.telefoon = "Vul een geldig telefoonnummer in.";
+  }
+  if (!s.typeEvent) e.typeEvent = "Selecteer een type event.";
+  if (!s.datum) {
+    e.datum = "Datum is verplicht.";
+  } else if (!isValidFutureDate(s.datum)) {
+    e.datum = "Kies een geldige toekomstige datum.";
+  }
+  if (!s.straat.trim()) e.straat = "Straatnaam is verplicht.";
+  if (!s.huisnummer.trim()) e.huisnummer = "Huisnummer is verplicht.";
+  if (!s.postcode.trim()) {
+    e.postcode = "Postcode is verplicht.";
+  } else if (!POSTCODE_RE.test(s.postcode.trim())) {
+    e.postcode = "Voer een geldige Belgische postcode in (4 cijfers).";
+  }
+  if (!s.gemeente.trim()) e.gemeente = "Gemeente is verplicht.";
+  return e;
+}
+
+const BELGIAN_PROVINCES = [
+  "Antwerpen",
+  "Oost-Vlaanderen",
+  "West-Vlaanderen",
+  "Vlaams-Brabant",
+  "Limburg",
+  "Brussels Hoofdstedelijk Gewest",
+  "Waals-Brabant",
+  "Henegouwen",
+  "Namen",
+  "Luik",
+  "Luxemburg",
+] as const;
 
 
 // ─── Stepper ──────────────────────────────────────────────────────────────────
@@ -227,6 +298,11 @@ function ExperienceStep({
 
 // ─── Step 2 – Contact ─────────────────────────────────────────────────────────
 
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <span className={styles.fieldError}>{msg}</span>;
+}
+
 function ContactStep({
   state,
   onChange,
@@ -238,10 +314,32 @@ function ContactStep({
   onNext: () => void;
   onBack: () => void;
 }) {
+  const [errors, setErrors] = useState<ContactErrors>({});
+  const [touched, setTouched] = useState(false);
+
   const set =
     <K extends keyof ContactState>(key: K) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-      onChange({ ...state, [key]: e.target.value });
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const next = { ...state, [key]: e.target.value };
+      onChange(next);
+      // Clear this field's error once the user edits it (after first attempt)
+      if (touched && errors[key]) {
+        setErrors((prev) => ({ ...prev, [key]: undefined }));
+      }
+    };
+
+  function handleNext() {
+    setTouched(true);
+    const errs = validateContact(state);
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    onNext();
+  }
+
+  // Today's date as min value for the date picker
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className={styles.stepContent}>
@@ -253,33 +351,56 @@ function ContactStep({
       </div>
 
       <div className={styles.formGrid}>
+        {/* Name */}
         <div className={styles.formField}>
           <label className={styles.formLabel}>Volledige naam *</label>
-          <Input placeholder="John Doe" value={state.naam} onChange={set("naam")} required />
+          <Input
+            placeholder="Jan Janssen"
+            value={state.naam}
+            onChange={set("naam")}
+            data-invalid={errors.naam ? true : undefined}
+            required
+          />
+          <FieldError msg={errors.naam} />
         </div>
+
+        {/* Email */}
         <div className={styles.formField}>
           <label className={styles.formLabel}>E-mail *</label>
           <Input
             type="email"
-            placeholder="john@example.com"
+            placeholder="jan@voorbeeld.be"
             value={state.email}
             onChange={set("email")}
+            data-invalid={errors.email ? true : undefined}
             required
           />
+          <FieldError msg={errors.email} />
         </div>
+
+        {/* Phone */}
         <div className={styles.formField}>
           <label className={styles.formLabel}>Telefoonnummer *</label>
           <Input
             type="tel"
-            placeholder="+32 123 45 67 89"
+            placeholder="+32 470 12 34 56"
             value={state.telefoon}
             onChange={set("telefoon")}
+            data-invalid={errors.telefoon ? true : undefined}
             required
           />
+          <FieldError msg={errors.telefoon} />
         </div>
+
+        {/* Event type */}
         <div className={styles.formField}>
           <label className={styles.formLabel}>Type event *</label>
-          <NativeSelect value={state.typeEvent} onChange={set("typeEvent")} required>
+          <NativeSelect
+            value={state.typeEvent}
+            onChange={set("typeEvent")}
+            data-invalid={errors.typeEvent ? true : undefined}
+            required
+          >
             <option value="">Kies type event</option>
             {EVENT_TYPES.map((t) => (
               <option key={t} value={t}>
@@ -287,17 +408,110 @@ function ContactStep({
               </option>
             ))}
           </NativeSelect>
+          <FieldError msg={errors.typeEvent} />
         </div>
-        <div className={styles.formField}>
+
+        {/* Date */}
+        <div className={`${styles.formField} ${styles.formFieldFull}`}>
           <label className={styles.formLabel}>Datum event *</label>
-          <Input type="date" value={state.datum} onChange={set("datum")} required />
-        </div>
-        <div className={styles.formField}>
-          <label className={styles.formLabel}>Locatie event *</label>
-          <Input placeholder="Adres" value={state.locatie} onChange={set("locatie")} required />
+          <Input
+            type="date"
+            min={today}
+            value={state.datum}
+            onChange={set("datum")}
+            data-invalid={errors.datum ? true : undefined}
+            required
+          />
+          <FieldError msg={errors.datum} />
         </div>
       </div>
 
+      {/* ── Location (Belgium) ── */}
+      <div className={styles.addressSection}>
+        <p className={styles.formLabel}>Locatie event *</p>
+
+        <div className={styles.addressGrid}>
+          {/* Street name */}
+          <div className={`${styles.formField} ${styles.streetField}`}>
+            <label className={styles.formLabel}>Straat</label>
+            <Input
+              placeholder="Kerkstraat"
+              value={state.straat}
+              onChange={set("straat")}
+              data-invalid={errors.straat ? true : undefined}
+              autoComplete="address-line1"
+            />
+            <FieldError msg={errors.straat} />
+          </div>
+
+          {/* House number */}
+          <div className={`${styles.formField} ${styles.houseNumField}`}>
+            <label className={styles.formLabel}>Nr.</label>
+            <Input
+              placeholder="12A"
+              value={state.huisnummer}
+              onChange={set("huisnummer")}
+              data-invalid={errors.huisnummer ? true : undefined}
+              autoComplete="address-line2"
+            />
+            <FieldError msg={errors.huisnummer} />
+          </div>
+
+          {/* Postal code */}
+          <div className={`${styles.formField} ${styles.postcodeField}`}>
+            <label className={styles.formLabel}>Postcode</label>
+            <Input
+              placeholder="1000"
+              value={state.postcode}
+              onChange={(e) => {
+                // Only allow digits
+                const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                onChange({ ...state, postcode: val });
+                if (touched && errors.postcode) {
+                  setErrors((prev) => ({ ...prev, postcode: undefined }));
+                }
+              }}
+              inputMode="numeric"
+              maxLength={4}
+              data-invalid={errors.postcode ? true : undefined}
+              autoComplete="postal-code"
+            />
+            <FieldError msg={errors.postcode} />
+          </div>
+
+          {/* City */}
+          <div className={`${styles.formField} ${styles.cityField}`}>
+            <label className={styles.formLabel}>Gemeente</label>
+            <Input
+              placeholder="Brussel"
+              value={state.gemeente}
+              onChange={set("gemeente")}
+              data-invalid={errors.gemeente ? true : undefined}
+              autoComplete="address-level2"
+            />
+            <FieldError msg={errors.gemeente} />
+          </div>
+
+          {/* Province – helper select, optional */}
+          <div className={`${styles.formField} ${styles.provinceField}`}>
+            <label className={styles.formLabel}>Provincie <span className={styles.optionalHint}>(optioneel)</span></label>
+            <NativeSelect
+              value={state.provincie}
+              onChange={set("provincie")}
+              autoComplete="address-level1"
+            >
+              <option value="">— Kies provincie —</option>
+              {BELGIAN_PROVINCES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+        </div>
+      </div>
+
+      {/* Notes */}
       <div className={styles.formField}>
         <label className={styles.formLabel}>Bijkomende informatie</label>
         <Textarea
@@ -320,7 +534,7 @@ function ContactStep({
         <Button variant="outline" onClick={onBack} className={styles.backButton}>
           <ArrowLeft size={16} /> Terug
         </Button>
-        <Button onClick={onNext} className={styles.nextButton}>
+        <Button onClick={handleNext} className={styles.nextButton}>
           Controleer aanvraag <ArrowRight size={16} />
         </Button>
       </div>
@@ -372,7 +586,12 @@ function ConfirmationStep({
     { label: "Telefoon", value: contactState.telefoon || "—" },
     { label: "Type event", value: contactState.typeEvent || "—" },
     { label: "Datum", value: contactState.datum || "—" },
-    { label: "Locatie", value: contactState.locatie || "—" },
+    {
+      label: "Locatie",
+      value: contactState.straat
+        ? `${contactState.straat} ${contactState.huisnummer}, ${contactState.postcode} ${contactState.gemeente}${contactState.provincie ? `, ${contactState.provincie}` : ""}`
+        : "—",
+    },
   ];
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
@@ -465,7 +684,11 @@ export function BookingForm() {
     telefoon: "",
     typeEvent: "",
     datum: "",
-    locatie: "",
+    straat: "",
+    huisnummer: "",
+    postcode: "",
+    gemeente: "",
+    provincie: "",
     bijkomend: "",
   });
 
@@ -492,7 +715,11 @@ export function BookingForm() {
       phone: contactState.telefoon,
       eventType: contactState.typeEvent,
       eventDate: contactState.datum,
-      location: contactState.locatie,
+      streetName: contactState.straat,
+      houseNumber: contactState.huisnummer,
+      postalCode: contactState.postcode,
+      city: contactState.gemeente,
+      province: contactState.provincie || undefined,
       notes: contactState.bijkomend || undefined,
       turnstileToken: token,
       website: honeypot,
