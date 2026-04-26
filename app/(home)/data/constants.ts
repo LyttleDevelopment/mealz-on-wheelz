@@ -1,15 +1,11 @@
 import {
   CalendarDays,
-  ChefHat,
   Clock,
   Mail,
   MapPin,
-  PartyPopper,
   Phone,
-  Sparkles,
   Store,
   Truck,
-  UtensilsCrossed,
 } from "lucide-react";
 import type { ContactInfo, Experience, GalleryTile, NavigationItem, Service } from "./types";
 
@@ -32,60 +28,123 @@ export const footerNavigation: NavigationItem[] = [
 
 export const experiences: Experience[] = [
   {
+    id: "italian",
     title: "Italian Experience",
     category: "Apéro + hoofdgerecht",
-    priceBadges: ["Hoofd v.a. €8"],
-    subtitle: "Romig comfortfood met een streetfood twist.",
-    price: "Vanaf €14 p.p.",
-    description:
-      "Verse pasta, zachte focaccia en toppings die ter plekke worden afgewerkt voor een warme, elegante service.",
-    highlights: [
-      "Pasta live afgewerkt",
-      "Vegetarische opties",
-      "Perfect voor walking dinners",
+    priceBadges: ["Apéro €15,95", "Hoofd v.a. €8"],
+    detailSubtitle: "Apéro €15,95 p.p. · Hoofdgerecht v.a. €8 p.p. · Apart te boeken",
+    notice:
+      "Min. 20 personen · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden",
+    tabs: [
+      {
+        label: "Apéro",
+        entries: [
+          { name: "Pastrami sandwich" },
+          { name: "Arancini" },
+          { name: "Antipasto" },
+        ],
+      },
+      {
+        label: "Hoofdgerecht",
+        entries: [
+          { name: "Ragu bolognese", price: "S €8 · M €10 · L €12 · à volonté €18" },
+          { name: "Quattro formaggi", price: "S €8 · M €10 · L €12 · à volonté €18" },
+          { name: "Thai curry + kip", price: "S €8 · M €10 · L €12 · à volonté €18" },
+          { name: "Scampi crema + zeevruchten", price: "S €8 · M €10 · L €12 · à volonté €18" },
+        ],
+      },
     ],
-    icon: ChefHat,
+    icon: "🍝",
   },
   {
+    id: "tex-mex",
     title: "Tex-Mex Experience",
     category: "Apéro + burgers",
     priceBadges: ["Apéro €11,95", "Hoofd v.a. €10"],
-    subtitle: "Vurig, kleurrijk en gemaakt om te delen.",
-    price: "Vanaf €13 p.p.",
-    description:
-      "Loaded taco's, bowls en frisse toppings voor events die iets losser, socialer en energieker mogen aanvoelen.",
-    highlights: [
-      "Taco bar setup",
-      "Milde & spicy keuzes",
-      "Top voor teams en festivals",
+    detailSubtitle: "Apéro €11,95 p.p. · Burgers v.a. €10 · Apart te boeken",
+    notice:
+      "Min. 20 personen · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden · Min. 10 stuks per burgertype",
+    tabs: [
+      {
+        label: "Apéro",
+        entries: [
+          { name: "Loaded nacho's" },
+          { name: "Buffalo chicken wings" },
+          { name: "Taco met pulled beef" },
+        ],
+      },
+      {
+        label: "Burgers",
+        entries: [
+          { name: "Juicy Lucy", price: "€10" },
+          { name: "Black Pepper", price: "€12" },
+          { name: "Truffle Burger", price: "€11" },
+          { name: "Tropical Chicken", price: "€10" },
+          { name: "Bubba Shrimp Burger", price: "€12" },
+          { name: "Mexican Avocado Burger", price: "€10" },
+        ],
+      },
+      {
+        label: "Frietjes",
+        entries: [
+          { name: "Classic", price: "€3,95" },
+          { name: "Sweet potato", price: "€3,95" },
+          { name: "Truffle", price: "€4,50" },
+        ],
+      },
     ],
-    icon: Sparkles,
+    icon: "🌮",
   },
   {
+    id: "barbecue",
     title: "Barbecue Experience",
     category: "Apéro + grill formules",
     priceBadges: ["Apéro €11,95", "Hoofd v.a. €22,95"],
-    subtitle: "Robuuste smaken met een premium uitstraling.",
-    price: "Vanaf €18 p.p.",
-    description:
-      "Low & slow barbecue, seizoenssalades en stevige sharing plates voor events met impact en karakter.",
-    highlights: [
-      "Live grill moment",
-      "Vlees & veggie",
-      "Sterk voor buitenlocaties",
+    detailSubtitle: "Apéro €11,95 p.p. · Formules v.a. €22,95 · Apart te boeken",
+    notice:
+      "Min. 20 personen · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden",
+    tabs: [
+      {
+        label: "Apéro",
+        entries: [
+          { name: "Gegrilde mosseltjes met spek" },
+          { name: "Witte pens / bloedworst met uienconfijt" },
+          { name: "Bao bun met pulled chicken" },
+        ],
+      },
+      {
+        label: "Formules",
+        entries: [
+          { name: "Classic", price: "€22,95 · €25,95 · €27,95" },
+          { name: "Deluxe", price: "€34,95" },
+          { note: "Zie bijlage voor samenstelling" },
+        ],
+      },
     ],
-    icon: UtensilsCrossed,
+    icon: "🔥",
   },
   {
+    id: "sweet",
     title: "Sweet Experience",
     category: "Dessertbuffet",
-    priceBadges: ["€10,95, p.p."],
-    subtitle: "Desserts en verwenmomenten voor elk publiek.",
-    price: "Vanaf €9 p.p.",
-    description:
-      "Mini desserts, loaded waffles en feestelijke sweets die perfect werken als afsluiter of stand-alone concept.",
-    highlights: ["Dessert corner", "Kinderproof", "Ideaal voor recepties"],
-    icon: PartyPopper,
+    priceBadges: ["€10,95 p.p."],
+    detailSubtitle: "€10,95 p.p. · Dessertbuffet · Apart te boeken",
+    notice: "Min. 20 personen · Opstartkost €150 · Apart te boeken als dessertbuffet",
+    tabs: [
+      {
+        label: "Menu",
+        entries: [
+          { name: "Assortiment mousses (choco, mango, framboos)" },
+          { name: "Petit fours" },
+          { name: "Rijstpap" },
+          { name: "Panna cotta" },
+          { name: "Frangipane" },
+          { name: "Macarons" },
+          { name: "Vers fruit" },
+        ],
+      },
+    ],
+    icon: "🍮",
   },
 ];
 

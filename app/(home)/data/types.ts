@@ -1,3 +1,4 @@
+import type { ExperienceId } from "@/_lib/booking/constants";
 import type { LucideIcon } from 'lucide-react';
 
 export type NavigationItem = {
@@ -5,15 +6,26 @@ export type NavigationItem = {
   href: string;
 };
 
+export type ExperienceDetailEntry = {
+  name?: string;
+  price?: string;
+  note?: string;
+};
+
+export type ExperienceTab = {
+  label: string;
+  entries: ExperienceDetailEntry[];
+};
+
 export type Experience = {
+  id: ExperienceId;
   title: string;
   category: string;
-  subtitle: string;
-  price: string;
   priceBadges: string[];
-  description: string;
-  highlights: string[];
-  icon: LucideIcon;
+  detailSubtitle: string;
+  notice: string;
+  tabs: ExperienceTab[];
+  icon: string;
 };
 
 export type Service = {
