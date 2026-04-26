@@ -14,11 +14,17 @@
   },
   "dependencies": {
     "@lyttle-development/ui": "file:packages/design-framework/packages/ui",
+    "@marsidev/react-turnstile": "^1.5.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.37.0",
+    "googleapis": "^171.4.0",
     "lucide-react": "^1.8.0",
     "next": "^16.2.3",
     "prettier": "^3.8.2",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "resend": "^6.12.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

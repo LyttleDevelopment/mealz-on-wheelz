@@ -2,6 +2,10 @@
   "extends": "./packages/design-framework/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@/*": ["./app/*"]
+    },
     "noEmit": true,
     "plugins": [
       {
