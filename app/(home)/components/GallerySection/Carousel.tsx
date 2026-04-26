@@ -19,14 +19,21 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export function Carousel() {
-  // Shuffled once on mount via lazy state initialiser
-  const [images] = useState(() => shuffle(SOURCE_IMAGES));
+  // Start with the unshuffled list so server and client render the same HTML.
+  // Shuffle only after mount so hydration always matches.
+  const [images, setImages] = useState(SOURCE_IMAGES);
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const regionRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
+
+  // Shuffle once on the client after hydration
+  useEffect(() => {
+    setImages(shuffle(SOURCE_IMAGES));
+    setCurrent(0);
+  }, []);
 
   const total = images.length;
 
