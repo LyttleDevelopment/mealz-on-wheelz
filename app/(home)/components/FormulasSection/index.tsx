@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@lyttle-development/ui";
 import { MIN_GUESTS, STARTUP_COST } from "@/_lib/booking/constants";
 import { experiences } from "../../data/constants";
@@ -10,14 +10,32 @@ import styles from "./index.module.scss";
 
 export function FormulasSection() {
   const detailPanelId = useId();
-  const [selectedExperienceId, setSelectedExperienceId] = useState<Experience["id"] | null>(null);
+  const detailPanelRef = useRef<HTMLDivElement>(null);
+  const [selectedExperienceId, setSelectedExperienceId] = useState<
+    Experience["id"] | null
+  >(null);
   const [activeTabLabel, setActiveTabLabel] = useState<string | null>(null);
 
-  const selectedExperience = experiences.find((experience) => experience.id === selectedExperienceId) ?? null;
+  const selectedExperience =
+    experiences.find((experience) => experience.id === selectedExperienceId) ??
+    null;
   const activeTab =
     selectedExperience?.tabs.find((tab) => tab.label === activeTabLabel) ??
     selectedExperience?.tabs[0] ??
     null;
+
+  // Scroll to detail panel on mobile when an experience is selected
+  useEffect(() => {
+    if (!selectedExperienceId) return;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (!isMobile) return;
+    setTimeout(() => {
+      detailPanelRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 50);
+  }, [selectedExperienceId]);
 
   function handleExperienceSelect(experience: Experience) {
     setSelectedExperienceId(experience.id);
@@ -33,7 +51,9 @@ export function FormulasSection() {
         />
 
         <div className={styles.metaRow}>
-          <p className={styles.metaHint}>Klik op een experience voor meer info</p>
+          <p className={styles.metaHint}>
+            Klik op een experience voor meer info
+          </p>
           <p className={styles.metaInfo}>
             Min. {MIN_GUESTS} pers. · €{STARTUP_COST} opstartkost
           </p>
@@ -59,7 +79,9 @@ export function FormulasSection() {
                     {experience.icon}
                   </span>
                   <span className={styles.cardTitle}>{experience.title}</span>
-                  <span className={styles.cardCategory}>{experience.category}</span>
+                  <span className={styles.cardCategory}>
+                    {experience.category}
+                  </span>
                 </span>
 
                 <span className={styles.cardPrices}>
@@ -79,12 +101,18 @@ export function FormulasSection() {
         </div>
 
         {selectedExperience && activeTab && (
-          <div id={detailPanelId} className={styles.detailPanel}>
+          <div id={detailPanelId} className={styles.detailPanel} ref={detailPanelRef}>
             <div className={styles.detailHeader}>
               <h3 className={styles.detailTitle}>{selectedExperience.title}</h3>
-              <p className={styles.detailSubtitle}>{selectedExperience.detailSubtitle}</p>
+              <p className={styles.detailSubtitle}>
+                {selectedExperience.detailSubtitle}
+              </p>
 
-              <div className={styles.detailTabs} role="tablist" aria-label={`${selectedExperience.title} menu onderdelen`}>
+              <div
+                className={styles.detailTabs}
+                role="tablist"
+                aria-label={`${selectedExperience.title} menu onderdelen`}
+              >
                 {selectedExperience.tabs.map((tab) => {
                   const isTabActive = tab.label === activeTab.label;
 
@@ -111,11 +139,17 @@ export function FormulasSection() {
               <div className={styles.menuList}>
                 {activeTab.entries.map((entry, index) =>
                   entry.note ? (
-                    <p key={`${activeTab.label}-note-${index}`} className={styles.noteRow}>
+                    <p
+                      key={`${activeTab.label}-note-${index}`}
+                      className={styles.noteRow}
+                    >
                       {entry.note}
                     </p>
                   ) : (
-                    <div key={`${activeTab.label}-${entry.name}-${index}`} className={styles.menuItem}>
+                    <div
+                      key={`${activeTab.label}-${entry.name}-${index}`}
+                      className={styles.menuItem}
+                    >
                       <span className={styles.itemName}>{entry.name}</span>
                       <span className={styles.itemPrice}>{entry.price}</span>
                     </div>
