@@ -733,6 +733,14 @@ function SubmittedState() {
 export function BookingForm() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const startedAtRef = useRef<number>(Date.now());
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  function goToStep(next: 1 | 2 | 3 | 4) {
+    setStep(next);
+    setTimeout(() => {
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }
 
   const [experienceState, setExperienceState] = useState<ExperienceState>({
     experience: null,
@@ -798,7 +806,7 @@ export function BookingForm() {
       });
       const json = (await res.json()) as BookingApiResponse;
       if (json.ok) {
-        setStep(4);
+        goToStep(4);
       } else {
         setSubmitError(
           json.message ??
@@ -823,7 +831,7 @@ export function BookingForm() {
   }
 
   return (
-    <div className={styles.formCard}>
+    <div className={styles.formCard} ref={cardRef}>
       {/* Honeypot – visually hidden, must stay empty */}
       <input
         type="text"
@@ -842,22 +850,22 @@ export function BookingForm() {
         <ExperienceStep
           state={experienceState}
           onChange={setExperienceState}
-          onNext={() => setStep(2)}
+          onNext={() => goToStep(2)}
         />
       )}
       {step === 2 && (
         <ContactStep
           state={contactState}
           onChange={setContactState}
-          onNext={() => setStep(3)}
-          onBack={() => setStep(1)}
+          onNext={() => goToStep(3)}
+          onBack={() => goToStep(1)}
         />
       )}
       {step === 3 && (
         <ConfirmationStep
           experienceState={experienceState}
           contactState={contactState}
-          onBack={() => setStep(2)}
+          onBack={() => goToStep(2)}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           submitError={submitError}
