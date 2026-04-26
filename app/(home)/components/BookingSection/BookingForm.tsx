@@ -72,7 +72,7 @@ type BookingExperience = (typeof BOOKING_EXPERIENCES)[number];
 // ─── State types ─────────────────────────────────────────────────────────────
 
 interface ExperienceState {
-  experience: BookingExperience;
+  experience: BookingExperience | null;
   includeApero: boolean;
   includeMain: boolean;
   guestCount: number;
@@ -98,6 +98,7 @@ function formatEuro(amount: number) {
 }
 
 function calcTotal(exp: ExperienceState) {
+  if (!exp.experience) return STARTUP_COST;
   const perPerson =
     exp.experience.basePrice +
     (exp.includeApero && exp.experience.hasApero
@@ -154,7 +155,7 @@ function ExperienceStep({
   const exp = state.experience;
 
   // For experiences without toggles (Sweet), no option requirement applies
-  const hasOptions = exp.hasApero || exp.hasMain;
+  const hasOptions = exp ? exp.hasApero || exp.hasMain : false;
   const atLeastOneSelected =
     !hasOptions || state.includeApero || state.includeMain;
 
@@ -169,6 +170,7 @@ function ExperienceStep({
   }, [atLeastOneSelected]);
 
   function handleNext() {
+    if (!exp) return;
     if (!atLeastOneSelected) {
       setShowOptionError(true);
       return;
@@ -192,7 +194,7 @@ function ExperienceStep({
             key={item.title}
             type="button"
             className={styles.experienceCard}
-            data-selected={item.title === state.experience.title || undefined}
+            data-selected={item.title === state.experience?.title || undefined}
             onClick={() =>
               onChange({
                 ...state,
@@ -208,100 +210,104 @@ function ExperienceStep({
         ))}
       </div>
 
-      {/* Options */}
-      <div className={styles.optionsList}>
-        {exp.hasApero && (
-          <div className={styles.optionRow}>
-            <div className={styles.optionLabel}>
-              <span>Apéro inbegrepen</span>
-              <span className={styles.optionPrice}>{exp.aperoDisplay}</span>
-            </div>
-            <Switch
-              checked={state.includeApero}
-              onCheckedChange={(checked) =>
-                onChange({ ...state, includeApero: checked })
-              }
-            />
-          </div>
-        )}
-        {exp.hasMain && (
-          <div className={styles.optionRow}>
-            <div className={styles.optionLabel}>
-              <span>{exp.mainLabel}</span>
-              <span className={styles.optionPrice}>{exp.mainPriceLabel}</span>
-            </div>
-            <Switch
-              checked={state.includeMain}
-              onCheckedChange={(checked) =>
-                onChange({ ...state, includeMain: checked })
-              }
-            />
-          </div>
-        )}
-        <div className={styles.optionRow}>
-          <div className={styles.optionLabel}>
-            <span>Aantal gasten</span>
-            <span className={styles.optionPrice}>(min. {MIN_GUESTS})</span>
-          </div>
-          <Input
-            type="number"
-            min={MIN_GUESTS}
-            value={guestInput}
-            onChange={(e) => {
-              const raw = e.target.value;
-              setGuestInput(raw);
-              const num = Number(raw);
-              if (!isNaN(num) && num >= MIN_GUESTS) {
-                onChange({ ...state, guestCount: num });
-              }
-            }}
-            onBlur={() => {
-              const clamped = Math.max(
-                MIN_GUESTS,
-                Number(guestInput) || MIN_GUESTS,
-              );
-              setGuestInput(String(clamped));
-              onChange({ ...state, guestCount: clamped });
-            }}
-            className={styles.guestInput}
-          />
-        </div>
-      </div>
-
-      {showOptionError && (
-        <p className={styles.optionError}>
-          Selecteer minstens één optie (apéro of hoofdgerecht) om verder te
-          gaan.
-        </p>
-      )}
-
-      {/* Price summary */}
-      <div className={styles.priceBox}>
-        <div className={styles.priceBoxContent}>
-          <div>
-            <span className={styles.priceBoxLabel}>Geschatte totaalprijs</span>
-            <span className={styles.priceBoxNote}>
-              Incl. {formatEuro(STARTUP_COST)} opstartkost
-            </span>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <span className={styles.priceBoxAmount}>{formatEuro(total)}</span>
-            {total > STARTUP_COST && (
-              <span className={styles.priceBoxNote}>
-                ± {formatEuro((total - STARTUP_COST) / state.guestCount)} p.p.
-                (excl. opstart)
-              </span>
+      {/* Options – only visible after an experience is selected */}
+      {exp && (
+        <>
+          <div className={styles.optionsList}>
+            {exp.hasApero && (
+              <div className={styles.optionRow}>
+                <div className={styles.optionLabel}>
+                  <span>Apéro inbegrepen</span>
+                  <span className={styles.optionPrice}>{exp.aperoDisplay}</span>
+                </div>
+                <Switch
+                  checked={state.includeApero}
+                  onCheckedChange={(checked) =>
+                    onChange({ ...state, includeApero: checked })
+                  }
+                />
+              </div>
             )}
+            {exp.hasMain && (
+              <div className={styles.optionRow}>
+                <div className={styles.optionLabel}>
+                  <span>{exp.mainLabel}</span>
+                  <span className={styles.optionPrice}>{exp.mainPriceLabel}</span>
+                </div>
+                <Switch
+                  checked={state.includeMain}
+                  onCheckedChange={(checked) =>
+                    onChange({ ...state, includeMain: checked })
+                  }
+                />
+              </div>
+            )}
+            <div className={styles.optionRow}>
+              <div className={styles.optionLabel}>
+                <span>Aantal gasten</span>
+                <span className={styles.optionPrice}>(min. {MIN_GUESTS})</span>
+              </div>
+              <Input
+                type="number"
+                min={MIN_GUESTS}
+                value={guestInput}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  setGuestInput(raw);
+                  const num = Number(raw);
+                  if (!isNaN(num) && num >= MIN_GUESTS) {
+                    onChange({ ...state, guestCount: num });
+                  }
+                }}
+                onBlur={() => {
+                  const clamped = Math.max(
+                    MIN_GUESTS,
+                    Number(guestInput) || MIN_GUESTS,
+                  );
+                  setGuestInput(String(clamped));
+                  onChange({ ...state, guestCount: clamped });
+                }}
+                className={styles.guestInput}
+              />
+            </div>
           </div>
-        </div>
-      </div>
-      <p className={styles.priceDisclaimer}>
-        Dit is een schatting. De definitieve prijs wordt bevestigd na overleg.
-      </p>
 
-      <Button className={styles.nextButton} onClick={handleNext}>
-        Verder naar uw gegevens <ArrowRight size={16} />
-      </Button>
+          {showOptionError && (
+            <p className={styles.optionError}>
+              Selecteer minstens één optie (apéro of hoofdgerecht) om verder te
+              gaan.
+            </p>
+          )}
+
+          {/* Price summary */}
+          <div className={styles.priceBox}>
+            <div className={styles.priceBoxContent}>
+              <div>
+                <span className={styles.priceBoxLabel}>Geschatte totaalprijs</span>
+                <span className={styles.priceBoxNote}>
+                  Incl. {formatEuro(STARTUP_COST)} opstartkost
+                </span>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <span className={styles.priceBoxAmount}>{formatEuro(total)}</span>
+                {total > STARTUP_COST && (
+                  <span className={styles.priceBoxNote}>
+                    ± {formatEuro((total - STARTUP_COST) / state.guestCount)} p.p.
+                    (excl. opstart)
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <p className={styles.priceDisclaimer}>
+            Dit is een schatting. De definitieve prijs wordt bevestigd na overleg.
+          </p>
+
+          <Button className={styles.nextButton} onClick={handleNext}>
+            Verder naar uw gegevens <ArrowRight size={16} />
+          </Button>
+        </>
+      )}
     </div>
   );
 }
@@ -460,6 +466,7 @@ function ConfirmationStep({
 }) {
   const total = calcTotal(experienceState);
   const exp = experienceState.experience;
+  if (!exp) return null;
 
   const rows: { label: string; value: string }[] = [
     { label: "Experience", value: exp.title },
@@ -548,7 +555,7 @@ export function BookingForm() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
   const [experienceState, setExperienceState] = useState<ExperienceState>({
-    experience: BOOKING_EXPERIENCES[0],
+    experience: null,
     includeApero: false,
     includeMain: true,
     guestCount: MIN_GUESTS,
