@@ -7,19 +7,22 @@
   align-items: center;
 
   /* Mobile: use svh to avoid browser-chrome clipping; compensate for shell (4rem) + mobile nav (~3.5rem) */
-  min-height: calc(100svh - 7.5rem);
+  min-height: calc(100svh - 4rem);
   background: linear-gradient(180deg, rgb(18 33 34 / 0.6), rgb(18 33 34 / 0.6)), url("/media/working-in-truck.webp");
   background-repeat: no-repeat;
   background-size: cover;
-  background-attachment: scroll; /* fixed breaks on iOS Safari */
+  /* fixed breaks on iOS Safari */
+  background-attachment: scroll;
+  background-attachment: fixed;
   background-position: center;
 }
+
+
 
 @media (min-width: 768px) {
   .heroShell {
     height: calc(100vh - 6rem);
     min-height: unset;
-    background-attachment: fixed;
   }
 }
 
