@@ -5,12 +5,17 @@ const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/sit
 export async function verifyTurnstile(token: string, remoteIp?: string): Promise<boolean> {
   const env = getBookingEnv();
 
-  // Dev bypass
+  // Dev bypass – also allow when no secret key is configured
   if (
     process.env.NODE_ENV !== "production" &&
-    env.TURNSTILE_BYPASS_IN_DEV === "true"
+    (env.TURNSTILE_BYPASS_IN_DEV === "true" || !env.TURNSTILE_SECRET_KEY)
   ) {
     return true;
+  }
+
+  if (!env.TURNSTILE_SECRET_KEY) {
+    console.error("[booking] TURNSTILE_SECRET_KEY is not set in production.");
+    return false;
   }
 
   const body = new URLSearchParams({
