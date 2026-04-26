@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-push-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -36,3 +36,14 @@ jobs:
 
       - name: Push API Docker image to GitHub Container Registry
         run: docker push ghcr.io/lyttledevelopment/mealz-on-weelz:main
+
+  trigger-portainer-webhook:
+    name: Trigger Portainer Webhook
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    steps:
+      - name: Call Portainer Webhook
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
+          method: POST
