@@ -15,12 +15,6 @@
   min-height: 4rem;
 }
 
-@media (min-width: 768px) {
-  .headerShell {
-    min-height: 6rem;
-  }
-}
-
 /* ── Brand ──────────────────────────────────────────────────── */
 .brand {
   display: inline-flex;
@@ -36,12 +30,6 @@
   height: auto;
   flex-shrink: 0;
   filter: drop-shadow(0 2px 8px rgb(186 160 143 / 0.3));
-}
-
-@media (min-width: 768px) {
-  .brandLogo {
-    width: 6rem;
-  }
 }
 
 .brandText {

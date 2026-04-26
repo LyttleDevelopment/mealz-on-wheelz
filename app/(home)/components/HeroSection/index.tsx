@@ -18,7 +18,7 @@ export function HeroSection() {
             <a href="#reserveren">Boek ons</a>
           </Button>
           <Button asChild variant="secondary" size="lg">
-            <a href="#formules">Ontdek menu</a>
+            <a href="#menu">Ontdek menu</a>
           </Button>
         </div>
       </article>

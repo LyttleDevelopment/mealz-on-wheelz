@@ -17,7 +17,9 @@ export function Header() {
     } else {
       el.style.overflow = "";
     }
-    return () => { el.style.overflow = ""; };
+    return () => {
+      el.style.overflow = "";
+    };
   }, [menuOpen]);
 
   return (
@@ -25,21 +27,32 @@ export function Header() {
       <header className={styles.header}>
         <Container>
           <div className={styles.headerShell}>
-            <a href="#home" className={styles.brand} onClick={() => setMenuOpen(false)}>
+            <a
+              href="#home"
+              className={styles.brand}
+              onClick={() => setMenuOpen(false)}
+            >
               <img
                 src="/logo.svg"
                 alt="Mealz on Wheelz logo"
                 className={styles.brandLogo}
-                width={48}
-                height={40}
+                width={100}
+                height={100}
               />
             </a>
 
             {/* Desktop right side */}
             <div className={styles.desktopRight}>
-              <nav className={styles.desktopNav} aria-label="Primaire navigatie">
+              <nav
+                className={styles.desktopNav}
+                aria-label="Primaire navigatie"
+              >
                 {navigation.map((item) => (
-                  <a key={item.href} href={item.href} className={styles.navLink}>
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className={styles.navLink}
+                  >
                     {item.label}
                   </a>
                 ))}
