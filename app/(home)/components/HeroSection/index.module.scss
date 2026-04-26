@@ -81,16 +81,29 @@
   margin: 0;
   color: white;
   font-family: var(--font-berniertm), var(--font-display), Impact, sans-serif;
-  font-size: clamp(4.5rem, 22vw, 7.5rem);
+  /* Mobile-first: a slightly smaller heading on small screens so it doesn't dominate
+     while still scaling up on larger viewports. Restore the original larger clamp
+     at tablet/desktop via a media query below. */
+  font-size: clamp(3rem, 11vw, 5.5rem);
   line-height: 0.86;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-wrap: balance;
 }
 
+/* Restore larger heroTitle on wider viewports */
+@media (min-width: 768px) {
+  .heroTitle {
+    font-size: clamp(4.5rem, 22vw, 7.5rem);
+  }
+}
+
 .heroText {
   max-width: 40rem;
   color: var(--foreground);
+  /* Make the paragraph text a touch smaller on mobile; scale up slightly on
+     tablet and desktop to match the design system's "lg" size. */
+  font-size: clamp(0.95rem, 3.5vw, 1.125rem);
 }
 
 .heroActions {
@@ -133,6 +146,10 @@
   .heroLayout {
     grid-template-columns: minmax(0, 1.2fr) minmax(20rem, 0.88fr);
     align-items: center;
+  /* Ensure hero paragraph reads comfortably on tablet+ */
+  .heroText {
+    font-size: 1.125rem;
+  }
   }
 }
 
