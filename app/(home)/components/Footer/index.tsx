@@ -3,9 +3,9 @@ import { footerNavigation } from "../../data/constants";
 import styles from "./index.module.scss";
 
 const socialLinks = [
-  { label: "f", href: "#", ariaLabel: "Facebook" },
-  { label: "ig", href: "#", ariaLabel: "Instagram" },
-  { label: "TT", href: "#", ariaLabel: "TikTok" },
+  { label: "f", href: "https://www.facebook.com/people/Mealzonwheelz/61559672413790/", ariaLabel: "Facebook" },
+  { label: "ig", href: "https://www.instagram.com/mealzonwheelzfoodtruck", ariaLabel: "Instagram" },
+  { label: "TT", href: "https://www.tiktok.com/@mealzonwheelzfoodtruck", ariaLabel: "TikTok" },
 ];
 
 export function Footer() {
