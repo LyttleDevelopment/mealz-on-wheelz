@@ -147,11 +147,17 @@ function getEventDateBounds(event: calendar_v3.Schema$Event) {
     return { startDate, endDateExclusive: event.end.date };
   }
 
-  const endDateTime = event.end?.dateTime?.slice(0, 10);
+  const endDateTime = event.end?.dateTime;
   if (endDateTime) {
+    const endDate = endDateTime.slice(0, 10);
+    const endTime = endDateTime.match(/^\d{4}-\d{2}-\d{2}T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?/)?.slice(1);
+    const endsAtStartOfDay = endTime
+      ? endTime.every((part) => part === "00")
+      : false;
+
     return {
       startDate,
-      endDateExclusive: addDays(endDateTime, 1),
+      endDateExclusive: endsAtStartOfDay ? endDate : addDays(endDate, 1),
     };
   }
 
