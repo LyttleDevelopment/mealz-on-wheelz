@@ -303,44 +303,29 @@
 }
 
 .datePickerCard {
-  display: grid;
-  gap: 0.6rem;
-  padding: 0.35rem 0 0;
-}
-
-.datePickerHeader {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.selectedDateLabel {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .selectedDateValue {
-  font-size: 0.94rem;
+  font-size: 0.88rem;
+  font-weight: 600;
   color: #1e2939;
   text-transform: capitalize;
-}
-
-.calendarHint {
-  max-width: 36rem;
-  font-size: 0.78rem;
-  color: #6b7280;
-  line-height: 1.45;
+  text-align: center;
+  display: block;
+  min-height: 1.2em;
 }
 
 .bookingCalendar {
-  --cell-size: clamp(1.8rem, 10vw, 2.15rem);
+  --cell-size: clamp(1.75rem, 9vw, 2rem);
 
   width: 100%;
-  max-width: 18.25rem;
-  margin-inline: 0;
-  padding: 0.15rem;
+  max-width: min(100%, 17rem);
+  margin-inline: auto;
+  padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -349,10 +334,12 @@
 
 .bookingCalendar > div {
   width: 100%;
+  max-width: 100%;
 }
 
 .bookingCalendar table {
   table-layout: fixed;
+  width: 100%;
 }
 
 .bookingCalendar button {
@@ -404,6 +391,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 0.8rem;
+  justify-content: center;
 }
 
 .calendarLegendItem {
@@ -501,21 +489,12 @@
   }
 
   .datePickerCard {
-    gap: 0.5rem;
-  }
-
-  .datePickerHeader {
-    gap: 0.2rem;
-  }
-
-  .calendarHint {
-    font-size: 0.74rem;
+    gap: 0.35rem;
   }
 
   .bookingCalendar {
-    --cell-size: clamp(1.72rem, 11vw, 1.98rem);
-
-    max-width: min(100%, 16.5rem);
+    --cell-size: clamp(1.65rem, 10vw, 2rem);
+    max-width: min(100%, 16rem);
   }
 
   .bookingCalendarBookedDay button::after {

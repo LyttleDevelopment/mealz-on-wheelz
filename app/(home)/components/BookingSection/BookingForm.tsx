@@ -472,7 +472,6 @@ function ContactStep({
           ? `${formatDateLabel(state.datum)} geselecteerd.`
           : "Nog geen datum geselecteerd.";
   const calendarDescribedBy = [
-    dateHintId,
     dateLegendId,
     dateStatusId,
     errors.datum ? dateErrorId : null,
@@ -608,24 +607,16 @@ function ContactStep({
           <label id={dateLabelId} className={styles.formLabel}>
             Datum event *
           </label>
-          <div className={styles.datePickerCard}>
-            <div className={styles.datePickerHeader}>
-              <span className={styles.selectedDateLabel}>Geselecteerde datum</span>
-              <strong
-                className={styles.selectedDateValue}
-                role="status"
-                aria-live="polite"
-                aria-atomic="true"
-              >
-                {formatDateLabel(state.datum)}
-              </strong>
-              <span className={styles.calendarHint} id={dateHintId}>
-                De kalender start op maandag. Bezet gemarkeerde dagen zijn niet
-                beschikbaar. Gebruik tikken, klikken of de pijltjestoetsen om een
-                vrije datum te kiezen.
-              </span>
-            </div>
+          <strong
+            className={styles.selectedDateValue}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {formatDateLabel(state.datum)}
+          </strong>
 
+          <div className={styles.datePickerCard}>
             <Calendar
               mode="single"
               locale={nlBE}
