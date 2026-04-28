@@ -147,17 +147,13 @@ function getEventDateBounds(event: calendar_v3.Schema$Event) {
     };
   }
 
-  // Timed event — block every calendar date the event falls on
+  // Timed event — block only the start calendar date
   const startDate = event.start?.dateTime?.slice(0, 10) ?? null;
   if (!startDate) return null;
 
-  const endDate = event.end?.dateTime?.slice(0, 10) ?? startDate;
-
-  // Always include the end date if it differs (event crosses into that calendar day),
-  // so even a 1-minute event always blocks its start date.
   return {
     startDate,
-    endDateExclusive: addDays(endDate, 1),
+    endDateExclusive: addDays(startDate, 1),
   };
 }
 
