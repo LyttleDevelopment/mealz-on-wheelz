@@ -117,7 +117,7 @@ export const experiences: Experience[] = [
         entries: [
           { name: "Classic", price: "€22,95 · €25,95 · €27,95" },
           { name: "Deluxe", price: "€34,95" },
-          { note: "Zie bijlage voor samenstelling" },
+          { note: "Vraag naar bijlage voor samenstelling" },
         ],
       },
     ],

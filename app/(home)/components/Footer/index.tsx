@@ -70,6 +70,10 @@ export function Footer() {
           <p className={styles.copyright}>
             © {year} Mealz on Wheelz. All rights reserved.
           </p>
+          <a className={styles.poweredBy}
+             href={"https://www.lyttledevelopment.com"} target="_blank" rel="noopener noreferrer">
+            Powered by LyttleDevelopment
+          </a>
         </div>
       </Container>
     </footer>

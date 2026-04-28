@@ -14,7 +14,7 @@ export function AboutSection() {
           <Text as="p" size="sm">
             Mealz on wheelz is een foodtruck gevestigd in Moerbeke-Waas. Wij
             zijn gespecialiseerd in culinaire ervaringen: van heerlijke pasta's
-            en authentieke streetfood tot smaakvolle BBQ-gerechten.
+            en authentiek streetfood tot smaakvolle BBQ-gerechten.
             <br />
             <br />
             Onze missie is om onze klanten te voorzien van hoogwaardige

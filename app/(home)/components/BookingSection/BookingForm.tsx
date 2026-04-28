@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   Button,
   Calendar,
@@ -11,6 +11,7 @@ import {
 } from "@lyttle-development/ui";
 import { AlertCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
+import { nlBE } from "react-day-picker/locale";
 import styles from "./index.module.scss";
 import {
   BOOKING_EXPERIENCES,
@@ -91,6 +92,43 @@ function getAvailabilityRange() {
     from: formatDateForApi(from),
     to: formatDateForApi(to),
   };
+}
+
+function getCompactWeekdayName(date: Date) {
+  return new Intl.DateTimeFormat("nl-BE", { weekday: "short" })
+    .format(date)
+    .replace(".", "")
+    .slice(0, 2);
+}
+
+function getBookingDayAriaLabel(
+  date: Date,
+  modifiers: Partial<Record<"today" | "selected" | "disabled" | "booked", boolean>>,
+) {
+  let label = new Intl.DateTimeFormat("nl-BE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+
+  if (modifiers.today) {
+    label = `Vandaag, ${label}`;
+  }
+
+  if (modifiers.selected) {
+    label = `${label}, geselecteerd`;
+  }
+
+  if (modifiers.booked) {
+    return `${label}, bezet en niet beschikbaar`;
+  }
+
+  if (modifiers.disabled) {
+    return `${label}, niet beschikbaar`;
+  }
+
+  return `${label}, beschikbaar`;
 }
 
 /** Strip non-digit characters and check length is plausible for BE/EU numbers */
@@ -411,6 +449,11 @@ function ContactStep({
   const [errors, setErrors] = useState<ContactErrors>({});
   const [touched, setTouched] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const dateLabelId = useId();
+  const dateHintId = useId();
+  const dateLegendId = useId();
+  const dateStatusId = useId();
+  const dateErrorId = useId();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -418,6 +461,24 @@ function ContactStep({
   const isSelectedDateUnavailable = state.datum
     ? unavailableDates.has(state.datum)
     : false;
+  const isBookedDate = (date: Date) => unavailableDates.has(formatDateForApi(date));
+  const calendarStatusText = availabilityLoading
+    ? "Beschikbaarheid wordt geladen…"
+    : availabilityError
+      ? availabilityError
+      : isSelectedDateUnavailable
+        ? "De gekozen datum is intussen bezet. Kies een andere datum."
+        : state.datum
+          ? `${formatDateLabel(state.datum)} geselecteerd.`
+          : "Nog geen datum geselecteerd.";
+  const calendarDescribedBy = [
+    dateHintId,
+    dateLegendId,
+    dateStatusId,
+    errors.datum ? dateErrorId : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const set =
     <K extends keyof ContactState>(key: K) =>
@@ -544,41 +605,85 @@ function ContactStep({
 
         {/* Date */}
         <div className={`${styles.formField} ${styles.formFieldFull}`}>
-          <label className={styles.formLabel}>Datum event *</label>
+          <label id={dateLabelId} className={styles.formLabel}>
+            Datum event *
+          </label>
           <div className={styles.datePickerCard}>
             <div className={styles.datePickerHeader}>
               <span className={styles.selectedDateLabel}>Geselecteerde datum</span>
-              <strong className={styles.selectedDateValue}>
+              <strong
+                className={styles.selectedDateValue}
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 {formatDateLabel(state.datum)}
               </strong>
-              <span className={styles.calendarHint}>
-                Dagen met een event op de planning- of reservatiekalender zijn
-                automatisch geblokkeerd.
+              <span className={styles.calendarHint} id={dateHintId}>
+                De kalender start op maandag. Bezet gemarkeerde dagen zijn niet
+                beschikbaar. Gebruik tikken, klikken of de pijltjestoetsen om een
+                vrije datum te kiezen.
               </span>
             </div>
 
             <Calendar
               mode="single"
+              locale={nlBE}
+              labels={{ labelDayButton: getBookingDayAriaLabel }}
+              weekStartsOn={1}
+              showOutsideDays={false}
               selected={selectedDate}
               onSelect={(date) =>
                 onChange({ ...state, datum: date ? formatDateForApi(date) : "" })
               }
+              formatters={{ formatWeekdayName: getCompactWeekdayName }}
+              modifiers={{ booked: isBookedDate }}
+              modifiersClassNames={{ booked: styles.bookingCalendarBookedDay }}
               disabled={[
                 { before: today },
-                (date) =>
-                  availabilityLoading || unavailableDates.has(formatDateForApi(date)),
+                (date) => availabilityLoading || isBookedDate(date),
               ]}
               className={styles.bookingCalendar}
+              aria-labelledby={dateLabelId}
+              aria-describedby={calendarDescribedBy}
+              aria-invalid={errors.datum ? true : undefined}
             />
 
+            <div
+              className={styles.calendarLegend}
+              id={dateLegendId}
+              aria-label="Legenda voor beschikbare en bezette dagen"
+            >
+              <span className={styles.calendarLegendItem}>
+                <span className={styles.calendarLegendSwatch} />
+                Beschikbaar
+              </span>
+              <span className={styles.calendarLegendItem}>
+                <span
+                  className={`${styles.calendarLegendSwatch} ${styles.calendarLegendSwatchSelected}`}
+                />
+                Geselecteerd
+              </span>
+              <span className={styles.calendarLegendItem}>
+                <span
+                  className={`${styles.calendarLegendSwatch} ${styles.calendarLegendSwatchBooked}`}
+                />
+                Bezet
+              </span>
+            </div>
+
             {availabilityLoading && (
-              <p className={styles.calendarStatus}>
+              <p className={styles.calendarStatus} id={dateStatusId} role="status">
                 Beschikbaarheid wordt geladen…
               </p>
             )}
 
             {availabilityError && (
-              <div className={styles.calendarStatusError} role="alert">
+              <div
+                className={styles.calendarStatusError}
+                id={dateStatusId}
+                role="alert"
+              >
                 <span>{availabilityError}</span>
                 <Button
                   type="button"
@@ -592,12 +697,24 @@ function ContactStep({
             )}
 
             {!availabilityLoading && !availabilityError && isSelectedDateUnavailable && (
-              <p className={styles.calendarStatusErrorText}>
+              <p
+                className={styles.calendarStatusErrorText}
+                id={dateStatusId}
+                role="status"
+              >
                 Deze datum is intussen niet meer beschikbaar.
               </p>
             )}
+
+            {!availabilityLoading && !availabilityError && !isSelectedDateUnavailable && (
+              <p className={styles.calendarStatus} id={dateStatusId} role="status">
+                {calendarStatusText}
+              </p>
+            )}
           </div>
-          <FieldError msg={errors.datum} />
+          <span id={dateErrorId}>
+            <FieldError msg={errors.datum} />
+          </span>
         </div>
       </div>
 
