@@ -16,6 +16,8 @@ const envSchema = z.object({
   GOOGLE_SERVICE_ACCOUNT_EMAIL: z.string().email(),
   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: z.string().min(1),
   GOOGLE_CALENDAR_ID: z.string().min(1),
+  GOOGLE_BOOKED_CALENDAR_ID: z.string().min(1),
+  GOOGLE_RERSERVED_CALENDAR_ID: z.string().min(1).optional(),
 });
 
 export type BookingEnv = z.infer<typeof envSchema>;

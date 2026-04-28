@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EXPERIENCE_IDS, EVENT_TYPES, MIN_GUESTS, MIN_SUBMIT_MS } from "./constants";
+import { EXPERIENCE_IDS, EVENT_TYPES, MIN_GUESTS } from "./constants";
 
 // ─── Request schema ───────────────────────────────────────────────────────────
 
@@ -70,7 +70,7 @@ export type BookingRequest = z.infer<typeof bookingRequestSchema>;
 
 // ─── Response types ───────────────────────────────────────────────────────────
 
-export type BookingWarning = "customer_email_failed" | "calendar_failed";
+export type BookingWarning = "customer_email_failed";
 
 export interface BookingSuccessResponse {
   ok: true;
@@ -81,10 +81,31 @@ export interface BookingSuccessResponse {
 
 export interface BookingErrorResponse {
   ok: false;
-  code: "validation_error" | "spam_rejected" | "rate_limited" | "booking_delivery_failed";
+  code:
+    | "validation_error"
+    | "spam_rejected"
+    | "rate_limited"
+    | "booking_delivery_failed"
+    | "date_unavailable"
+    | "availability_check_failed";
   message: string;
   fieldErrors?: Record<string, string>;
 }
 
 export type BookingApiResponse = BookingSuccessResponse | BookingErrorResponse;
+
+export interface BookingAvailabilitySuccessResponse {
+  ok: true;
+  unavailableDates: string[];
+}
+
+export interface BookingAvailabilityErrorResponse {
+  ok: false;
+  code: "availability_check_failed" | "validation_error";
+  message: string;
+}
+
+export type BookingAvailabilityResponse =
+  | BookingAvailabilitySuccessResponse
+  | BookingAvailabilityErrorResponse;
 

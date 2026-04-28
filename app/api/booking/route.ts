@@ -4,12 +4,40 @@ import { bookingRequestSchema, BookingWarning } from "@/_lib/booking/schema";
 import { calcPricing } from "@/_lib/booking/pricing";
 import { verifyTurnstile } from "@/_lib/booking/turnstile";
 import { checkRateLimit } from "@/_lib/booking/rate-limit";
-import { sendInternalBookingEmail, sendCustomerAcknowledgmentEmail } from "@/_lib/booking/email";
-import { createCalendarEvent } from "@/_lib/booking/calendar";
+import {
+  sendCustomerAcknowledgmentEmail,
+  sendCustomerBookingFailureEmail,
+  sendInternalBookingConflictEmail,
+  sendInternalBookingEmail,
+} from "@/_lib/booking/email";
+import {
+  listUnavailableBookingDates,
+  removeBookedCalendarEvent,
+  reserveBookingDate,
+} from "@/_lib/booking/calendar";
 import { MIN_SUBMIT_MS } from "@/_lib/booking/constants";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function formatDateString(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function addDays(date: Date, days: number): Date {
+  const next = new Date(date.getTime());
+  next.setUTCDate(next.getUTCDate() + days);
+  return next;
+}
+
+function noStoreHeaders() {
+  return { "Cache-Control": "no-store" };
+}
 
 function getIp(req: NextRequest): string {
   return (
@@ -17,6 +45,44 @@ function getIp(req: NextRequest): string {
     req.headers.get("x-real-ip") ??
     "unknown"
   );
+}
+
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const from = url.searchParams.get("from") ?? formatDateString(today);
+  const to = url.searchParams.get("to") ?? formatDateString(addDays(today, 730));
+
+  if (!DATE_RE.test(from) || !DATE_RE.test(to) || from > to) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "validation_error",
+        message: "Ongeldige beschikbaarheidsperiode.",
+      },
+      { status: 400, headers: noStoreHeaders() },
+    );
+  }
+
+  try {
+    const unavailableDates = await listUnavailableBookingDates(from, to);
+    return NextResponse.json(
+      { ok: true, unavailableDates },
+      { headers: noStoreHeaders() },
+    );
+  } catch (err) {
+    console.error("[booking] Availability lookup failed", err);
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "availability_check_failed",
+        message: "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.",
+      },
+      { status: 503, headers: noStoreHeaders() },
+    );
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -84,15 +150,79 @@ export async function POST(req: NextRequest) {
 
   const bookingId = randomUUID();
   const warnings: BookingWarning[] = [];
+  let reservedEventId: string | null = null;
+
+  // ─── Reserve date in Google Calendar (hard failure) ──────────────────────
+  try {
+    const reservation = await reserveBookingDate(data, bookingId, pricing.total);
+
+    if (!reservation.ok) {
+      const reservationReason =
+        "reason" in reservation ? reservation.reason : "date_unavailable";
+
+      if (reservationReason === "conflict_after_insert") {
+        try {
+          await sendInternalBookingConflictEmail(
+            data,
+            bookingId,
+            reservation.conflicts,
+            reservation.keptEvent,
+          );
+        } catch (err) {
+          console.warn("[booking] Conflict notification email failed", { bookingId, err });
+        }
+
+        try {
+          await sendCustomerBookingFailureEmail(data);
+        } catch (err) {
+          console.warn("[booking] Customer failure email failed", { bookingId, err });
+        }
+      }
+
+      return NextResponse.json(
+        {
+          ok: false,
+          code: "date_unavailable",
+          message: "Deze datum is net niet meer beschikbaar. Kies een andere datum.",
+        },
+        { status: 409, headers: noStoreHeaders() },
+      );
+    }
+
+    reservedEventId = reservation.eventId;
+  } catch (err) {
+    console.error("[booking] Calendar reservation failed", { bookingId, err });
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "availability_check_failed",
+        message: "De beschikbaarheid kon niet bevestigd worden. Probeer het opnieuw.",
+      },
+      { status: 503, headers: noStoreHeaders() },
+    );
+  }
 
   // ─── Internal email (hard failure) ───────────────────────────────────────
   try {
     await sendInternalBookingEmail(data, bookingId, pricing.total);
   } catch (err) {
     console.error("[booking] Internal email failed", { bookingId, err });
+
+    if (reservedEventId) {
+      try {
+        await removeBookedCalendarEvent(reservedEventId);
+      } catch (cleanupErr) {
+        console.error("[booking] Failed to rollback reserved calendar event", {
+          bookingId,
+          reservedEventId,
+          cleanupErr,
+        });
+      }
+    }
+
     return NextResponse.json(
       { ok: false, code: "booking_delivery_failed", message: "Er is een fout opgetreden. Probeer het opnieuw of neem contact met ons op." },
-      { status: 502 },
+      { status: 502, headers: noStoreHeaders() },
     );
   }
 
@@ -104,14 +234,6 @@ export async function POST(req: NextRequest) {
     warnings.push("customer_email_failed");
   }
 
-  // ─── Google Calendar event (soft failure) ────────────────────────────────
-  try {
-    await createCalendarEvent(data, bookingId, pricing.total);
-  } catch (err) {
-    console.warn("[booking] Calendar event creation failed", { bookingId, err });
-    warnings.push("calendar_failed");
-  }
-
   return NextResponse.json(
     {
       ok: true,
@@ -119,7 +241,7 @@ export async function POST(req: NextRequest) {
       message: "Uw aanvraag is ontvangen. Wij nemen binnen 24 uur contact met u op.",
       ...(warnings.length > 0 ? { warnings } : {}),
     },
-    { status: 201 },
+    { status: 201, headers: noStoreHeaders() },
   );
 }
 

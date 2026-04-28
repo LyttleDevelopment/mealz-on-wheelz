@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
+  Calendar,
   Input,
   NativeSelect,
   Switch,
@@ -20,7 +21,10 @@ import {
   STARTUP_COST,
 } from "@/_lib/booking/constants";
 import { calcPricing, formatEuro } from "@/_lib/booking/pricing";
-import type { BookingApiResponse } from "@/_lib/booking/schema";
+import type {
+  BookingApiResponse,
+  BookingAvailabilityResponse,
+} from "@/_lib/booking/schema";
 
 // ─── State types ──────────────────────────────────────────────────────────────
 
@@ -49,6 +53,46 @@ interface ContactState {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const POSTCODE_RE = /^\d{4}$/;
 
+function formatDateForApi(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function parseDateFromApi(value: string): Date | undefined {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
+  const [year, month, day] = value.split("-").map(Number);
+  const next = new Date(year, month - 1, day);
+  next.setHours(0, 0, 0, 0);
+  return Number.isNaN(next.getTime()) ? undefined : next;
+}
+
+function formatDateLabel(value: string) {
+  const date = parseDateFromApi(value);
+  if (!date) return "Selecteer een beschikbare datum";
+
+  return new Intl.DateTimeFormat("nl-BE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
+function getAvailabilityRange() {
+  const from = new Date();
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(from);
+  to.setFullYear(to.getFullYear() + 2);
+
+  return {
+    from: formatDateForApi(from),
+    to: formatDateForApi(to),
+  };
+}
+
 /** Strip non-digit characters and check length is plausible for BE/EU numbers */
 function isValidPhone(v: string) {
   const digits = v.replace(/\D/g, "");
@@ -67,7 +111,10 @@ function isValidFutureDate(v: string) {
 
 type ContactErrors = Partial<Record<keyof ContactState, string>>;
 
-function validateContact(s: ContactState): ContactErrors {
+function validateContact(
+  s: ContactState,
+  unavailableDates: ReadonlySet<string>,
+): ContactErrors {
   const e: ContactErrors = {};
   if (!s.naam.trim()) e.naam = "Naam is verplicht.";
   if (!s.email.trim()) {
@@ -83,6 +130,8 @@ function validateContact(s: ContactState): ContactErrors {
   if (!s.typeEvent) e.typeEvent = "Selecteer een type event.";
   if (!s.datum) {
     e.datum = "Datum is verplicht.";
+  } else if (unavailableDates.has(s.datum)) {
+    e.datum = "Deze datum is niet meer beschikbaar.";
   } else if (!isValidFutureDate(s.datum)) {
     e.datum = "Kies een geldige toekomstige datum.";
   }
@@ -171,14 +220,6 @@ function ExperienceStep({
   const atLeastOneSelected =
     !hasOptions || state.includeApero || state.includeMain;
 
-  useEffect(() => {
-    setGuestInput(String(state.guestCount));
-  }, [state.guestCount]);
-
-  useEffect(() => {
-    if (atLeastOneSelected) setShowOptionError(false);
-  }, [atLeastOneSelected]);
-
   // Scroll to options when an experience is first selected
   const prevExpId = useRef<string | null>(null);
   useEffect(() => {
@@ -218,7 +259,10 @@ function ExperienceStep({
             type="button"
             className={styles.experienceCard}
             data-selected={item.id === state.experience?.id || undefined}
-            onClick={() => onChange({ ...state, experience: item })}
+            onClick={() => {
+              setShowOptionError(false);
+              onChange({ ...state, experience: item });
+            }}
           >
             <span className={styles.experienceTitle}>{item.title}</span>
             <span className={styles.experienceSubtitle}>
@@ -239,9 +283,10 @@ function ExperienceStep({
                 </div>
                 <Switch
                   checked={state.includeApero}
-                  onCheckedChange={(checked) =>
-                    onChange({ ...state, includeApero: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setShowOptionError(false);
+                    onChange({ ...state, includeApero: checked });
+                  }}
                 />
               </div>
             )}
@@ -255,9 +300,10 @@ function ExperienceStep({
                 </div>
                 <Switch
                   checked={state.includeMain}
-                  onCheckedChange={(checked) =>
-                    onChange({ ...state, includeMain: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setShowOptionError(false);
+                    onChange({ ...state, includeMain: checked });
+                  }}
                 />
               </div>
             )}
@@ -273,6 +319,7 @@ function ExperienceStep({
                 onChange={(e) => {
                   const raw = e.target.value;
                   setGuestInput(raw);
+                  setShowOptionError(false);
                   const num = Number(raw);
                   if (!isNaN(num) && num >= MIN_GUESTS) {
                     onChange({ ...state, guestCount: num });
@@ -347,15 +394,30 @@ function ContactStep({
   onChange,
   onNext,
   onBack,
+  unavailableDates,
+  availabilityLoading,
+  availabilityError,
+  onRetryAvailability,
 }: {
   state: ContactState;
   onChange: (s: ContactState) => void;
   onNext: () => void;
   onBack: () => void;
+  unavailableDates: ReadonlySet<string>;
+  availabilityLoading: boolean;
+  availabilityError: string | null;
+  onRetryAvailability: () => void;
 }) {
   const [errors, setErrors] = useState<ContactErrors>({});
   const [touched, setTouched] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const selectedDate = state.datum ? parseDateFromApi(state.datum) : undefined;
+  const isSelectedDateUnavailable = state.datum
+    ? unavailableDates.has(state.datum)
+    : false;
 
   const set =
     <K extends keyof ContactState>(key: K) =>
@@ -374,7 +436,16 @@ function ContactStep({
 
   function handleNext() {
     setTouched(true);
-    const errs = validateContact(state);
+    const errs = validateContact(state, unavailableDates);
+
+    if (availabilityLoading) {
+      errs.datum ??= "Beschikbaarheid wordt nog geladen.";
+    }
+
+    if (availabilityError) {
+      errs.datum ??= availabilityError;
+    }
+
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       setTimeout(() => {
@@ -389,9 +460,6 @@ function ContactStep({
   }
 
   const errorCount = Object.values(errors).filter(Boolean).length;
-
-  // Today's date as min value for the date picker
-  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className={styles.stepContent} ref={formRef}>
@@ -477,14 +545,58 @@ function ContactStep({
         {/* Date */}
         <div className={`${styles.formField} ${styles.formFieldFull}`}>
           <label className={styles.formLabel}>Datum event *</label>
-          <Input
-            type="date"
-            min={today}
-            value={state.datum}
-            onChange={set("datum")}
-            data-invalid={errors.datum ? true : undefined}
-            required
-          />
+          <div className={styles.datePickerCard}>
+            <div className={styles.datePickerHeader}>
+              <span className={styles.selectedDateLabel}>Geselecteerde datum</span>
+              <strong className={styles.selectedDateValue}>
+                {formatDateLabel(state.datum)}
+              </strong>
+              <span className={styles.calendarHint}>
+                Dagen met een event op de planning- of reservatiekalender zijn
+                automatisch geblokkeerd.
+              </span>
+            </div>
+
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) =>
+                onChange({ ...state, datum: date ? formatDateForApi(date) : "" })
+              }
+              disabled={[
+                { before: today },
+                (date) =>
+                  availabilityLoading || unavailableDates.has(formatDateForApi(date)),
+              ]}
+              className={styles.bookingCalendar}
+            />
+
+            {availabilityLoading && (
+              <p className={styles.calendarStatus}>
+                Beschikbaarheid wordt geladen…
+              </p>
+            )}
+
+            {availabilityError && (
+              <div className={styles.calendarStatusError} role="alert">
+                <span>{availabilityError}</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={styles.retryAvailabilityButton}
+                  onClick={onRetryAvailability}
+                >
+                  Opnieuw laden
+                </Button>
+              </div>
+            )}
+
+            {!availabilityLoading && !availabilityError && isSelectedDateUnavailable && (
+              <p className={styles.calendarStatusErrorText}>
+                Deze datum is intussen niet meer beschikbaar.
+              </p>
+            )}
+          </div>
           <FieldError msg={errors.datum} />
         </div>
       </div>
@@ -590,7 +702,11 @@ function ContactStep({
         >
           <ArrowLeft size={16} /> Terug
         </Button>
-        <Button onClick={handleNext} className={styles.nextButton}>
+        <Button
+          onClick={handleNext}
+          className={styles.nextButton}
+          disabled={availabilityLoading || Boolean(availabilityError)}
+        >
           Controleer aanvraag <ArrowRight size={16} />
         </Button>
       </div>
@@ -609,6 +725,9 @@ function ConfirmationStep({
   submitError,
   turnstileToken,
   onTurnstileSuccess,
+  availabilityLoading,
+  availabilityError,
+  isDateUnavailable,
 }: {
   experienceState: ExperienceState;
   contactState: ContactState;
@@ -618,6 +737,9 @@ function ConfirmationStep({
   submitError: string | null;
   turnstileToken: string | null;
   onTurnstileSuccess: (token: string) => void;
+  availabilityLoading: boolean;
+  availabilityError: string | null;
+  isDateUnavailable: boolean;
 }) {
   const exp = experienceState.experience;
   if (!exp) return null;
@@ -656,7 +778,12 @@ function ConfirmationStep({
   ];
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
-  const canSubmit = !isSubmitting && (!!turnstileToken || !siteKey);
+  const canSubmit =
+    !isSubmitting &&
+    (!!turnstileToken || !siteKey) &&
+    !availabilityLoading &&
+    !availabilityError &&
+    !isDateUnavailable;
 
   return (
     <div className={styles.stepContent}>
@@ -687,6 +814,18 @@ function ConfirmationStep({
         <div className={styles.turnstileWrapper}>
           <Turnstile siteKey={siteKey} onSuccess={onTurnstileSuccess} />
         </div>
+      )}
+
+      {availabilityLoading && (
+        <p className={styles.calendarStatus}>Beschikbaarheid wordt opnieuw gecontroleerd…</p>
+      )}
+
+      {availabilityError && <p className={styles.submitError}>{availabilityError}</p>}
+
+      {isDateUnavailable && (
+        <p className={styles.submitError}>
+          Deze datum is niet meer beschikbaar. Ga terug en kies een andere datum.
+        </p>
       )}
 
       {submitError && <p className={styles.submitError}>{submitError}</p>}
@@ -766,13 +905,80 @@ export function BookingForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState("");
+  const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
+  const [availabilityLoading, setAvailabilityLoading] = useState(true);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+
+  const unavailableDateSet = useMemo(
+    () => new Set(unavailableDates),
+    [unavailableDates],
+  );
+
+  async function loadAvailability(): Promise<Set<string> | null> {
+    setAvailabilityLoading(true);
+    setAvailabilityError(null);
+
+    try {
+      const range = getAvailabilityRange();
+      const params = new URLSearchParams(range);
+      const res = await fetch(`/api/booking?${params.toString()}`, {
+        cache: "no-store",
+      });
+      const json = (await res.json()) as BookingAvailabilityResponse;
+
+      if (!res.ok || !json.ok) {
+        const message =
+          !json.ok
+            ? json.message
+            : "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.";
+        setAvailabilityError(message);
+        return null;
+      }
+
+      setUnavailableDates(json.unavailableDates);
+      return new Set(json.unavailableDates);
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.";
+      setAvailabilityError(message);
+      return null;
+    } finally {
+      setAvailabilityLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadAvailability();
+  }, []);
+
+  useEffect(() => {
+    setSubmitError(null);
+  }, [contactState.datum]);
 
   async function handleSubmit() {
     if (!experienceState.experience) return;
     setIsSubmitting(true);
     setSubmitError(null);
 
-    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+    const latestUnavailableDates = await loadAvailability();
+    if (!latestUnavailableDates) {
+      setSubmitError(
+        "Beschikbaarheid kon niet opnieuw worden gecontroleerd. Probeer het opnieuw.",
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (contactState.datum && latestUnavailableDates.has(contactState.datum)) {
+      setSubmitError(
+        "Deze datum is net niet meer beschikbaar. Kies een andere datum.",
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
     // If no site key is configured, no widget is shown → send empty token.
     // The server will bypass verification when TURNSTILE_BYPASS_IN_DEV=true
     // or when TURNSTILE_SECRET_KEY is not set.
@@ -859,6 +1065,12 @@ export function BookingForm() {
           onChange={setContactState}
           onNext={() => goToStep(3)}
           onBack={() => goToStep(1)}
+          unavailableDates={unavailableDateSet}
+          availabilityLoading={availabilityLoading}
+          availabilityError={availabilityError}
+          onRetryAvailability={() => {
+            void loadAvailability();
+          }}
         />
       )}
       {step === 3 && (
@@ -871,6 +1083,11 @@ export function BookingForm() {
           submitError={submitError}
           turnstileToken={turnstileToken}
           onTurnstileSuccess={setTurnstileToken}
+          availabilityLoading={availabilityLoading}
+          availabilityError={availabilityError}
+          isDateUnavailable={
+            !!contactState.datum && unavailableDateSet.has(contactState.datum)
+          }
         />
       )}
     </div>
