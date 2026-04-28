@@ -15,7 +15,6 @@ const envSchema = z.object({
   // Google Calendar
   GOOGLE_SERVICE_ACCOUNT_EMAIL: z.string().email(),
   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: z.string().min(1),
-  GOOGLE_CALENDAR_ID: z.string().min(1),
   GOOGLE_BOOKED_CALENDAR_ID: z.string().min(1),
   GOOGLE_RERSERVED_CALENDAR_ID: z.string().min(1).optional(),
 });
@@ -28,6 +27,7 @@ const STRIP_IF_EMPTY: (keyof BookingEnv)[] = [
   "TURNSTILE_BYPASS_IN_DEV",
   "BOOKING_REPLY_TO",
   "BOOKING_NOTIFICATION_CC",
+  "GOOGLE_RERSERVED_CALENDAR_ID",
 ];
 
 let _env: BookingEnv | null = null;

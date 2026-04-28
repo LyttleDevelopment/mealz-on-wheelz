@@ -4,8 +4,6 @@ import { formatEuro } from "./pricing";
 import { BookingRequest } from "./schema";
 import { getExperience } from "./constants";
 
-const BLOCKING_CALENDAR_KEYS = ["GOOGLE_CALENDAR_ID", "GOOGLE_BOOKED_CALENDAR_ID"] as const;
-
 export interface CalendarConflictEvent {
   calendarId: string;
   eventId: string;
@@ -63,7 +61,14 @@ function buildTimeRange(startDate: string, endDateExclusive: string) {
 
 function getBlockingCalendarIds(): string[] {
   const env = getBookingEnv();
-  return BLOCKING_CALENDAR_KEYS.map((key) => env[key]);
+
+  return Array.from(
+    new Set(
+      [env.GOOGLE_BOOKED_CALENDAR_ID, env.GOOGLE_RERSERVED_CALENDAR_ID].filter(
+        (calendarId): calendarId is string => Boolean(calendarId),
+      ),
+    ),
+  );
 }
 
 function getCalendarClient() {
