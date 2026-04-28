@@ -203,17 +203,17 @@ export const contactInfo: ContactInfo[] = [
   {
     icon: Phone,
     label: "Telefoonnummer",
-    value: "+32 (0)9 123 45 67",
+    value: "+32 (0)499/41.03.75",
   },
   {
     icon: Mail,
     label: "E-mail",
-    value: "hallo@mealzonwheelz.be",
+    value: "mealzonwheelz-foodtruck@outlook.com",
   },
   {
     icon: Clock,
     label: "Contacttijden",
-    value: "Ma–Za: 10u – 21u\nZo: 12u – 19u",
+    value: "24/7 bereikbaar, snelle reactie binnen 24u",
   },
 ];
 
