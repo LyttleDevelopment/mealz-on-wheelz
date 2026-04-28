@@ -304,7 +304,7 @@ export async function reserveBookingDate(
       description: buildDescription(req, bookingId, estimatedTotal),
       start: { date: req.eventDate },
       end: { date: addDays(req.eventDate, 1) },
-      transparency: "transparent",
+      transparency: "opaque",
       status: "tentative",
       extendedProperties: {
         private: {
@@ -360,4 +360,3 @@ export async function reserveBookingDate(
     keptEvent: conflictsAfterCleanup[0] ?? keptEvent,
   };
 }
-
