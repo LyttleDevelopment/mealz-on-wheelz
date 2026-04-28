@@ -139,29 +139,26 @@ function compareConflicts(a: CalendarConflictEvent, b: CalendarConflictEvent) {
 }
 
 function getEventDateBounds(event: calendar_v3.Schema$Event) {
-  const startDate = event.start?.date ?? event.start?.dateTime?.slice(0, 10) ?? null;
-
-  if (!startDate) return null;
-
-  if (event.end?.date) {
-    return { startDate, endDateExclusive: event.end.date };
-  }
-
-  const endDateTime = event.end?.dateTime;
-  if (endDateTime) {
-    const endDate = endDateTime.slice(0, 10);
-    const endTime = endDateTime.match(/^\d{4}-\d{2}-\d{2}T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?/)?.slice(1);
-    const endsAtStartOfDay = endTime
-      ? endTime.every((part) => part === "00")
-      : false;
-
+  // All-day event — end.date is exclusive by Google Calendar convention
+  if (event.start?.date) {
     return {
-      startDate,
-      endDateExclusive: endsAtStartOfDay ? endDate : addDays(endDate, 1),
+      startDate: event.start.date,
+      endDateExclusive: event.end?.date ?? addDays(event.start.date, 1),
     };
   }
 
-  return { startDate, endDateExclusive: addDays(startDate, 1) };
+  // Timed event — block every calendar date the event falls on
+  const startDate = event.start?.dateTime?.slice(0, 10) ?? null;
+  if (!startDate) return null;
+
+  const endDate = event.end?.dateTime?.slice(0, 10) ?? startDate;
+
+  // Always include the end date if it differs (event crosses into that calendar day),
+  // so even a 1-minute event always blocks its start date.
+  return {
+    startDate,
+    endDateExclusive: addDays(endDate, 1),
+  };
 }
 
 function expandEventDates(
