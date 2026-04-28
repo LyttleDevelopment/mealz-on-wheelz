@@ -147,13 +147,33 @@ function getEventDateBounds(event: calendar_v3.Schema$Event) {
     };
   }
 
-  // Timed event — block only the start calendar date
+  // Timed event — block every calendar date the event falls on
   const startDate = event.start?.dateTime?.slice(0, 10) ?? null;
   if (!startDate) return null;
 
+  let endDateStr = startDate;
+
+  if (event.end?.dateTime) {
+    const end = new Date(event.end.dateTime);
+    // Move the end time back by 10 hours for logical day grouping.
+    // If an event ends at 02:00 AM or 00:00 midnight, it belongs to the previous calendar day.
+    end.setUTCHours(end.getUTCHours() - 10);
+
+    const y = end.getUTCFullYear();
+    const m = String(end.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(end.getUTCDate()).padStart(2, "0");
+    endDateStr = `${y}-${m}-${day}`;
+
+    // Safety check: if our shift pushes the end date before the start date (e.g. 1-hour event in the morning),
+    // we just fallback to startDate so we always block at least the start day.
+    if (endDateStr < startDate) {
+      endDateStr = startDate;
+    }
+  }
+
   return {
     startDate,
-    endDateExclusive: addDays(startDate, 1),
+    endDateExclusive: addDays(endDateStr, 1),
   };
 }
 
