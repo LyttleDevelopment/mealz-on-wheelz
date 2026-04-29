@@ -12,7 +12,7 @@ import styles from "./page.module.scss";
 export default function HomePage() {
   return (
     <main className={styles.page} id="main-content">
-      <div id="home" />
+      <span id="home" aria-hidden="true" />
       <Header />
       <HeroSection />
       <AboutSection />
