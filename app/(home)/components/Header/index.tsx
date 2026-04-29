@@ -98,7 +98,7 @@ export function Header() {
                 href={item.href}
                 className={styles.mobileNavLink}
                 style={{ "--i": i } as React.CSSProperties}
-                onClick={() => setMenuOpen(false)}
+                onClick={handleBrandClick}
               >
                 {item.label}
               </Link>
