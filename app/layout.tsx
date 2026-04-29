@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import localFont from 'next/font/local';
-import type {CSSProperties, ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import {TooltipProvider} from '@lyttle-development/ui';
 import './globals.scss';
 import {siteConfig} from '../site.config';
@@ -14,16 +14,6 @@ const berniertmFont = localFont({
   display: 'swap',
   weight: '400',
 });
-
-const displayFontFallback = 'Impact, "Arial Black", Haettenschweiler, sans-serif';
-const sansFontFallback = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-
-type FontCSSVariables = CSSProperties & Record<'--font-display' | '--font-sans', string>;
-
-const fallbackFontVariables: FontCSSVariables = {
-  '--font-display': displayFontFallback,
-  '--font-sans': sansFontFallback,
-};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -93,7 +83,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="nl" className={berniertmFont.variable} style={fallbackFontVariables}>
+    <html lang="nl" className={berniertmFont.variable}>
       <body>
         <a href="#main-content" className="skip-link">
           Spring naar de inhoud
