@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button, Container } from "@lyttle-development/ui";
@@ -8,6 +9,7 @@ import styles from "./index.module.scss";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const handleBrandClick = () => setMenuOpen(false);
 
   // Prevent body scroll while menu is open (both html + body for full browser coverage)
   useEffect(() => {
@@ -27,10 +29,10 @@ export function Header() {
       <header className={styles.header}>
         <Container>
           <div className={styles.headerShell}>
-            <a
-              href="#home"
+            <Link
+              href="/"
               className={styles.brand}
-              onClick={() => setMenuOpen(false)}
+              onClick={handleBrandClick}
             >
               <img
                 src="/logo.svg"
@@ -39,7 +41,7 @@ export function Header() {
                 width={100}
                 height={100}
               />
-            </a>
+            </Link>
 
             {/* Desktop right side */}
             <div className={styles.desktopRight}>
@@ -48,13 +50,19 @@ export function Header() {
                 aria-label="Primaire navigatie"
               >
                 {navigation.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    className={styles.navLink}
-                  >
-                    {item.label}
-                  </a>
+                  item.href.startsWith("/") ? (
+                    <Link key={item.href} href={item.href} className={styles.navLink}>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className={styles.navLink}
+                    >
+                      {item.label}
+                    </a>
+                  )
                 ))}
               </nav>
 
@@ -84,21 +92,33 @@ export function Header() {
       >
         <nav className={styles.mobileNav} aria-label="Mobiele navigatie">
           {navigation.map((item, i) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className={styles.mobileNavLink}
-              style={{ "--i": i } as React.CSSProperties}
-              onClick={() => {
-                setMenuOpen(false);
-                setTimeout(() => {
-                  const target = document.querySelector(item.href);
-                  if (target) target.scrollIntoView({ behavior: "smooth" });
-                }, 320);
-              }}
-            >
-              {item.label}
-            </a>
+            item.href.startsWith("/") ? (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={styles.mobileNavLink}
+                style={{ "--i": i } as React.CSSProperties}
+                onClick={handleBrandClick}
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <a
+                key={item.href}
+                href={item.href}
+                className={styles.mobileNavLink}
+                style={{ "--i": i } as React.CSSProperties}
+                onClick={() => {
+                  setMenuOpen(false);
+                  setTimeout(() => {
+                    const target = document.querySelector(item.href);
+                    if (target) target.scrollIntoView({ behavior: "smooth" });
+                  }, 320);
+                }}
+              >
+                {item.label}
+              </a>
+            )
           ))}
 
           <div

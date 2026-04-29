@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Container } from "@lyttle-development/ui";
 import { footerNavigation } from "../../data/constants";
 import styles from "./index.module.scss";
@@ -16,7 +17,7 @@ export function Footer() {
         <div className={styles.footerGrid}>
           {/* Brand column */}
           <div>
-            <a href="#home" className={styles.brand}>
+            <Link href="/" className={styles.brand}>
               <img
                 src="/logo.svg"
                 alt="Mealz on Wheelz logo"
@@ -25,7 +26,7 @@ export function Footer() {
                 height={40}
               />
               <span className={styles.brandText}>Mealz on Wheelz</span>
-            </a>
+            </Link>
             <p className={styles.tagline}>
               Bringing gourmet street food to your neighborhood and events since 2024.
             </p>
@@ -34,15 +35,21 @@ export function Footer() {
           {/* Quick Links column */}
           <div>
             <h3 className={styles.colTitle}>Quick Links</h3>
-            <ul className={styles.linkList}>
-              {footerNavigation.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href} className={styles.link}>
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+              <ul className={styles.linkList}>
+                {footerNavigation.map((item) => (
+                  <li key={item.href}>
+                    {item.href.startsWith("/") ? (
+                      <Link href={item.href} className={styles.link}>
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <a href={item.href} className={styles.link}>
+                        {item.label}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
           </div>
 
           {/* Follow us column */}

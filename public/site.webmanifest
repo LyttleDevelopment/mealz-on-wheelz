@@ -1,6 +1,10 @@
 {
-  "name": "Mealz On Wheelz",
+  "name": "Mealz on Wheelz",
   "short_name": "MOW",
+  "description": "Foodtruck en catering voor pasta, streetfood, BBQ en dessertbuffetten in Oost-Vlaanderen.",
+  "lang": "nl-BE",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
