@@ -1,0 +1,43 @@
+export const siteConfig = {
+  name: 'Mealz on Wheelz',
+  shortName: 'MOW',
+  url: 'https://www.mealzonwheelz.be',
+  title: 'Mealz on Wheelz | Foodtruck & catering in Oost-Vlaanderen',
+  description:
+    "Mealz on Wheelz is een foodtruck uit Moerbeke-Waas voor pasta's, streetfood, BBQ, dessertbuffetten en catering op privéfeesten, bedrijfsevents en festivals in Oost-Vlaanderen.",
+  keywords: [
+    'Mealz on Wheelz',
+    'Mealz on Wheelz foodtruck',
+    'foodtruck Moerbeke-Waas',
+    'foodtruck Oost-Vlaanderen',
+    'catering Oost-Vlaanderen',
+    'event catering',
+    'streetfood catering',
+    'BBQ catering',
+    'dessertbuffet',
+    'pasta foodtruck',
+    'festival foodtruck',
+    'privéfeest catering',
+    'bedrijfsevent catering',
+  ],
+  ogImage: '/media/truck-kitchen.webp',
+  legacyRedirects: [
+    '/onze-diensten',
+    '/contact-of-reserveren',
+    '/foto-galerij',
+    '/alles-voor-uw-tuinfeest',
+    '/kalender',
+  ],
+  business: {
+    email: 'mealzonwheelz-foodtruck@outlook.com',
+    phone: '+32499410375',
+    areaServed: 'Oost-Vlaanderen',
+    locality: 'Moerbeke-Waas',
+    country: 'BE',
+    sameAs: [
+      'https://www.facebook.com/people/Mealzonwheelz/61559672413790/',
+      'https://www.instagram.com/mealzonwheelzfoodtruck',
+      'https://www.tiktok.com/@mealzonwheelzfoodtruck',
+    ],
+  },
+} as const;

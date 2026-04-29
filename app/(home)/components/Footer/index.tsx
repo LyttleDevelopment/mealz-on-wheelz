@@ -16,7 +16,7 @@ export function Footer() {
         <div className={styles.footerGrid}>
           {/* Brand column */}
           <div>
-            <a href="#home" className={styles.brand}>
+            <a href="/" className={styles.brand}>
               <img
                 src="/logo.svg"
                 alt="Mealz on Wheelz logo"

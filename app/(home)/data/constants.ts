@@ -10,7 +10,7 @@ import {
 import type { ContactInfo, Experience, GalleryTile, NavigationItem, Service } from "./types";
 
 export const navigation: NavigationItem[] = [
-  { label: "Home", href: "#home" },
+  { label: "Home", href: "/" },
   { label: "Over ons", href: "#over-ons" },
   { label: "Menu", href: "#menu" },
   { label: "Diensten", href: "#diensten" },
@@ -19,11 +19,11 @@ export const navigation: NavigationItem[] = [
 ];
 
 export const footerNavigation: NavigationItem[] = [
-  { label: "Home", href: "#home" },
+  { label: "Home", href: "/" },
   { label: "Over ons", href: "#over-ons" },
   { label: "Menu", href: "#menu" },
   { label: "Diensten", href: "#diensten" },
-  { label: "Algemene voorwaarden", href: "#algemene-voorwaarden" },
+  { label: "Algemene voorwaarden", href: "/" },
 ];
 
 export const experiences: Experience[] = [
@@ -216,4 +216,3 @@ export const contactInfo: ContactInfo[] = [
     value: "24/7 bereikbaar, snelle reactie binnen 24u",
   },
 ];
-
