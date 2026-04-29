@@ -15,10 +15,12 @@ const berniertmFont = localFont({
   weight: '400',
 });
 
-const fallbackFontVariables: CSSProperties = {
-  '--font-display': '"Arial Narrow", Impact, Haettenschweiler, sans-serif',
+type FontVariableStyle = CSSProperties & Record<'--font-display' | '--font-sans', string>;
+
+const fallbackFontVariables: FontVariableStyle = {
+  '--font-display': 'Impact, "Arial Black", Haettenschweiler, sans-serif',
   '--font-sans': 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-} as CSSProperties;
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
