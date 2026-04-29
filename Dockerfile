@@ -10,6 +10,7 @@ COPY tsconfig.json ./
 COPY app ./app
 COPY public ./public
 COPY next.config.* ./
+COPY site.config.* ./
 COPY eslint.config.* ./
 COPY packages/design-framework ./packages/design-framework
 
