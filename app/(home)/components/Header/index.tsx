@@ -28,7 +28,11 @@ export function Header() {
       <header className={styles.header}>
         <Container>
           <div className={styles.headerShell}>
-            <Link href="/" className={styles.brand}>
+            <Link
+              href="/"
+              className={styles.brand}
+              onClick={menuOpen ? () => setMenuOpen(false) : undefined}
+            >
               <img
                 src="/logo.svg"
                 alt="Mealz on Wheelz logo"
