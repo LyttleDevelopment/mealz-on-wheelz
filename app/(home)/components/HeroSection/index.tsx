@@ -1,5 +1,15 @@
+"use client";
+
 import { Button, Heading, Text } from "@lyttle-development/ui";
 import styles from "./index.module.scss";
+
+function scrollTo(href: string) {
+  return (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) target.scrollIntoView({ behavior: "smooth" });
+  };
+}
 
 export function HeroSection() {
   return (
@@ -15,10 +25,10 @@ export function HeroSection() {
         </Text>
         <div className={styles.heroActions}>
           <Button asChild variant="default" size="lg">
-            <a href="#reserveren">Boek ons</a>
+            <a href="#reserveren" onClick={scrollTo("#reserveren")}>Boek ons</a>
           </Button>
           <Button asChild variant="secondary" size="lg">
-            <a href="#menu">Ontdek menu</a>
+            <a href="#menu" onClick={scrollTo("#menu")}>Ontdek menu</a>
           </Button>
         </div>
       </article>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button, Container } from "@lyttle-development/ui";
 import { navigation } from "../../data/constants";
@@ -9,7 +10,29 @@ import styles from "./index.module.scss";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const handleBrandClick = () => setMenuOpen(false);
+  const pathname = usePathname();
+
+  const handleBrandClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setMenuOpen(false);
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: "smooth" });
+    } else if (href === "/" && pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   // Prevent body scroll while menu is open (both html + body for full browser coverage)
   useEffect(() => {
@@ -50,24 +73,19 @@ export function Header() {
                 aria-label="Primaire navigatie"
               >
                 {navigation.map((item) => (
-                  item.href.startsWith("/") ? (
-                    <Link key={item.href} href={item.href} className={styles.navLink}>
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      className={styles.navLink}
-                    >
-                      {item.label}
-                    </a>
-                  )
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className={styles.navLink}
+                    onClick={(e) => handleNavClick(e, item.href)}
+                  >
+                    {item.label}
+                  </a>
                 ))}
               </nav>
 
               <Button asChild variant="secondary" size="lg">
-                <a href="#contact">Contacteer ons</a>
+                <a href="#contact" onClick={(e) => handleNavClick(e, "#contact")}>Contacteer ons</a>
               </Button>
             </div>
 
@@ -92,41 +110,44 @@ export function Header() {
       >
         <nav className={styles.mobileNav} aria-label="Mobiele navigatie">
           {navigation.map((item, i) => (
-            item.href.startsWith("/") ? (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={styles.mobileNavLink}
-                style={{ "--i": i } as React.CSSProperties}
-                onClick={handleBrandClick}
-              >
-                {item.label}
-              </Link>
-            ) : (
               <a
                 key={item.href}
                 href={item.href}
                 className={styles.mobileNavLink}
                 style={{ "--i": i } as React.CSSProperties}
-                onClick={() => {
+                onClick={(e) => {
                   setMenuOpen(false);
-                  setTimeout(() => {
-                    const target = document.querySelector(item.href);
-                    if (target) target.scrollIntoView({ behavior: "smooth" });
-                  }, 320);
+                  if (item.href.startsWith("#")) {
+                    e.preventDefault();
+                    setTimeout(() => {
+                      const target = document.querySelector(item.href);
+                      if (target) target.scrollIntoView({ behavior: "smooth" });
+                    }, 320);
+                  } else if (item.href === "/" && pathname === "/") {
+                    e.preventDefault();
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }, 320);
+                  }
                 }}
               >
                 {item.label}
               </a>
-            )
-          ))}
+            ))}
 
           <div
             className={styles.mobileNavCta}
             style={{ "--i": navigation.length } as React.CSSProperties}
           >
             <Button asChild variant="secondary" size="lg">
-              <a href="#contact" onClick={() => setMenuOpen(false)}>
+              <a href="#contact" onClick={(e) => {
+                  e.preventDefault();
+                  setMenuOpen(false);
+                  setTimeout(() => {
+                    const target = document.querySelector("#contact");
+                    if (target) target.scrollIntoView({ behavior: "smooth" });
+                  }, 320);
+                }}>
                 Contacteer ons
               </a>
             </Button>
