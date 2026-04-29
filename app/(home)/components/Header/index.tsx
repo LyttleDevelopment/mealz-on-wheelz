@@ -9,6 +9,11 @@ import styles from "./index.module.scss";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const handleBrandClick = () => {
+    if (menuOpen) {
+      setMenuOpen(false);
+    }
+  };
 
   // Prevent body scroll while menu is open (both html + body for full browser coverage)
   useEffect(() => {
@@ -31,7 +36,7 @@ export function Header() {
             <Link
               href="/"
               className={styles.brand}
-              onClick={menuOpen ? () => setMenuOpen(false) : undefined}
+              onClick={handleBrandClick}
             >
               <img
                 src="/logo.svg"
