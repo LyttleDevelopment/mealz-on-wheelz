@@ -15,14 +15,14 @@ const berniertmFont = localFont({
   weight: '400',
 });
 
-const fontDisplayFallback = 'Impact, "Arial Black", Haettenschweiler, sans-serif';
-const fontSansFallback = 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+const displayFontFallback = 'Impact, "Arial Black", Haettenschweiler, sans-serif';
+const sansFontFallback = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 
 type FontCSSVariables = CSSProperties & Record<'--font-display' | '--font-sans', string>;
 
 const fallbackFontVariables: FontCSSVariables = {
-  '--font-display': fontDisplayFallback,
-  '--font-sans': fontSansFallback,
+  '--font-display': displayFontFallback,
+  '--font-sans': sansFontFallback,
 };
 
 export const metadata: Metadata = {
