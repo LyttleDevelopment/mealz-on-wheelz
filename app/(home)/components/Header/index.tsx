@@ -106,7 +106,6 @@ export function Header() {
                 onClick={() => {
                   setMenuOpen(false);
                   setTimeout(() => {
-                    if (!item.href.startsWith("#")) return;
                     const target = document.querySelector(item.href);
                     if (target) target.scrollIntoView({ behavior: "smooth" });
                   }, 320);

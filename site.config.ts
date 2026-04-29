@@ -27,7 +27,6 @@ export const siteConfig = {
     '/foto-galerij',
     '/alles-voor-uw-tuinfeest',
     '/kalender',
-    '/algemene-voorwaarden',
   ],
   business: {
     email: 'mealzonwheelz-foodtruck@outlook.com',
