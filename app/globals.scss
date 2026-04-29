@@ -1,6 +1,11 @@
 @use "../packages/design-framework/packages/ui/src/styles/globals.scss";
 @use "./themes";
 
+:root {
+  --font-display: Impact, "Arial Black", Haettenschweiler, sans-serif;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
 html {
   background: var(--background);
 }
@@ -33,4 +38,3 @@ img {
 .skip-link:focus-visible {
   transform: translateY(0);
 }
-

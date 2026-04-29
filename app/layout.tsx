@@ -1,23 +1,9 @@
 import type {Metadata} from 'next';
-import {Bebas_Neue, Inter} from 'next/font/google';
 import localFont from 'next/font/local';
 import type {ReactNode} from 'react';
 import {TooltipProvider} from '@lyttle-development/ui';
 import './globals.scss';
 import {siteConfig} from '../site.config';
-
-const bodyFont = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
-const displayFont = Bebas_Neue({
-  subsets: ['latin'],
-  variable: '--font-display',
-  weight: '400',
-  display: 'swap',
-});
 
 const berniertmFont = localFont({
   src: [
@@ -97,7 +83,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="nl" className={`${bodyFont.variable} ${displayFont.variable} ${berniertmFont.variable}`}>
+    <html lang="nl" className={berniertmFont.variable}>
       <body>
         <a href="#main-content" className="skip-link">
           Spring naar de inhoud
