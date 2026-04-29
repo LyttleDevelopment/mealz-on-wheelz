@@ -1,23 +1,9 @@
 import type {Metadata} from 'next';
-import {Bebas_Neue, Inter} from 'next/font/google';
 import localFont from 'next/font/local';
-import type {ReactNode} from 'react';
+import type {CSSProperties, ReactNode} from 'react';
 import {TooltipProvider} from '@lyttle-development/ui';
 import './globals.scss';
 import {siteConfig} from '../site.config';
-
-const bodyFont = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
-const displayFont = Bebas_Neue({
-  subsets: ['latin'],
-  variable: '--font-display',
-  weight: '400',
-  display: 'swap',
-});
 
 const berniertmFont = localFont({
   src: [
@@ -28,6 +14,11 @@ const berniertmFont = localFont({
   display: 'swap',
   weight: '400',
 });
+
+const fallbackFontVariables: CSSProperties = {
+  '--font-display': '"Arial Narrow", Impact, Haettenschweiler, sans-serif',
+  '--font-sans': 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+} as CSSProperties;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -97,7 +88,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="nl" className={`${bodyFont.variable} ${displayFont.variable} ${berniertmFont.variable}`}>
+    <html lang="nl" className={berniertmFont.variable} style={fallbackFontVariables}>
       <body>
         <a href="#main-content" className="skip-link">
           Spring naar de inhoud
