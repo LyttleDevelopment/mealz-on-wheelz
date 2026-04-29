@@ -23,7 +23,7 @@ export const footerNavigation: NavigationItem[] = [
   { label: "Over ons", href: "#over-ons" },
   { label: "Menu", href: "#menu" },
   { label: "Diensten", href: "#diensten" },
-  { label: "Algemene voorwaarden", href: "/" },
+  { label: "Algemene voorwaarden", href: "/algemene-voorwaarden" },
 ];
 
 export const experiences: Experience[] = [

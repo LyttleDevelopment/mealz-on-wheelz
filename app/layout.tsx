@@ -137,7 +137,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{__html: JSON.stringify(structuredData)}}
         />
-        <a href="#home" className="skip-link">
+        <a href="#main-content" className="skip-link">
           Spring naar de inhoud
         </a>
         <TooltipProvider>{children}</TooltipProvider>
