@@ -4,6 +4,7 @@ import type {ReactNode} from 'react';
 import {TooltipProvider} from '@lyttle-development/ui';
 import './globals.scss';
 import {siteConfig} from '../site.config';
+import {PageLoader} from './components/PageLoader';
 
 const berniertmFont = localFont({
   src: [
@@ -85,37 +86,7 @@ export default function RootLayout({
   return (
     <html lang="nl" className={berniertmFont.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>
-        {/* Full-page loader — visible by default, hidden via JS on window.load */}
-        <div id="page-loader" aria-hidden="true" role="presentation">
-          <div className="page-loader__inner">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo.svg"
-              alt=""
-              className="page-loader__logo"
-              width="136"
-              height="110"
-            />
-            <div className="page-loader__dots">
-              <span />
-              <span />
-              <span />
-            </div>
-          </div>
-        </div>
-
-        {/* Inline script — runs synchronously, sets up the hide-on-load handler */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var b=document.body,l=document.getElementById('page-loader');if(!l)return;b.classList.add('page-loading');function hide(){l.classList.add('page-loader--hidden');b.classList.remove('page-loading');setTimeout(function(){l.style.display='none';},700);}if(document.readyState==='complete'){hide();}else{window.addEventListener('load',hide);}})();`,
-          }}
-        />
-
-        {/* If JS is disabled, hide the loader immediately so content is accessible */}
-        <noscript>
-          <style>{`#page-loader{display:none!important}`}</style>
-        </noscript>
-
+        <PageLoader />
         <a href="#main-content" className="skip-link">
           Spring naar de inhoud
         </a>
