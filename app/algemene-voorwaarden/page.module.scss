@@ -29,10 +29,10 @@
   display: grid;
   gap: 1rem;
   padding: clamp(1.4rem, 3vw, 2rem);
-  border: 1px solid rgb(31 58 59 / 0.1);
+  border: 1px solid rgb(245 240 235 / 0.1);
   border-radius: 1.75rem;
-  background: linear-gradient(160deg, rgb(255 255 255 / 0.94), rgb(245 240 235 / 0.92));
-  box-shadow: 0 18px 48px rgb(0 0 0 / 0.08);
+  background: linear-gradient(160deg, rgb(41 71 72 / 0.7), rgb(31 58 59 / 0.85));
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.2);
 }
 
 .eyebrow {
@@ -70,8 +70,8 @@
 .metaCard {
   padding: 1rem;
   border-radius: 1rem;
-  background: rgb(31 58 59 / 0.05);
-  border: 1px solid rgb(31 58 59 / 0.08);
+  background: rgb(245 240 235 / 0.07);
+  border: 1px solid rgb(245 240 235 / 0.1);
 }
 
 .metaCard strong,
@@ -96,10 +96,10 @@
 
 .article,
 .sidebarCard {
-  border: 1px solid rgb(31 58 59 / 0.08);
+  border: 1px solid rgb(245 240 235 / 0.1);
   border-radius: 1.5rem;
-  background: rgb(255 255 255 / 0.9);
-  box-shadow: 0 12px 32px rgb(0 0 0 / 0.05);
+  background: rgb(41 71 72 / 0.5);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.15);
 }
 
 .article {
@@ -115,7 +115,7 @@
   display: grid;
   gap: 0.75rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgb(31 58 59 / 0.08);
+  border-bottom: 1px solid rgb(245 240 235 / 0.08);
 }
 
 .section:last-child {
