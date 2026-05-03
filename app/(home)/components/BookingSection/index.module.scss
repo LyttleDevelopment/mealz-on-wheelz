@@ -513,6 +513,26 @@
   gap: 1rem;
 }
 
+/* ─── 24h time selector ──────────────────────────────────────────────────── */
+
+.timeSelectRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  select {
+    flex: 1;
+  }
+}
+
+.timeSeparator {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  line-height: 1;
+  user-select: none;
+}
+
 .selectedDateCard {
   display: flex;
   flex-direction: column;

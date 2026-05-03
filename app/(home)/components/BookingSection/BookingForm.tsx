@@ -140,6 +140,11 @@ function getBookingDayAriaLabel(
   return `${label}, beschikbaar`;
 }
 
+/** Returns true when the viewport is narrower than 1024 px (mobile/tablet). */
+function isMobileViewport() {
+  return typeof window !== "undefined" && window.innerWidth < 1024;
+}
+
 /** Strip non-digit characters and check length is plausible for BE/EU numbers */
 function isValidPhone(v: string) {
   const digits = v.replace(/\D/g, "");
@@ -282,17 +287,19 @@ function ExperienceStep({
   const atLeastOneSelected =
     !hasOptions || state.includeApero || state.includeMain;
 
-  // Scroll to options when an experience is first selected
+  // Scroll to options when an experience is first selected (mobile only)
   const prevExpId = useRef<string | null>(null);
   useEffect(() => {
     if (exp && exp.id !== prevExpId.current) {
       prevExpId.current = exp.id;
-      setTimeout(() => {
-        summaryRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 50);
+      if (isMobileViewport()) {
+        setTimeout(() => {
+          optionsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 50);
+      }
     }
   }, [exp]);
 
@@ -665,12 +672,14 @@ function ContactStep({
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
-      setTimeout(() => {
-        formRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 50);
+      if (isMobileViewport()) {
+        setTimeout(() => {
+          formRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }, 50);
+      }
       return;
     }
     onNext();
@@ -864,13 +873,57 @@ function ContactStep({
         <div className={styles.scheduleMeta}>
           <div className={styles.formField}>
             <label className={styles.formLabel}>Gewenst tijdstip *</label>
-            <Input
-              type="time"
-              value={state.tijdstip}
-              onChange={set("tijdstip")}
-              data-invalid={errors.tijdstip ? true : undefined}
-              required
-            />
+            <div className={styles.timeSelectRow}>
+              <NativeSelect
+                value={state.tijdstip ? state.tijdstip.split(":")[0] : ""}
+                onChange={(e) => {
+                  const hour = e.target.value;
+                  const minute = state.tijdstip
+                    ? state.tijdstip.split(":")[1] ?? "00"
+                    : "00";
+                  const next = { ...state, tijdstip: hour ? `${hour}:${minute}` : "" };
+                  onChange(next);
+                  if (touched && errors.tijdstip) {
+                    setErrors((prev) => ({ ...prev, tijdstip: undefined }));
+                  }
+                }}
+                data-invalid={errors.tijdstip ? true : undefined}
+                aria-label="Uur"
+              >
+                <option value="">UU</option>
+                {Array.from({ length: 24 }, (_, i) =>
+                  String(i).padStart(2, "0"),
+                ).map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </NativeSelect>
+              <span className={styles.timeSeparator}>:</span>
+              <NativeSelect
+                value={state.tijdstip ? state.tijdstip.split(":")[1] ?? "" : ""}
+                onChange={(e) => {
+                  const minute = e.target.value;
+                  const hour = state.tijdstip
+                    ? state.tijdstip.split(":")[0] ?? ""
+                    : "";
+                  const next = { ...state, tijdstip: hour ? `${hour}:${minute}` : "" };
+                  onChange(next);
+                  if (touched && errors.tijdstip) {
+                    setErrors((prev) => ({ ...prev, tijdstip: undefined }));
+                  }
+                }}
+                data-invalid={errors.tijdstip ? true : undefined}
+                aria-label="Minuten"
+              >
+                <option value="">MM</option>
+                {["00", "15", "30", "45"].map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </NativeSelect>
+            </div>
             <FieldError msg={errors.tijdstip} />
           </div>
 
@@ -1197,9 +1250,11 @@ export function BookingForm() {
 
   function goToStep(next: 1 | 2 | 3 | 4) {
     setStep(next);
-    setTimeout(() => {
-      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
+    if (isMobileViewport()) {
+      setTimeout(() => {
+        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
   }
 
   const [experienceState, setExperienceState] = useState<ExperienceState>({
