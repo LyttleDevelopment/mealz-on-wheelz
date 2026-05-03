@@ -4,7 +4,7 @@ import {
   experiences,
   minGuests,
   startupCost,
-} from "../../../data/constants";
+} from "@data/constants";
 
 export function formatEuro(amount: number): string {
   return new Intl.NumberFormat("nl-BE", {

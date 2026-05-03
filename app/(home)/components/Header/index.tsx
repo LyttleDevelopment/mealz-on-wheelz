@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button, Container } from "@lyttle-development/ui";
-import { navigation } from "../../../../data/constants";
+import { navigation } from "@data/constants";
 import styles from "./index.module.scss";
 
 export function Header() {

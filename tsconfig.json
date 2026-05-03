@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": ["./app/*"]
+      "@/*": ["./app/*"],
+      "@data/*": ["./data/*"]
     },
     "noEmit": true,
     "plugins": [

@@ -1,6 +1,6 @@
 // ─── Booking constants – single source of truth for UI and server ────────────
 
-import { defaultMaxGuests, ExperienceId, experiences } from "../../../data/constants";
+import { defaultMaxGuests, ExperienceId, experiences } from "@data/constants";
 
 export interface ExperienceDefinition {
   id: ExperienceId;

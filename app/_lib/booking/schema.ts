@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getExperience, getExperienceMaxGuests } from "./constants";
-import { eventTypes, expirienceIds, minGuests } from "../../../data/constants";
+import { eventTypes, expirienceIds, minGuests } from "@data/constants";
 
 // ─── Request schema ───────────────────────────────────────────────────────────
 

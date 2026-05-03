@@ -15,7 +15,7 @@ import {
   removeBookedCalendarEvent,
   reserveBookingDate,
 } from "@/_lib/booking/calendar";
-import { minSubmitTime } from "../../../data/constants";
+import { minSubmitTime } from "@data/constants";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
