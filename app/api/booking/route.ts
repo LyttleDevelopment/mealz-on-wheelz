@@ -15,7 +15,7 @@ import {
   removeBookedCalendarEvent,
   reserveBookingDate,
 } from "@/_lib/booking/calendar";
-import { MIN_SUBMIT_MS } from "@/_lib/booking/constants";
+import { minSubmitTime } from "@data/constants";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -53,7 +53,8 @@ export async function GET(req: NextRequest) {
   today.setUTCHours(0, 0, 0, 0);
 
   const from = url.searchParams.get("from") ?? formatDateString(today);
-  const to = url.searchParams.get("to") ?? formatDateString(addDays(today, 730));
+  const to =
+    url.searchParams.get("to") ?? formatDateString(addDays(today, 730));
 
   if (!DATE_RE.test(from) || !DATE_RE.test(to) || from > to) {
     return NextResponse.json(
@@ -78,7 +79,8 @@ export async function GET(req: NextRequest) {
       {
         ok: false,
         code: "availability_check_failed",
-        message: "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.",
+        message:
+          "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.",
       },
       { status: 503, headers: noStoreHeaders() },
     );
@@ -106,7 +108,12 @@ export async function POST(req: NextRequest) {
       fieldErrors[key] = issue.message;
     }
     return NextResponse.json(
-      { ok: false, code: "validation_error", message: "Validatiefout.", fieldErrors },
+      {
+        ok: false,
+        code: "validation_error",
+        message: "Validatiefout.",
+        fieldErrors,
+      },
       { status: 422 },
     );
   }
@@ -117,13 +124,19 @@ export async function POST(req: NextRequest) {
   // Already enforced via zod (max length 0), but double-check
   if (data.website !== "") {
     // Return fake success so bots learn nothing
-    return NextResponse.json({ ok: true, bookingId: randomUUID(), message: "Ontvangen." }, { status: 201 });
+    return NextResponse.json(
+      { ok: true, bookingId: randomUUID(), message: "Ontvangen." },
+      { status: 201 },
+    );
   }
 
   // ─── Timing check ────────────────────────────────────────────────────────
   const elapsed = Date.now() - data.startedAt;
-  if (elapsed < MIN_SUBMIT_MS) {
-    return NextResponse.json({ ok: true, bookingId: randomUUID(), message: "Ontvangen." }, { status: 201 });
+  if (elapsed < minSubmitTime) {
+    return NextResponse.json(
+      { ok: true, bookingId: randomUUID(), message: "Ontvangen." },
+      { status: 201 },
+    );
   }
 
   // ─── Rate limiting ───────────────────────────────────────────────────────
@@ -131,22 +144,38 @@ export async function POST(req: NextRequest) {
   const rateResult = await checkRateLimit(ip, data.email);
   if (rateResult.limited) {
     return NextResponse.json(
-      { ok: false, code: "rate_limited", message: "Te veel aanvragen. Probeer het later opnieuw." },
+      {
+        ok: false,
+        code: "rate_limited",
+        message: "Te veel aanvragen. Probeer het later opnieuw.",
+      },
       { status: 429 },
     );
   }
 
   // ─── Turnstile verification ──────────────────────────────────────────────
-  const turnstileOk = await verifyTurnstile(data.turnstileToken, ip).catch(() => false);
+  const turnstileOk = await verifyTurnstile(data.turnstileToken, ip).catch(
+    () => false,
+  );
   if (!turnstileOk) {
     return NextResponse.json(
-      { ok: false, code: "spam_rejected", message: "Verificatie mislukt. Probeer het opnieuw." },
+      {
+        ok: false,
+        code: "spam_rejected",
+        message: "Verificatie mislukt. Probeer het opnieuw.",
+      },
       { status: 429 },
     );
   }
 
   // ─── Recalculate pricing server-side ─────────────────────────────────────
-  const pricing = calcPricing(data.experienceId, data.includeApero, data.includeMain, data.guestCount);
+  const pricing = calcPricing(
+    data.experienceId,
+    data.includeApero,
+    data.includeMain,
+    data.guestCount,
+    data.mainOptionId,
+  );
 
   const bookingId = randomUUID();
   const warnings: BookingWarning[] = [];
@@ -154,7 +183,11 @@ export async function POST(req: NextRequest) {
 
   // ─── Reserve date in Google Calendar (hard failure) ──────────────────────
   try {
-    const reservation = await reserveBookingDate(data, bookingId, pricing.total);
+    const reservation = await reserveBookingDate(
+      data,
+      bookingId,
+      pricing.total,
+    );
 
     if (!reservation.ok) {
       const reservationReason =
@@ -169,13 +202,19 @@ export async function POST(req: NextRequest) {
             reservation.keptEvent,
           );
         } catch (err) {
-          console.warn("[booking] Conflict notification email failed", { bookingId, err });
+          console.warn("[booking] Conflict notification email failed", {
+            bookingId,
+            err,
+          });
         }
 
         try {
           await sendCustomerBookingFailureEmail(data);
         } catch (err) {
-          console.warn("[booking] Customer failure email failed", { bookingId, err });
+          console.warn("[booking] Customer failure email failed", {
+            bookingId,
+            err,
+          });
         }
       }
 
@@ -183,7 +222,8 @@ export async function POST(req: NextRequest) {
         {
           ok: false,
           code: "date_unavailable",
-          message: "Deze datum is net niet meer beschikbaar. Kies een andere datum.",
+          message:
+            "Deze datum is net niet meer beschikbaar. Kies een andere datum.",
         },
         { status: 409, headers: noStoreHeaders() },
       );
@@ -196,7 +236,8 @@ export async function POST(req: NextRequest) {
       {
         ok: false,
         code: "availability_check_failed",
-        message: "De beschikbaarheid kon niet bevestigd worden. Probeer het opnieuw.",
+        message:
+          "De beschikbaarheid kon niet bevestigd worden. Probeer het opnieuw.",
       },
       { status: 503, headers: noStoreHeaders() },
     );
@@ -221,7 +262,12 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { ok: false, code: "booking_delivery_failed", message: "Er is een fout opgetreden. Probeer het opnieuw of neem contact met ons op." },
+      {
+        ok: false,
+        code: "booking_delivery_failed",
+        message:
+          "Er is een fout opgetreden. Probeer het opnieuw of neem contact met ons op.",
+      },
       { status: 502, headers: noStoreHeaders() },
     );
   }
@@ -238,10 +284,10 @@ export async function POST(req: NextRequest) {
     {
       ok: true,
       bookingId,
-      message: "Uw aanvraag is ontvangen. Wij nemen binnen 24 uur contact met u op.",
+      message:
+        "Uw aanvraag is ontvangen. Wij nemen binnen 24 uur contact met u op.",
       ...(warnings.length > 0 ? { warnings } : {}),
     },
     { status: 201, headers: noStoreHeaders() },
   );
 }
-

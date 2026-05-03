@@ -1,0 +1,49 @@
+name: Deploy to Portainer
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Verify submodule contents
+        run: |
+          ls -la packages
+          ls -la packages/design-framework
+          ls -la packages/design-framework/packages/ui
+          test -f packages/design-framework/tsconfig.base.json
+          test -f packages/design-framework/packages/ui/package.json
+          test -f packages/design-framework/packages/ui/src/styles/globals.scss
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build API Docker image
+        run: docker build --network=host -t ghcr.io/lyttledevelopment/mealz-on-weelz:dev -f Dockerfile .
+
+      - name: Push API Docker image to GitHub Container Registry
+        run: docker push ghcr.io/lyttledevelopment/mealz-on-weelz:dev
+
+  trigger-portainer-webhook:
+    name: Trigger Portainer Webhook
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    steps:
+      - name: Call Portainer Webhook
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.PORTAINER_WEBHOOK_URL_DEV }}
+          method: POST

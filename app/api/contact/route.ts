@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { contactRequestSchema, ContactApiResponse } from "@/_lib/contact/schema";
+import {
+  ContactApiResponse,
+  contactRequestSchema,
+} from "@/_lib/contact/schema";
 import { verifyTurnstile } from "@/_lib/booking/turnstile";
 import { checkRateLimit } from "@/_lib/booking/rate-limit";
-import { sendInternalContactEmail, sendCustomerContactAcknowledgment } from "@/_lib/contact/email";
-import { MIN_SUBMIT_MS } from "@/_lib/booking/constants";
+import {
+  sendCustomerContactAcknowledgment,
+  sendInternalContactEmail,
+} from "@/_lib/contact/email";
+import { minSubmitTime } from "@data/constants";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -36,7 +42,12 @@ export async function POST(req: NextRequest) {
       fieldErrors[issue.path.join(".")] = issue.message;
     }
     return NextResponse.json<ContactApiResponse>(
-      { ok: false, code: "validation_error", message: "Validatiefout.", fieldErrors },
+      {
+        ok: false,
+        code: "validation_error",
+        message: "Validatiefout.",
+        fieldErrors,
+      },
       { status: 422 },
     );
   }
@@ -45,13 +56,19 @@ export async function POST(req: NextRequest) {
 
   // ─── Honeypot ──────────────────────────────────────────────────────────────
   if (data.website !== "") {
-    return NextResponse.json<ContactApiResponse>({ ok: true, message: "Ontvangen." }, { status: 201 });
+    return NextResponse.json<ContactApiResponse>(
+      { ok: true, message: "Ontvangen." },
+      { status: 201 },
+    );
   }
 
   // ─── Timing check ──────────────────────────────────────────────────────────
   const elapsed = Date.now() - data.startedAt;
-  if (elapsed < MIN_SUBMIT_MS) {
-    return NextResponse.json<ContactApiResponse>({ ok: true, message: "Ontvangen." }, { status: 201 });
+  if (elapsed < minSubmitTime) {
+    return NextResponse.json<ContactApiResponse>(
+      { ok: true, message: "Ontvangen." },
+      { status: 201 },
+    );
   }
 
   // ─── Rate limiting ─────────────────────────────────────────────────────────
@@ -59,16 +76,26 @@ export async function POST(req: NextRequest) {
   const rateResult = await checkRateLimit(ip, data.email);
   if (rateResult.limited) {
     return NextResponse.json<ContactApiResponse>(
-      { ok: false, code: "rate_limited", message: "Te veel aanvragen. Probeer het later opnieuw." },
+      {
+        ok: false,
+        code: "rate_limited",
+        message: "Te veel aanvragen. Probeer het later opnieuw.",
+      },
       { status: 429 },
     );
   }
 
   // ─── Turnstile verification ────────────────────────────────────────────────
-  const turnstileOk = await verifyTurnstile(data.turnstileToken, ip).catch(() => false);
+  const turnstileOk = await verifyTurnstile(data.turnstileToken, ip).catch(
+    () => false,
+  );
   if (!turnstileOk) {
     return NextResponse.json<ContactApiResponse>(
-      { ok: false, code: "spam_rejected", message: "Verificatie mislukt. Probeer het opnieuw." },
+      {
+        ok: false,
+        code: "spam_rejected",
+        message: "Verificatie mislukt. Probeer het opnieuw.",
+      },
       { status: 429 },
     );
   }
@@ -82,7 +109,8 @@ export async function POST(req: NextRequest) {
       {
         ok: false,
         code: "delivery_failed",
-        message: "Er is een fout opgetreden. Probeer het opnieuw of neem rechtstreeks contact met ons op.",
+        message:
+          "Er is een fout opgetreden. Probeer het opnieuw of neem rechtstreeks contact met ons op.",
       },
       { status: 502 },
     );
@@ -97,8 +125,11 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json<ContactApiResponse>(
-    { ok: true, message: "Uw bericht is ontvangen. Wij nemen zo snel mogelijk contact met u op." },
+    {
+      ok: true,
+      message:
+        "Uw bericht is ontvangen. Wij nemen zo snel mogelijk contact met u op.",
+    },
     { status: 201 },
   );
 }
-

@@ -2,9 +2,9 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@lyttle-development/ui";
-import { MIN_GUESTS, STARTUP_COST } from "@/_lib/booking/constants";
-import { experiences } from "../../data/constants";
-import type { Experience } from "../../data/types";
+import { getExperienceTabSections } from "@/_lib/booking/constants";
+import { experiences, minGuests, startupCost } from "@data/constants";
+import type { Experience } from "@data/types";
 import { SectionHeading } from "../SectionHeading";
 import styles from "./index.module.scss";
 
@@ -55,7 +55,7 @@ export function FormulasSection() {
             Klik op een experience voor meer info
           </p>
           <p className={styles.metaInfo}>
-            Min. {MIN_GUESTS} pers. · €{STARTUP_COST} opstartkost
+            Min. {minGuests} pers. · €{startupCost} opstartkost
           </p>
         </div>
 
@@ -141,21 +141,42 @@ export function FormulasSection() {
               <p className={styles.sectionLabel}>{activeTab.label}</p>
 
               <div className={styles.menuList}>
-                {activeTab.entries.map((entry, index) =>
-                  entry.note ? (
-                    <p
-                      key={`${activeTab.label}-note-${index}`}
-                      className={styles.noteRow}
-                    >
-                      {entry.note}
-                    </p>
-                  ) : (
+                {getExperienceTabSections(activeTab).map(
+                  (section, sectionIndex) => (
                     <div
-                      key={`${activeTab.label}-${entry.name}-${index}`}
-                      className={styles.menuItem}
+                      key={`${activeTab.label}-section-${section.title ?? sectionIndex}`}
+                      className={styles.menuSection}
                     >
-                      <span className={styles.itemName}>{entry.name}</span>
-                      <span className={styles.itemPrice}>{entry.price}</span>
+                      {section.title && (
+                        <h4 className={styles.menuSectionTitle}>
+                          {section.title}
+                        </h4>
+                      )}
+
+                      <div className={styles.menuSectionItems}>
+                        {section.entries.map((entry, index) =>
+                          entry.note ? (
+                            <p
+                              key={`${activeTab.label}-${section.title ?? sectionIndex}-note-${index}`}
+                              className={styles.noteRow}
+                            >
+                              {entry.note}
+                            </p>
+                          ) : (
+                            <div
+                              key={`${activeTab.label}-${section.title ?? sectionIndex}-${entry.name}-${index}`}
+                              className={styles.menuItem}
+                            >
+                              <span className={styles.itemName}>
+                                {entry.name}
+                              </span>
+                              <span className={styles.itemPrice}>
+                                {entry.price}
+                              </span>
+                            </div>
+                          ),
+                        )}
+                      </div>
                     </div>
                   ),
                 )}

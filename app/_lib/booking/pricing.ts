@@ -1,9 +1,10 @@
+import { getExperienceMainOption } from "./constants";
 import {
-  BOOKING_EXPERIENCES,
   ExperienceId,
-  MIN_GUESTS,
-  STARTUP_COST,
-} from "./constants";
+  experiences,
+  minGuests,
+  startupCost,
+} from "@data/constants";
 
 export function formatEuro(amount: number): string {
   return new Intl.NumberFormat("nl-BE", {
@@ -24,17 +25,28 @@ export function calcPricing(
   includeApero: boolean,
   includeMain: boolean,
   guestCount: number,
+  mainOptionId?: string | null,
 ): PriceBreakdown {
-  const exp = BOOKING_EXPERIENCES.find((e) => e.id === experienceId);
+  const exp = experiences.find((e) => e.id === experienceId);
   if (!exp) {
-    return { perPerson: 0, startupCost: STARTUP_COST, total: STARTUP_COST, guestCount };
+    return {
+      perPerson: 0,
+      startupCost: startupCost,
+      total: startupCost,
+      guestCount,
+    };
   }
-  const guests = Math.max(MIN_GUESTS, guestCount);
+
+  const mainOptionPrice = includeMain
+    ? (getExperienceMainOption(experienceId, mainOptionId)?.price ??
+      exp.mainPrice)
+    : 0;
+
+  const guests = Math.max(minGuests, guestCount);
   const perPerson =
     exp.basePrice +
     (includeApero && exp.hasApero ? exp.aperoPrice : 0) +
-    (includeMain && exp.hasMain ? exp.mainPrice : 0);
-  const total = STARTUP_COST + guests * perPerson;
-  return { perPerson, startupCost: STARTUP_COST, total, guestCount: guests };
+    (includeMain && exp.hasMain ? mainOptionPrice : 0);
+  const total = startupCost + guests * perPerson;
+  return { perPerson, startupCost: startupCost, total, guestCount: guests };
 }
-

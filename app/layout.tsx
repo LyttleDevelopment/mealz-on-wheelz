@@ -4,6 +4,7 @@ import type {ReactNode} from 'react';
 import {TooltipProvider} from '@lyttle-development/ui';
 import './globals.scss';
 import {siteConfig} from '../site.config';
+import {PageLoader} from './components/PageLoader';
 
 const berniertmFont = localFont({
   src: [
@@ -83,8 +84,9 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="nl" className={berniertmFont.variable}>
-      <body>
+    <html lang="nl" className={berniertmFont.variable} suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <PageLoader />
         <a href="#main-content" className="skip-link">
           Spring naar de inhoud
         </a>

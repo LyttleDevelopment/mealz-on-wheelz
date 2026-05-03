@@ -20,7 +20,7 @@ export function HeroSection() {
         </Heading>
         <Text as="p" size="lg" className={styles.heroText}>
           Mealz on Wheelz is jouw go-to foodtruck in het Oost-Vlaamse
-          Moerbeke-Waas. Wij bieden concepten aan zoals pasta's, BBQ en nog
+          Moerbeke-Waas. Wij bieden concepten aan zoals pasta&apos;s, BBQ en nog
           meer. Kom langs of vraag een offerte en ontdek het zelf!
         </Text>
         <div className={styles.heroActions}>

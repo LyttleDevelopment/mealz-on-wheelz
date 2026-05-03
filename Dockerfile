@@ -8,6 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY app ./app
+COPY data ./data
 COPY public ./public
 COPY next.config.* ./
 COPY site.config.* ./

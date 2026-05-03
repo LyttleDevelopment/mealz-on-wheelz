@@ -14,18 +14,23 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { nlBE } from "react-day-picker/locale";
 import styles from "./index.module.scss";
 import {
-  BOOKING_EXPERIENCES,
-  EVENT_TYPES,
   ExperienceDefinition,
-  ExperienceId,
-  MIN_GUESTS,
-  STARTUP_COST,
+  getExperienceMainOption,
+  getExperienceMaxGuests,
+  getExperienceTabSections,
 } from "@/_lib/booking/constants";
 import { calcPricing, formatEuro } from "@/_lib/booking/pricing";
 import type {
   BookingApiResponse,
   BookingAvailabilityResponse,
 } from "@/_lib/booking/schema";
+import {
+  eventTypes,
+  ExperienceId,
+  experiences,
+  minGuests,
+  startupCost,
+} from "@data/constants"; // ─── State types ──────────────────────────────────────────────────────────────
 
 // ─── State types ──────────────────────────────────────────────────────────────
 
@@ -33,6 +38,7 @@ interface ExperienceState {
   experience: ExperienceDefinition | null;
   includeApero: boolean;
   includeMain: boolean;
+  selectedMainOptionId: string | null;
   guestCount: number;
 }
 
@@ -42,6 +48,7 @@ interface ContactState {
   telefoon: string;
   typeEvent: string;
   datum: string;
+  tijdstip: string;
   straat: string;
   postcode: string;
   gemeente: string;
@@ -103,7 +110,9 @@ function getCompactWeekdayName(date: Date) {
 
 function getBookingDayAriaLabel(
   date: Date,
-  modifiers: Partial<Record<"today" | "selected" | "disabled" | "booked", boolean>>,
+  modifiers: Partial<
+    Record<"today" | "selected" | "disabled" | "booked", boolean>
+  >,
 ) {
   let label = new Intl.DateTimeFormat("nl-BE", {
     weekday: "long",
@@ -131,6 +140,11 @@ function getBookingDayAriaLabel(
   return `${label}, beschikbaar`;
 }
 
+/** Returns true when the viewport is narrower than 1024 px (mobile/tablet). */
+function isMobileViewport() {
+  return typeof window !== "undefined" && window.innerWidth < 1024;
+}
+
 /** Strip non-digit characters and check length is plausible for BE/EU numbers */
 function isValidPhone(v: string) {
   const digits = v.replace(/\D/g, "");
@@ -145,6 +159,10 @@ function isValidFutureDate(v: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return d >= today;
+}
+
+function isValidTime(v: string) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
 }
 
 type ContactErrors = Partial<Record<keyof ContactState, string>>;
@@ -172,6 +190,11 @@ function validateContact(
     e.datum = "Deze datum is niet meer beschikbaar.";
   } else if (!isValidFutureDate(s.datum)) {
     e.datum = "Kies een geldige toekomstige datum.";
+  }
+  if (!s.tijdstip) {
+    e.tijdstip = "Tijdstip is verplicht.";
+  } else if (!isValidTime(s.tijdstip)) {
+    e.tijdstip = "Voer een geldig tijdstip in.";
   }
   if (!s.straat.trim()) e.straat = "Straatnaam is verplicht.";
   if (!s.postcode.trim()) {
@@ -242,7 +265,13 @@ function ExperienceStep({
   const [showOptionError, setShowOptionError] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
   const exp = state.experience;
+  const maxGuests = exp ? getExperienceMaxGuests(exp.id) : undefined;
+  const hasSelectableMainOptions = Boolean(exp?.mainOptions?.length);
+  const selectedMainOption = exp
+    ? getExperienceMainOption(exp.id, state.selectedMainOptionId)
+    : null;
 
   const pricing = exp
     ? calcPricing(
@@ -250,25 +279,28 @@ function ExperienceStep({
         state.includeApero,
         state.includeMain,
         state.guestCount,
+        state.selectedMainOptionId,
       )
     : null;
-  const total = pricing?.total ?? STARTUP_COST;
+  const total = pricing?.total ?? startupCost;
 
   const hasOptions = exp ? exp.hasApero || exp.hasMain : false;
   const atLeastOneSelected =
     !hasOptions || state.includeApero || state.includeMain;
 
-  // Scroll to options when an experience is first selected
+  // Scroll to options when an experience is first selected (mobile only)
   const prevExpId = useRef<string | null>(null);
   useEffect(() => {
     if (exp && exp.id !== prevExpId.current) {
       prevExpId.current = exp.id;
-      setTimeout(() => {
-        summaryRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 50);
+      if (isMobileViewport()) {
+        setTimeout(() => {
+          optionsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 50);
+      }
     }
   }, [exp]);
 
@@ -278,6 +310,12 @@ function ExperienceStep({
       setShowOptionError(true);
       return;
     }
+
+    if (state.includeMain && hasSelectableMainOptions && !selectedMainOption) {
+      setShowOptionError(true);
+      return;
+    }
+
     onNext();
   }
 
@@ -291,15 +329,27 @@ function ExperienceStep({
       </div>
 
       <div className={styles.experienceGrid}>
-        {BOOKING_EXPERIENCES.map((item) => (
+        {experiences.map((item) => (
           <button
             key={item.id}
             type="button"
             className={styles.experienceCard}
             data-selected={item.id === state.experience?.id || undefined}
             onClick={() => {
+              const nextGuestCount = Math.min(
+                Math.max(minGuests, state.guestCount),
+                item.maxGuests,
+              );
+
+              setGuestInput(String(nextGuestCount));
               setShowOptionError(false);
-              onChange({ ...state, experience: item });
+              onChange({
+                experience: item,
+                includeApero: item.hasApero ? state.includeApero : false,
+                includeMain: item.hasMain,
+                selectedMainOptionId: item.mainOptions?.[0]?.id ?? null,
+                guestCount: nextGuestCount,
+              });
             }}
           >
             <span className={styles.experienceTitle}>{item.title}</span>
@@ -340,36 +390,94 @@ function ExperienceStep({
                   checked={state.includeMain}
                   onCheckedChange={(checked) => {
                     setShowOptionError(false);
-                    onChange({ ...state, includeMain: checked });
+                    onChange({
+                      ...state,
+                      includeMain: checked,
+                      selectedMainOptionId: checked
+                        ? (state.selectedMainOptionId ??
+                          exp.mainOptions?.[0]?.id ??
+                          null)
+                        : state.selectedMainOptionId,
+                    });
                   }}
                 />
               </div>
             )}
+            {state.includeMain &&
+              exp.mainOptions &&
+              exp.mainOptions.length > 0 && (
+                <div className={styles.formulaSelector}>
+                  {exp.mainOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={styles.formulaCard}
+                      data-selected={
+                        state.selectedMainOptionId === option.id || undefined
+                      }
+                      onClick={() => {
+                        setShowOptionError(false);
+                        onChange({ ...state, selectedMainOptionId: option.id });
+                      }}
+                    >
+                      <span className={styles.formulaCardHeader}>
+                        <span className={styles.formulaCardTitle}>
+                          {option.label}
+                        </span>
+                        <span className={styles.formulaCardPrice}>
+                          {option.priceLabel}
+                        </span>
+                      </span>
+                      {option.description && (
+                        <span className={styles.formulaCardDescription}>
+                          {option.description}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             <div className={styles.optionRow}>
               <div className={styles.optionLabel}>
                 <span>Aantal gasten</span>
-                <span className={styles.optionPrice}>(min. {MIN_GUESTS})</span>
+                <span className={styles.optionPrice}>
+                  (min. {minGuests}
+                  {maxGuests ? ` · max. ${maxGuests}` : ""})
+                </span>
               </div>
               <Input
                 type="number"
-                min={MIN_GUESTS}
+                min={minGuests}
+                max={maxGuests}
                 value={guestInput}
                 onChange={(e) => {
                   const raw = e.target.value;
                   setGuestInput(raw);
                   setShowOptionError(false);
                   const num = Number(raw);
-                  if (!isNaN(num) && num >= MIN_GUESTS) {
-                    onChange({ ...state, guestCount: num });
+                  if (!isNaN(num) && num >= minGuests) {
+                    onChange({
+                      ...state,
+                      guestCount: maxGuests ? Math.min(num, maxGuests) : num,
+                    });
                   }
                 }}
                 onBlur={() => {
-                  const clamped = Math.max(
-                    MIN_GUESTS,
-                    Number(guestInput) || MIN_GUESTS,
+                  const clamped = Math.min(
+                    maxGuests ?? Number.MAX_SAFE_INTEGER,
+                    Math.max(minGuests, Number(guestInput) || minGuests),
                   );
                   setGuestInput(String(clamped));
                   onChange({ ...state, guestCount: clamped });
+                  // On mobile, scroll to the next button so it's easy to tap
+                  if (isMobileViewport()) {
+                    setTimeout(() => {
+                      nextButtonRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                      });
+                    }, 50);
+                  }
                 }}
                 className={styles.guestInput}
               />
@@ -378,10 +486,73 @@ function ExperienceStep({
 
           {showOptionError && (
             <p className={styles.optionError}>
-              Selecteer minstens één optie (apéro of hoofdgerecht) om verder te
-              gaan.
+              {state.includeMain &&
+              hasSelectableMainOptions &&
+              !selectedMainOption
+                ? "Kies een formule om verder te gaan."
+                : "Selecteer minstens één optie (apéro of hoofdgerecht) om verder te gaan."}
             </p>
           )}
+
+          <div className={styles.experienceDetailPanel}>
+            <div className={styles.experienceDetailHeader}>
+              <div>
+                <p className={styles.experienceDetailEyebrow}>
+                  Wat mag u verwachten?
+                </p>
+                <h4 className={styles.experienceDetailTitle}>{exp.title}</h4>
+              </div>
+              <p className={styles.experienceDetailNotice}>{exp.notice}</p>
+            </div>
+
+            <div className={styles.experienceDetailGroups}>
+              {exp.tabs.map((tab) => (
+                <section
+                  key={tab.label}
+                  className={styles.experienceDetailGroup}
+                >
+                  <h5 className={styles.experienceDetailGroupTitle}>
+                    {tab.label}
+                  </h5>
+                  {getExperienceTabSections(tab).map(
+                    (section, sectionIndex) => (
+                      <div
+                        key={`${tab.label}-section-${section.title ?? sectionIndex}`}
+                        className={styles.experienceDetailSection}
+                      >
+                        {section.title && (
+                          <h6 className={styles.experienceDetailSectionTitle}>
+                            {section.title}
+                          </h6>
+                        )}
+
+                        <div className={styles.experienceDetailItems}>
+                          {section.entries.map((entry, index) =>
+                            entry.note ? (
+                              <p
+                                key={`${tab.label}-${section.title ?? sectionIndex}-note-${index}`}
+                                className={styles.experienceDetailNote}
+                              >
+                                {entry.note}
+                              </p>
+                            ) : (
+                              <div
+                                key={`${tab.label}-${section.title ?? sectionIndex}-${entry.name}-${index}`}
+                                className={styles.experienceDetailItem}
+                              >
+                                <span>{entry.name}</span>
+                                {entry.price && <span>{entry.price}</span>}
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </section>
+              ))}
+            </div>
+          </div>
 
           <div className={styles.priceBox} ref={summaryRef}>
             <div className={styles.priceBoxContent}>
@@ -390,16 +561,19 @@ function ExperienceStep({
                   Geschatte totaalprijs
                 </span>
                 <span className={styles.priceBoxNote}>
-                  Incl. {formatEuro(STARTUP_COST)} opstartkost
+                  Incl. {formatEuro(startupCost)} opstartkost
                 </span>
               </div>
               <div style={{ textAlign: "right" }}>
                 <span className={styles.priceBoxAmount}>
                   {formatEuro(total)}
                 </span>
-                {total > STARTUP_COST && (
+                {total > startupCost && (
                   <span className={styles.priceBoxNote}>
-                    ± {formatEuro((total - STARTUP_COST) / state.guestCount)}{" "}
+                    ±{" "}
+                    {formatEuro(
+                      (total - startupCost) / Math.max(state.guestCount, 1),
+                    )}{" "}
                     p.p. (excl. opstart)
                   </span>
                 )}
@@ -411,7 +585,7 @@ function ExperienceStep({
             overleg.
           </p>
 
-          <Button className={styles.nextButton} onClick={handleNext}>
+          <Button ref={nextButtonRef} className={styles.nextButton} onClick={handleNext}>
             Verder naar uw gegevens <ArrowRight size={16} />
           </Button>
         </>
@@ -450,7 +624,6 @@ function ContactStep({
   const [touched, setTouched] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const dateLabelId = useId();
-  const dateHintId = useId();
   const dateLegendId = useId();
   const dateStatusId = useId();
   const dateErrorId = useId();
@@ -461,7 +634,8 @@ function ContactStep({
   const isSelectedDateUnavailable = state.datum
     ? unavailableDates.has(state.datum)
     : false;
-  const isBookedDate = (date: Date) => unavailableDates.has(formatDateForApi(date));
+  const isBookedDate = (date: Date) =>
+    unavailableDates.has(formatDateForApi(date));
   const calendarStatusText = availabilityLoading
     ? "Beschikbaarheid wordt geladen…"
     : availabilityError
@@ -508,12 +682,14 @@ function ContactStep({
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
-      setTimeout(() => {
-        formRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 50);
+      if (isMobileViewport()) {
+        setTimeout(() => {
+          formRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }, 50);
+      }
       return;
     }
     onNext();
@@ -593,119 +769,13 @@ function ContactStep({
             required
           >
             <option value="">Kies type event</option>
-            {EVENT_TYPES.map((t) => (
+            {eventTypes.map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
             ))}
           </NativeSelect>
           <FieldError msg={errors.typeEvent} />
-        </div>
-
-        {/* Date */}
-        <div className={`${styles.formField} ${styles.formFieldFull}`}>
-          <label id={dateLabelId} className={styles.formLabel}>
-            Datum event *
-          </label>
-          <strong
-            className={styles.selectedDateValue}
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {formatDateLabel(state.datum)}
-          </strong>
-
-          <div className={styles.datePickerCard}>
-            <Calendar
-              mode="single"
-              locale={nlBE}
-              labels={{ labelDayButton: getBookingDayAriaLabel }}
-              weekStartsOn={1}
-              showOutsideDays={false}
-              selected={selectedDate}
-              onSelect={(date) =>
-                onChange({ ...state, datum: date ? formatDateForApi(date) : "" })
-              }
-              formatters={{ formatWeekdayName: getCompactWeekdayName }}
-              modifiers={{ booked: isBookedDate }}
-              modifiersClassNames={{ booked: styles.bookingCalendarBookedDay }}
-              disabled={[
-                { before: today },
-                (date) => availabilityLoading || isBookedDate(date),
-              ]}
-              className={styles.bookingCalendar}
-              aria-labelledby={dateLabelId}
-              aria-describedby={calendarDescribedBy}
-              aria-invalid={errors.datum ? true : undefined}
-            />
-
-            <div
-              className={styles.calendarLegend}
-              id={dateLegendId}
-              aria-label="Legenda voor beschikbare en bezette dagen"
-            >
-              <span className={styles.calendarLegendItem}>
-                <span className={styles.calendarLegendSwatch} />
-                Beschikbaar
-              </span>
-              <span className={styles.calendarLegendItem}>
-                <span
-                  className={`${styles.calendarLegendSwatch} ${styles.calendarLegendSwatchSelected}`}
-                />
-                Geselecteerd
-              </span>
-              <span className={styles.calendarLegendItem}>
-                <span
-                  className={`${styles.calendarLegendSwatch} ${styles.calendarLegendSwatchBooked}`}
-                />
-                Bezet
-              </span>
-            </div>
-
-            {availabilityLoading && (
-              <p className={styles.calendarStatus} id={dateStatusId} role="status">
-                Beschikbaarheid wordt geladen…
-              </p>
-            )}
-
-            {availabilityError && (
-              <div
-                className={styles.calendarStatusError}
-                id={dateStatusId}
-                role="alert"
-              >
-                <span>{availabilityError}</span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={styles.retryAvailabilityButton}
-                  onClick={onRetryAvailability}
-                >
-                  Opnieuw laden
-                </Button>
-              </div>
-            )}
-
-            {!availabilityLoading && !availabilityError && isSelectedDateUnavailable && (
-              <p
-                className={styles.calendarStatusErrorText}
-                id={dateStatusId}
-                role="status"
-              >
-                Deze datum is intussen niet meer beschikbaar.
-              </p>
-            )}
-
-            {!availabilityLoading && !availabilityError && !isSelectedDateUnavailable && (
-              <p className={styles.calendarStatus} id={dateStatusId} role="status">
-                {calendarStatusText}
-              </p>
-            )}
-          </div>
-          <span id={dateErrorId}>
-            <FieldError msg={errors.datum} />
-          </span>
         </div>
       </div>
 
@@ -802,6 +872,195 @@ function ContactStep({
         </p>
       </div>
 
+      <div className={styles.scheduleSection}>
+        <div className={styles.scheduleHeader}>
+          <h4 className={styles.scheduleTitle}>Kies datum en tijdstip</h4>
+          <p className={styles.scheduleDescription}>
+            We tonen enkel data die al definitief gereserveerd zijn.
+          </p>
+        </div>
+
+        <div className={styles.scheduleMeta}>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Gewenst tijdstip *</label>
+            <div className={styles.timeSelectRow}>
+              <NativeSelect
+                value={state.tijdstip ? state.tijdstip.split(":")[0] : ""}
+                onChange={(e) => {
+                  const hour = e.target.value;
+                  const minute = state.tijdstip
+                    ? state.tijdstip.split(":")[1] ?? "00"
+                    : "00";
+                  const next = { ...state, tijdstip: hour ? `${hour}:${minute}` : "" };
+                  onChange(next);
+                  if (touched && errors.tijdstip) {
+                    setErrors((prev) => ({ ...prev, tijdstip: undefined }));
+                  }
+                }}
+                data-invalid={errors.tijdstip ? true : undefined}
+                aria-label="Uur"
+              >
+                <option value="">UU</option>
+                {Array.from({ length: 24 }, (_, i) =>
+                  String(i).padStart(2, "0"),
+                ).map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </NativeSelect>
+              <span className={styles.timeSeparator}>:</span>
+              <NativeSelect
+                value={state.tijdstip ? state.tijdstip.split(":")[1] ?? "" : ""}
+                onChange={(e) => {
+                  const minute = e.target.value;
+                  const hour = state.tijdstip
+                    ? state.tijdstip.split(":")[0] ?? ""
+                    : "";
+                  const next = { ...state, tijdstip: hour ? `${hour}:${minute}` : "" };
+                  onChange(next);
+                  if (touched && errors.tijdstip) {
+                    setErrors((prev) => ({ ...prev, tijdstip: undefined }));
+                  }
+                }}
+                data-invalid={errors.tijdstip ? true : undefined}
+                aria-label="Minuten"
+              >
+                <option value="">MM</option>
+                {["00", "15", "30", "45"].map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </NativeSelect>
+            </div>
+            <FieldError msg={errors.tijdstip} />
+          </div>
+
+          <div className={styles.selectedDateCard}>
+            <span className={styles.selectedDateCaption}>
+              Geselecteerde datum
+            </span>
+            <strong
+              className={styles.selectedDateValue}
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {formatDateLabel(state.datum)}
+            </strong>
+          </div>
+        </div>
+
+        <div className={styles.datePickerCard}>
+          <label id={dateLabelId} className={styles.formLabel}>
+            Datum event *
+          </label>
+
+          <Calendar
+            mode="single"
+            locale={nlBE}
+            labels={{ labelDayButton: getBookingDayAriaLabel }}
+            weekStartsOn={1}
+            showOutsideDays={false}
+            selected={selectedDate}
+            onSelect={(date) =>
+              onChange({ ...state, datum: date ? formatDateForApi(date) : "" })
+            }
+            formatters={{ formatWeekdayName: getCompactWeekdayName }}
+            modifiers={{ booked: isBookedDate }}
+            modifiersClassNames={{ booked: styles.bookingCalendarBookedDay }}
+            disabled={[
+              { before: today },
+              (date) => availabilityLoading || isBookedDate(date),
+            ]}
+            className={styles.bookingCalendar}
+            aria-labelledby={dateLabelId}
+            aria-describedby={calendarDescribedBy}
+            aria-invalid={errors.datum ? true : undefined}
+          />
+
+          <div
+            className={styles.calendarLegend}
+            id={dateLegendId}
+            aria-label="Legenda voor beschikbare en bezette dagen"
+          >
+            <span className={styles.calendarLegendItem}>
+              <span className={styles.calendarLegendSwatch} />
+              Beschikbaar
+            </span>
+            <span className={styles.calendarLegendItem}>
+              <span
+                className={`${styles.calendarLegendSwatch} ${styles.calendarLegendSwatchSelected}`}
+              />
+              Geselecteerd
+            </span>
+            <span className={styles.calendarLegendItem}>
+              <span
+                className={`${styles.calendarLegendSwatch} ${styles.calendarLegendSwatchBooked}`}
+              />
+              Definitief gereserveerd
+            </span>
+          </div>
+
+          {availabilityLoading && (
+            <p
+              className={styles.calendarStatus}
+              id={dateStatusId}
+              role="status"
+            >
+              Beschikbaarheid wordt geladen…
+            </p>
+          )}
+
+          {availabilityError && (
+            <div
+              className={styles.calendarStatusError}
+              id={dateStatusId}
+              role="alert"
+            >
+              <span>{availabilityError}</span>
+              <Button
+                type="button"
+                variant="outline"
+                className={styles.retryAvailabilityButton}
+                onClick={onRetryAvailability}
+              >
+                Opnieuw laden
+              </Button>
+            </div>
+          )}
+
+          {!availabilityLoading &&
+            !availabilityError &&
+            isSelectedDateUnavailable && (
+              <p
+                className={styles.calendarStatusErrorText}
+                id={dateStatusId}
+                role="status"
+              >
+                Deze datum is intussen niet meer beschikbaar.
+              </p>
+            )}
+
+          {!availabilityLoading &&
+            !availabilityError &&
+            !isSelectedDateUnavailable && (
+              <p
+                className={styles.calendarStatus}
+                id={dateStatusId}
+                role="status"
+              >
+                {calendarStatusText}
+              </p>
+            )}
+
+          <span id={dateErrorId}>
+            <FieldError msg={errors.datum} />
+          </span>
+        </div>
+      </div>
+
       <div className={styles.buttonRow}>
         <Button
           variant="outline"
@@ -857,11 +1116,19 @@ function ConfirmationStep({
     experienceState.includeApero,
     experienceState.includeMain,
     experienceState.guestCount,
+    experienceState.selectedMainOptionId,
+  );
+  const mainOption = getExperienceMainOption(
+    exp.id as ExperienceId,
+    experienceState.selectedMainOptionId,
   );
 
   const rows: { label: string; value: string }[] = [
     { label: "Experience", value: exp.title },
     { label: "Apéro", value: experienceState.includeApero ? "Ja" : "Nee" },
+    ...(experienceState.includeMain && mainOption
+      ? [{ label: "Gekozen formule", value: mainOption.label }]
+      : []),
     ...(exp.hasMain
       ? [
           {
@@ -876,7 +1143,11 @@ function ConfirmationStep({
     { label: "E-mail", value: contactState.email || "—" },
     { label: "Telefoon", value: contactState.telefoon || "—" },
     { label: "Type event", value: contactState.typeEvent || "—" },
-    { label: "Datum", value: contactState.datum || "—" },
+    {
+      label: "Datum",
+      value: contactState.datum ? formatDateLabel(contactState.datum) : "—",
+    },
+    { label: "Tijdstip", value: contactState.tijdstip || "—" },
     {
       label: "Locatie",
       value: contactState.straat
@@ -925,14 +1196,19 @@ function ConfirmationStep({
       )}
 
       {availabilityLoading && (
-        <p className={styles.calendarStatus}>Beschikbaarheid wordt opnieuw gecontroleerd…</p>
+        <p className={styles.calendarStatus}>
+          Beschikbaarheid wordt opnieuw gecontroleerd…
+        </p>
       )}
 
-      {availabilityError && <p className={styles.submitError}>{availabilityError}</p>}
+      {availabilityError && (
+        <p className={styles.submitError}>{availabilityError}</p>
+      )}
 
       {isDateUnavailable && (
         <p className={styles.submitError}>
-          Deze datum is niet meer beschikbaar. Ga terug en kies een andere datum.
+          Deze datum is niet meer beschikbaar. Ga terug en kies een andere
+          datum.
         </p>
       )}
 
@@ -979,11 +1255,13 @@ function SubmittedState() {
 
 export function BookingForm() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const startedAtRef = useRef<number>(Date.now());
+  const startedAtRef = useRef<number | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   function goToStep(next: 1 | 2 | 3 | 4) {
     setStep(next);
+    // Always scroll to the top of the card so the stepper + step title are
+    // visible on both mobile and desktop.
     setTimeout(() => {
       cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
@@ -993,7 +1271,8 @@ export function BookingForm() {
     experience: null,
     includeApero: false,
     includeMain: true,
-    guestCount: MIN_GUESTS,
+    selectedMainOptionId: null,
+    guestCount: minGuests,
   });
 
   const [contactState, setContactState] = useState<ContactState>({
@@ -1002,6 +1281,7 @@ export function BookingForm() {
     telefoon: "",
     typeEvent: "",
     datum: "",
+    tijdstip: "",
     straat: "",
     postcode: "",
     gemeente: "",
@@ -1015,7 +1295,9 @@ export function BookingForm() {
   const [honeypot, setHoneypot] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
   const [availabilityLoading, setAvailabilityLoading] = useState(true);
-  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(
+    null,
+  );
 
   const unavailableDateSet = useMemo(
     () => new Set(unavailableDates),
@@ -1035,10 +1317,9 @@ export function BookingForm() {
       const json = (await res.json()) as BookingAvailabilityResponse;
 
       if (!res.ok || !json.ok) {
-        const message =
-          !json.ok
-            ? json.message
-            : "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.";
+        const message = !json.ok
+          ? json.message
+          : "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.";
         setAvailabilityError(message);
         return null;
       }
@@ -1058,12 +1339,21 @@ export function BookingForm() {
   }
 
   useEffect(() => {
-    void loadAvailability();
+    startedAtRef.current = Date.now();
+
+    const timer = window.setTimeout(() => {
+      void loadAvailability();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, []);
 
-  useEffect(() => {
+  function handleContactChange(next: ContactState) {
+    setContactState(next);
     setSubmitError(null);
-  }, [contactState.datum]);
+  }
 
   async function handleSubmit() {
     if (!experienceState.experience) return;
@@ -1096,12 +1386,14 @@ export function BookingForm() {
       experienceId: experienceState.experience.id,
       includeApero: experienceState.includeApero,
       includeMain: experienceState.includeMain,
+      mainOptionId: experienceState.selectedMainOptionId,
       guestCount: experienceState.guestCount,
       fullName: contactState.naam,
       email: contactState.email,
       phone: contactState.telefoon,
       eventType: contactState.typeEvent,
       eventDate: contactState.datum,
+      eventTime: contactState.tijdstip,
       streetName: contactState.straat,
       postalCode: contactState.postcode,
       city: contactState.gemeente,
@@ -1109,7 +1401,7 @@ export function BookingForm() {
       notes: contactState.bijkomend || undefined,
       turnstileToken: token,
       website: honeypot,
-      startedAt: startedAtRef.current,
+      startedAt: startedAtRef.current ?? Date.now(),
     };
 
     try {
@@ -1170,7 +1462,7 @@ export function BookingForm() {
       {step === 2 && (
         <ContactStep
           state={contactState}
-          onChange={setContactState}
+          onChange={handleContactChange}
           onNext={() => goToStep(3)}
           onBack={() => goToStep(1)}
           unavailableDates={unavailableDateSet}
