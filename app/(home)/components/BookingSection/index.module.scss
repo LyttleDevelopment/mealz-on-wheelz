@@ -11,6 +11,7 @@
 /* ─── Booking form card ──────────────────────────────────────────────────── */
 
 .formCard {
+  scroll-margin-top: 5rem; /* sticky header (4rem) + breathing room */
   background: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(245 240 235 / 0.78));
   border-radius: 1rem;
   padding: clamp(1rem, 3vw, 1.5rem);

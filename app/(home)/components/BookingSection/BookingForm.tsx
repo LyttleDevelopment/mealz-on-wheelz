@@ -1250,11 +1250,11 @@ export function BookingForm() {
 
   function goToStep(next: 1 | 2 | 3 | 4) {
     setStep(next);
-    if (isMobileViewport()) {
-      setTimeout(() => {
-        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 50);
-    }
+    // Always scroll to the top of the card so the stepper + step title are
+    // visible on both mobile and desktop.
+    setTimeout(() => {
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   }
 
   const [experienceState, setExperienceState] = useState<ExperienceState>({
