@@ -1,13 +1,6 @@
-import {
-  CalendarDays,
-  Clock,
-  Mail,
-  MapPin,
-  Phone,
-  Store,
-  Truck,
-} from "lucide-react";
-import type { ContactInfo, Experience, GalleryTile, NavigationItem, Service } from "./types";
+import { BOOKING_EXPERIENCES } from "@/_lib/booking/constants";
+import { CalendarDays, Clock, Mail, MapPin, Phone, Store, Truck } from "lucide-react";
+import type { ContactInfo, GalleryTile, NavigationItem, Service } from "./types";
 
 export const navigation: NavigationItem[] = [
   { label: "Home", href: "/" },
@@ -26,127 +19,7 @@ export const footerNavigation: NavigationItem[] = [
   { label: "Algemene voorwaarden", href: "/algemene-voorwaarden" },
 ];
 
-export const experiences: Experience[] = [
-  {
-    id: "italian",
-    title: "Italian Experience",
-    category: "Apéro + hoofdgerecht",
-    priceBadges: ["Apéro €15,95", "Hoofd v.a. €8"],
-    detailSubtitle: "Apéro €15,95 p.p. · Hoofdgerecht v.a. €8 p.p. · Apart te boeken",
-    notice:
-      "Min. 20 personen · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden",
-    tabs: [
-      {
-        label: "Apéro",
-        entries: [
-          { name: "Pastrami sandwich" },
-          { name: "Arancini" },
-          { name: "Antipasto" },
-        ],
-      },
-      {
-        label: "Hoofdgerecht",
-        entries: [
-          { name: "Ragu bolognese", price: "S €8 · M €10 · L €12 · à volonté €18" },
-          { name: "Quattro formaggi", price: "S €8 · M €10 · L €12 · à volonté €18" },
-          { name: "Thai curry + kip", price: "S €8 · M €10 · L €12 · à volonté €18" },
-          { name: "Scampi crema + zeevruchten", price: "S €8 · M €10 · L €12 · à volonté €18" },
-        ],
-      },
-    ],
-    icon: "🍝",
-  },
-  {
-    id: "tex-mex",
-    title: "Tex-Mex Experience",
-    category: "Apéro + burgers",
-    priceBadges: ["Apéro €11,95", "Hoofd v.a. €10"],
-    detailSubtitle: "Apéro €11,95 p.p. · Burgers v.a. €10 · Apart te boeken",
-    notice:
-      "Min. 20 personen · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden · Min. 10 stuks per burgertype",
-    tabs: [
-      {
-        label: "Apéro",
-        entries: [
-          { name: "Loaded nacho's" },
-          { name: "Buffalo chicken wings" },
-          { name: "Taco met pulled beef" },
-        ],
-      },
-      {
-        label: "Burgers",
-        entries: [
-          { name: "Juicy Lucy", price: "€10" },
-          { name: "Black Pepper", price: "€12" },
-          { name: "Truffle Burger", price: "€11" },
-          { name: "Tropical Chicken", price: "€10" },
-          { name: "Bubba Shrimp Burger", price: "€12" },
-          { name: "Mexican Avocado Burger", price: "€10" },
-        ],
-      },
-      {
-        label: "Frietjes",
-        entries: [
-          { name: "Classic", price: "€3,95" },
-          { name: "Sweet potato", price: "€3,95" },
-          { name: "Truffle", price: "€4,50" },
-        ],
-      },
-    ],
-    icon: "🌮",
-  },
-  {
-    id: "barbecue",
-    title: "Barbecue Experience",
-    category: "Apéro + grill formules",
-    priceBadges: ["Apéro €11,95", "Hoofd v.a. €22,95"],
-    detailSubtitle: "Apéro €11,95 p.p. · Formules v.a. €22,95 · Apart te boeken",
-    notice:
-      "Min. 20 personen · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden",
-    tabs: [
-      {
-        label: "Apéro",
-        entries: [
-          { name: "Gegrilde mosseltjes met spek" },
-          { name: "Witte pens / bloedworst met uienconfijt" },
-          { name: "Bao bun met pulled chicken" },
-        ],
-      },
-      {
-        label: "Formules",
-        entries: [
-          { name: "Classic", price: "€22,95 · €25,95 · €27,95" },
-          { name: "Deluxe", price: "€34,95" },
-          { note: "Vraag naar bijlage voor samenstelling" },
-        ],
-      },
-    ],
-    icon: "🔥",
-  },
-  {
-    id: "sweet",
-    title: "Sweet Experience",
-    category: "Dessertbuffet",
-    priceBadges: ["€10,95 p.p."],
-    detailSubtitle: "€10,95 p.p. · Dessertbuffet · Apart te boeken",
-    notice: "Min. 20 personen · Opstartkost €150 · Apart te boeken als dessertbuffet",
-    tabs: [
-      {
-        label: "Menu",
-        entries: [
-          { name: "Assortiment mousses (choco, mango, framboos)" },
-          { name: "Petit fours" },
-          { name: "Rijstpap" },
-          { name: "Panna cotta" },
-          { name: "Frangipane" },
-          { name: "Macarons" },
-          { name: "Vers fruit" },
-        ],
-      },
-    ],
-    icon: "🍮",
-  },
-];
+export const experiences = BOOKING_EXPERIENCES;
 
 export const services: Service[] = [
   {

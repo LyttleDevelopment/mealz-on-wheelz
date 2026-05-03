@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { getBookingEnv } from "./env";
 import { formatEuro } from "./pricing";
 import { BookingRequest } from "./schema";
-import { getExperience } from "./constants";
+import { getExperience, getExperienceMainOption } from "./constants";
 import { CalendarConflictEvent } from "./calendar";
 
 function getResendClient() {
@@ -10,8 +10,16 @@ function getResendClient() {
   return { env, resend: new Resend(env.RESEND_API_KEY) };
 }
 
-function buildInternalHtml(req: BookingRequest, bookingId: string, estimatedTotal: number): string {
+function buildInternalHtml(
+  req: BookingRequest,
+  bookingId: string,
+  estimatedTotal: number,
+): string {
   const exp = getExperience(req.experienceId);
+  const mainOption = getExperienceMainOption(
+    req.experienceId,
+    req.mainOptionId,
+  );
   return `
 <h2>Nieuwe booking aanvraag</h2>
 <p><strong>Booking ID:</strong> ${bookingId}</p>
@@ -21,6 +29,7 @@ function buildInternalHtml(req: BookingRequest, bookingId: string, estimatedTota
   <li><strong>Formule:</strong> ${exp.title}</li>
   ${exp.hasApero ? `<li><strong>Apéro:</strong> ${req.includeApero ? "Ja" : "Nee"}</li>` : ""}
   ${exp.hasMain ? `<li><strong>${exp.mainLabel}:</strong> ${req.includeMain ? "Ja" : "Nee"}</li>` : ""}
+  ${req.includeMain && mainOption ? `<li><strong>Gekozen formule:</strong> ${mainOption.label}</li>` : ""}
   <li><strong>Aantal gasten:</strong> ${req.guestCount}</li>
   <li><strong>Geschatte totaalprijs:</strong> ${formatEuro(estimatedTotal)}</li>
 </ul>
@@ -31,14 +40,23 @@ function buildInternalHtml(req: BookingRequest, bookingId: string, estimatedTota
   <li><strong>Telefoon:</strong> ${req.phone}</li>
   <li><strong>Type event:</strong> ${req.eventType}</li>
   <li><strong>Datum:</strong> ${req.eventDate}</li>
+  <li><strong>Tijdstip:</strong> ${req.eventTime}</li>
   <li><strong>Locatie:</strong> ${req.streetName}, ${req.postalCode} ${req.city}${req.province ? `, ${req.province}` : ""}</li>
   ${req.notes ? `<li><strong>Opmerkingen:</strong> ${req.notes}</li>` : ""}
 </ul>
 `.trim();
 }
 
-function buildCustomerHtml(req: BookingRequest, bookingId: string, estimatedTotal: number): string {
+function buildCustomerHtml(
+  req: BookingRequest,
+  bookingId: string,
+  estimatedTotal: number,
+): string {
   const exp = getExperience(req.experienceId);
+  const mainOption = getExperienceMainOption(
+    req.experienceId,
+    req.mainOptionId,
+  );
   return `
 <h2>Bedankt voor uw aanvraag, ${req.fullName}!</h2>
 <p>Wij hebben uw reservatie-aanvraag ontvangen en nemen binnen <strong>24 uur</strong> contact met u op om de beschikbaarheid te bevestigen.</p>
@@ -49,6 +67,8 @@ function buildCustomerHtml(req: BookingRequest, bookingId: string, estimatedTota
   <li><strong>Booking ID:</strong> ${bookingId}</li>
   <li><strong>Formule:</strong> ${exp.title}</li>
   <li><strong>Datum:</strong> ${req.eventDate}</li>
+  <li><strong>Tijdstip:</strong> ${req.eventTime}</li>
+  ${req.includeMain && mainOption ? `<li><strong>Gekozen formule:</strong> ${mainOption.label}</li>` : ""}
   <li><strong>Locatie:</strong> ${req.streetName}, ${req.postalCode} ${req.city}${req.province ? `, ${req.province}` : ""}</li>
   <li><strong>Aantal gasten:</strong> ${req.guestCount}</li>
   <li><strong>Geschatte prijs:</strong> ${formatEuro(estimatedTotal)} (incl. opstartkost)</li>
@@ -180,4 +200,3 @@ export async function sendCustomerBookingFailureEmail(
     throw new Error(`Resend booking failure email failed: ${error.message}`);
   }
 }
-

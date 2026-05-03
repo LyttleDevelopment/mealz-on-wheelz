@@ -146,7 +146,13 @@ export async function POST(req: NextRequest) {
   }
 
   // ─── Recalculate pricing server-side ─────────────────────────────────────
-  const pricing = calcPricing(data.experienceId, data.includeApero, data.includeMain, data.guestCount);
+  const pricing = calcPricing(
+    data.experienceId,
+    data.includeApero,
+    data.includeMain,
+    data.guestCount,
+    data.mainOptionId,
+  );
 
   const bookingId = randomUUID();
   const warnings: BookingWarning[] = [];

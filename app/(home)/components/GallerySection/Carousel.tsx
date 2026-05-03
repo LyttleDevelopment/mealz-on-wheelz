@@ -31,8 +31,14 @@ export function Carousel() {
 
   // Shuffle once on the client after hydration
   useEffect(() => {
-    setImages(shuffle(SOURCE_IMAGES));
-    setCurrent(0);
+    const timer = window.setTimeout(() => {
+      setImages(shuffle(SOURCE_IMAGES));
+      setCurrent(0);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, []);
 
   const total = images.length;
@@ -110,7 +116,11 @@ export function Carousel() {
     if (touchStart === null) return;
     const delta = touchStart - e.changedTouches[0].clientX;
     if (Math.abs(delta) > 50) {
-      delta > 0 ? next() : prev();
+      if (delta > 0) {
+        next();
+      } else {
+        prev();
+      }
     }
     setTouchStart(null);
   };

@@ -2,7 +2,7 @@ import { calendar_v3, google } from "googleapis";
 import { getBookingEnv } from "./env";
 import { formatEuro } from "./pricing";
 import { BookingRequest } from "./schema";
-import { getExperience } from "./constants";
+import { getExperience, getExperienceMainOption } from "./constants";
 
 export interface CalendarConflictEvent {
   calendarId: string;
@@ -62,13 +62,7 @@ function buildTimeRange(startDate: string, endDateExclusive: string) {
 function getBlockingCalendarIds(): string[] {
   const env = getBookingEnv();
 
-  return Array.from(
-    new Set(
-      [env.GOOGLE_BOOKED_CALENDAR_ID, env.GOOGLE_RERSERVED_CALENDAR_ID].filter(
-        (calendarId): calendarId is string => Boolean(calendarId),
-      ),
-    ),
-  );
+  return env.GOOGLE_RERSERVED_CALENDAR_ID ? [env.GOOGLE_RERSERVED_CALENDAR_ID] : [];
 }
 
 function getCalendarClient() {
@@ -198,12 +192,14 @@ function expandEventDates(
 
 function buildDescription(req: BookingRequest, bookingId: string, estimatedTotal: number): string {
   const exp = getExperience(req.experienceId);
+  const mainOption = getExperienceMainOption(req.experienceId, req.mainOptionId);
   const lines = [
     `Booking ID: ${bookingId}`,
     "Bron: website reservatie-aanvraag",
     `Formule: ${exp.title}`,
     exp.hasApero ? `Apéro: ${req.includeApero ? "Ja" : "Nee"}` : null,
     exp.hasMain ? `${exp.mainLabel}: ${req.includeMain ? "Ja" : "Nee"}` : null,
+    req.includeMain && mainOption ? `Gekozen formule: ${mainOption.label}` : null,
     `Aantal gasten: ${req.guestCount}`,
     `Geschatte prijs: ${formatEuro(estimatedTotal)}`,
     "",
@@ -212,6 +208,7 @@ function buildDescription(req: BookingRequest, bookingId: string, estimatedTotal
     `Telefoon: ${req.phone}`,
     `Type event: ${req.eventType}`,
     `Locatie: ${req.streetName}, ${req.postalCode} ${req.city}${req.province ? `, ${req.province}` : ""}`,
+    `Tijdstip: ${req.eventTime}`,
     req.notes ? `Opmerkingen: ${req.notes}` : null,
   ];
   return lines.filter(Boolean).join("\n");
@@ -277,23 +274,6 @@ export async function removeBookedCalendarEvent(eventId: string) {
   await deleteCalendarEvent(env.GOOGLE_BOOKED_CALENDAR_ID, eventId);
 }
 
-async function cleanupBookedConflicts(
-  conflicts: CalendarConflictEvent[],
-  keptEventId: string | null,
-) {
-  const env = getBookingEnv();
-
-  await Promise.all(
-    conflicts
-      .filter(
-        (event) =>
-          event.calendarId === env.GOOGLE_BOOKED_CALENDAR_ID &&
-          event.eventId !== keptEventId,
-      )
-      .map((event) => deleteCalendarEvent(event.calendarId, event.eventId)),
-  );
-}
-
 export async function reserveBookingDate(
   req: BookingRequest,
   bookingId: string,
@@ -338,41 +318,17 @@ export async function reserveBookingDate(
   }
 
   const conflictsAfterInsert = (await checkBookingDateAvailability(req.eventDate)).conflicts;
-  const insertedExistsAfterInsert = conflictsAfterInsert.some(
-    (event) => event.eventId === eventId,
-  );
-
-  if (conflictsAfterInsert.length <= 1) {
-    if (!insertedExistsAfterInsert) {
-      return {
-        ok: false,
-        reason: "conflict_after_insert",
-        conflicts: conflictsAfterInsert,
-        keptEvent: conflictsAfterInsert[0] ?? null,
-      };
-    }
-
-    return { ok: true, eventId };
-  }
-
-  const keptEvent = conflictsAfterInsert[0] ?? null;
-  await cleanupBookedConflicts(conflictsAfterInsert, keptEvent?.eventId ?? null);
-
-  const conflictsAfterCleanup = (await checkBookingDateAvailability(req.eventDate)).conflicts;
-  const insertedStillExists = conflictsAfterCleanup.some((event) => event.eventId === eventId);
-
-  if (conflictsAfterCleanup.length === 1 && insertedStillExists) {
-    return { ok: true, eventId };
-  }
-
-  if (insertedStillExists) {
+  if (conflictsAfterInsert.length > 0) {
     await deleteCalendarEvent(env.GOOGLE_BOOKED_CALENDAR_ID, eventId);
+
+    return {
+      ok: false,
+      reason: "date_unavailable",
+      conflicts: conflictsAfterInsert,
+      keptEvent: conflictsAfterInsert[0] ?? null,
+    };
   }
 
-  return {
-    ok: false,
-    reason: "conflict_after_insert",
-    conflicts: conflictsAfterCleanup.length > 0 ? conflictsAfterCleanup : conflictsAfterInsert,
-    keptEvent: conflictsAfterCleanup[0] ?? keptEvent,
-  };
+  return { ok: true, eventId };
 }
+

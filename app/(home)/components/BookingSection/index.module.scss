@@ -233,6 +233,161 @@
   text-align: center;
 }
 
+.formulaSelector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.75rem;
+  padding: 1rem 0 0.4rem;
+}
+
+.formulaCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgb(31 58 59 / 0.12);
+  border-radius: 1rem;
+  background: rgb(31 58 59 / 0.03);
+  color: #1e2939;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.formulaCard:hover {
+  border-color: rgb(31 58 59 / 0.28);
+  transform: translateY(-1px);
+}
+
+.formulaCard[data-selected] {
+  border-color: #1f3a3b;
+  background: rgb(31 58 59 / 0.08);
+}
+
+.formulaCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.formulaCardTitle {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.formulaCardPrice {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #baa08f;
+  white-space: nowrap;
+}
+
+.formulaCardDescription {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #6b7280;
+}
+
+.experienceDetailPanel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgb(31 58 59 / 0.08);
+  border-radius: 1.2rem;
+  background: rgb(31 58 59 / 0.04);
+}
+
+.experienceDetailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.experienceDetailEyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #baa08f;
+}
+
+.experienceDetailTitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #1e2939;
+}
+
+.experienceDetailNotice {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.experienceDetailGroups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.9rem;
+}
+
+.experienceDetailGroup {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.95rem;
+  border-radius: 1rem;
+  background: #fff;
+  border: 1px solid rgb(31 58 59 / 0.08);
+}
+
+.experienceDetailGroupTitle {
+  margin: 0;
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1f3a3b;
+}
+
+.experienceDetailItems {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.experienceDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgb(31 58 59 / 0.08);
+  font-size: 0.86rem;
+  color: #1e2939;
+
+  span:last-child {
+    text-align: right;
+    color: #6b7280;
+  }
+}
+
+.experienceDetailItem:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.experienceDetailNote {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #6b7280;
+  font-style: italic;
+}
+
 /* ─── Price summary box ──────────────────────────────────────────────────── */
 
 .priceBox {
@@ -306,17 +461,68 @@
 .datePickerCard {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid rgb(31 58 59 / 0.08);
+  border-radius: 1.2rem;
+  background: rgb(255 255 255 / 0.72);
+}
+
+.scheduleSection {
+  display: grid;
+  gap: 1rem;
+}
+
+.scheduleHeader {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.scheduleTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e2939;
+}
+
+.scheduleDescription {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #6b7280;
+}
+
+.scheduleMeta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.selectedDateCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: #1f3a3b;
+  color: #f5f0eb;
+}
+
+.selectedDateCaption {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(245 240 235 / 0.72);
 }
 
 .selectedDateValue {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #1e2939;
+  color: inherit;
   text-transform: capitalize;
-  text-align: center;
+  text-align: left;
   display: block;
   min-height: 1.2em;
 }
@@ -498,6 +704,7 @@
 
   .datePickerCard {
     gap: 0.35rem;
+    padding: 0.85rem;
   }
 
   .bookingCalendar {
@@ -632,6 +839,12 @@
 @media (max-width: 640px) {
   .experienceGrid,
   .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .scheduleMeta,
+  .experienceDetailGroups,
+  .formulaSelector {
     grid-template-columns: 1fr;
   }
 

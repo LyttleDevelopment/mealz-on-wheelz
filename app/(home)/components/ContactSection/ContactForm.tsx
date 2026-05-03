@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Input, Textarea } from "@lyttle-development/ui";
 import { AlertCircle, Send } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -50,8 +50,12 @@ function FieldError({ msg }: { msg?: string }) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ContactForm() {
-  const startedAtRef = useRef<number>(Date.now());
+  const startedAtRef = useRef<number | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    startedAtRef.current = Date.now();
+  }, []);
 
   const [form, setForm] = useState<FormState>({
     naam: "",
@@ -104,7 +108,7 @@ export function ContactForm() {
       ...form,
       turnstileToken: turnstileToken ?? "",
       website: honeypot,
-      startedAt: startedAtRef.current,
+      startedAt: startedAtRef.current ?? Date.now(),
     };
 
     try {
