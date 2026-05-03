@@ -2,12 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@lyttle-development/ui";
-import {
-  getExperienceTabSections,
-  MIN_GUESTS,
-  STARTUP_COST,
-} from "@/_lib/booking/constants";
-import { experiences } from "@data/constants";
+import { getExperienceTabSections } from "@/_lib/booking/constants";
+import { experiences, minGuests, startupCost } from "@data/constants";
 import type { Experience } from "@data/types";
 import { SectionHeading } from "../SectionHeading";
 import styles from "./index.module.scss";
@@ -59,7 +55,7 @@ export function FormulasSection() {
             Klik op een experience voor meer info
           </p>
           <p className={styles.metaInfo}>
-            Min. {MIN_GUESTS} pers. · €{STARTUP_COST} opstartkost
+            Min. {minGuests} pers. · €{startupCost} opstartkost
           </p>
         </div>
 

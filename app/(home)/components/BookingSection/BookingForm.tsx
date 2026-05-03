@@ -14,21 +14,23 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { nlBE } from "react-day-picker/locale";
 import styles from "./index.module.scss";
 import {
-  BOOKING_EXPERIENCES,
-  EVENT_TYPES,
   ExperienceDefinition,
-  ExperienceId,
   getExperienceMainOption,
   getExperienceMaxGuests,
   getExperienceTabSections,
-  MIN_GUESTS,
-  STARTUP_COST,
 } from "@/_lib/booking/constants";
 import { calcPricing, formatEuro } from "@/_lib/booking/pricing";
 import type {
   BookingApiResponse,
   BookingAvailabilityResponse,
 } from "@/_lib/booking/schema";
+import {
+  eventTypes,
+  ExperienceId,
+  experiences,
+  minGuests,
+  startupCost,
+} from "@data/constants"; // ─── State types ──────────────────────────────────────────────────────────────
 
 // ─── State types ──────────────────────────────────────────────────────────────
 
@@ -108,7 +110,9 @@ function getCompactWeekdayName(date: Date) {
 
 function getBookingDayAriaLabel(
   date: Date,
-  modifiers: Partial<Record<"today" | "selected" | "disabled" | "booked", boolean>>,
+  modifiers: Partial<
+    Record<"today" | "selected" | "disabled" | "booked", boolean>
+  >,
 ) {
   let label = new Intl.DateTimeFormat("nl-BE", {
     weekday: "long",
@@ -272,7 +276,7 @@ function ExperienceStep({
         state.selectedMainOptionId,
       )
     : null;
-  const total = pricing?.total ?? STARTUP_COST;
+  const total = pricing?.total ?? startupCost;
 
   const hasOptions = exp ? exp.hasApero || exp.hasMain : false;
   const atLeastOneSelected =
@@ -317,7 +321,7 @@ function ExperienceStep({
       </div>
 
       <div className={styles.experienceGrid}>
-        {BOOKING_EXPERIENCES.map((item) => (
+        {experiences.map((item) => (
           <button
             key={item.id}
             type="button"
@@ -325,7 +329,7 @@ function ExperienceStep({
             data-selected={item.id === state.experience?.id || undefined}
             onClick={() => {
               const nextGuestCount = Math.min(
-                Math.max(MIN_GUESTS, state.guestCount),
+                Math.max(minGuests, state.guestCount),
                 item.maxGuests,
               );
 
@@ -382,50 +386,60 @@ function ExperienceStep({
                       ...state,
                       includeMain: checked,
                       selectedMainOptionId: checked
-                        ? state.selectedMainOptionId ?? exp.mainOptions?.[0]?.id ?? null
+                        ? (state.selectedMainOptionId ??
+                          exp.mainOptions?.[0]?.id ??
+                          null)
                         : state.selectedMainOptionId,
                     });
                   }}
                 />
               </div>
             )}
-            {state.includeMain && exp.mainOptions && exp.mainOptions.length > 0 && (
-              <div className={styles.formulaSelector}>
-                {exp.mainOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    className={styles.formulaCard}
-                    data-selected={state.selectedMainOptionId === option.id || undefined}
-                    onClick={() => {
-                      setShowOptionError(false);
-                      onChange({ ...state, selectedMainOptionId: option.id });
-                    }}
-                  >
-                    <span className={styles.formulaCardHeader}>
-                      <span className={styles.formulaCardTitle}>{option.label}</span>
-                      <span className={styles.formulaCardPrice}>{option.priceLabel}</span>
-                    </span>
-                    {option.description && (
-                      <span className={styles.formulaCardDescription}>
-                        {option.description}
+            {state.includeMain &&
+              exp.mainOptions &&
+              exp.mainOptions.length > 0 && (
+                <div className={styles.formulaSelector}>
+                  {exp.mainOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={styles.formulaCard}
+                      data-selected={
+                        state.selectedMainOptionId === option.id || undefined
+                      }
+                      onClick={() => {
+                        setShowOptionError(false);
+                        onChange({ ...state, selectedMainOptionId: option.id });
+                      }}
+                    >
+                      <span className={styles.formulaCardHeader}>
+                        <span className={styles.formulaCardTitle}>
+                          {option.label}
+                        </span>
+                        <span className={styles.formulaCardPrice}>
+                          {option.priceLabel}
+                        </span>
                       </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
+                      {option.description && (
+                        <span className={styles.formulaCardDescription}>
+                          {option.description}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             <div className={styles.optionRow}>
               <div className={styles.optionLabel}>
                 <span>Aantal gasten</span>
                 <span className={styles.optionPrice}>
-                  (min. {MIN_GUESTS}
+                  (min. {minGuests}
                   {maxGuests ? ` · max. ${maxGuests}` : ""})
                 </span>
               </div>
               <Input
                 type="number"
-                min={MIN_GUESTS}
+                min={minGuests}
                 max={maxGuests}
                 value={guestInput}
                 onChange={(e) => {
@@ -433,7 +447,7 @@ function ExperienceStep({
                   setGuestInput(raw);
                   setShowOptionError(false);
                   const num = Number(raw);
-                  if (!isNaN(num) && num >= MIN_GUESTS) {
+                  if (!isNaN(num) && num >= minGuests) {
                     onChange({
                       ...state,
                       guestCount: maxGuests ? Math.min(num, maxGuests) : num,
@@ -443,7 +457,7 @@ function ExperienceStep({
                 onBlur={() => {
                   const clamped = Math.min(
                     maxGuests ?? Number.MAX_SAFE_INTEGER,
-                    Math.max(MIN_GUESTS, Number(guestInput) || MIN_GUESTS),
+                    Math.max(minGuests, Number(guestInput) || minGuests),
                   );
                   setGuestInput(String(clamped));
                   onChange({ ...state, guestCount: clamped });
@@ -455,7 +469,9 @@ function ExperienceStep({
 
           {showOptionError && (
             <p className={styles.optionError}>
-              {state.includeMain && hasSelectableMainOptions && !selectedMainOption
+              {state.includeMain &&
+              hasSelectableMainOptions &&
+              !selectedMainOption
                 ? "Kies een formule om verder te gaan."
                 : "Selecteer minstens één optie (apéro of hoofdgerecht) om verder te gaan."}
             </p>
@@ -464,7 +480,9 @@ function ExperienceStep({
           <div className={styles.experienceDetailPanel}>
             <div className={styles.experienceDetailHeader}>
               <div>
-                <p className={styles.experienceDetailEyebrow}>Wat mag u verwachten?</p>
+                <p className={styles.experienceDetailEyebrow}>
+                  Wat mag u verwachten?
+                </p>
                 <h4 className={styles.experienceDetailTitle}>{exp.title}</h4>
               </div>
               <p className={styles.experienceDetailNotice}>{exp.notice}</p>
@@ -472,41 +490,48 @@ function ExperienceStep({
 
             <div className={styles.experienceDetailGroups}>
               {exp.tabs.map((tab) => (
-                <section key={tab.label} className={styles.experienceDetailGroup}>
-                  <h5 className={styles.experienceDetailGroupTitle}>{tab.label}</h5>
-                  {getExperienceTabSections(tab).map((section, sectionIndex) => (
-                    <div
-                      key={`${tab.label}-section-${section.title ?? sectionIndex}`}
-                      className={styles.experienceDetailSection}
-                    >
-                      {section.title && (
-                        <h6 className={styles.experienceDetailSectionTitle}>
-                          {section.title}
-                        </h6>
-                      )}
-
-                      <div className={styles.experienceDetailItems}>
-                        {section.entries.map((entry, index) =>
-                          entry.note ? (
-                            <p
-                              key={`${tab.label}-${section.title ?? sectionIndex}-note-${index}`}
-                              className={styles.experienceDetailNote}
-                            >
-                              {entry.note}
-                            </p>
-                          ) : (
-                            <div
-                              key={`${tab.label}-${section.title ?? sectionIndex}-${entry.name}-${index}`}
-                              className={styles.experienceDetailItem}
-                            >
-                              <span>{entry.name}</span>
-                              {entry.price && <span>{entry.price}</span>}
-                            </div>
-                          ),
+                <section
+                  key={tab.label}
+                  className={styles.experienceDetailGroup}
+                >
+                  <h5 className={styles.experienceDetailGroupTitle}>
+                    {tab.label}
+                  </h5>
+                  {getExperienceTabSections(tab).map(
+                    (section, sectionIndex) => (
+                      <div
+                        key={`${tab.label}-section-${section.title ?? sectionIndex}`}
+                        className={styles.experienceDetailSection}
+                      >
+                        {section.title && (
+                          <h6 className={styles.experienceDetailSectionTitle}>
+                            {section.title}
+                          </h6>
                         )}
+
+                        <div className={styles.experienceDetailItems}>
+                          {section.entries.map((entry, index) =>
+                            entry.note ? (
+                              <p
+                                key={`${tab.label}-${section.title ?? sectionIndex}-note-${index}`}
+                                className={styles.experienceDetailNote}
+                              >
+                                {entry.note}
+                              </p>
+                            ) : (
+                              <div
+                                key={`${tab.label}-${section.title ?? sectionIndex}-${entry.name}-${index}`}
+                                className={styles.experienceDetailItem}
+                              >
+                                <span>{entry.name}</span>
+                                {entry.price && <span>{entry.price}</span>}
+                              </div>
+                            ),
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </section>
               ))}
             </div>
@@ -519,16 +544,19 @@ function ExperienceStep({
                   Geschatte totaalprijs
                 </span>
                 <span className={styles.priceBoxNote}>
-                  Incl. {formatEuro(STARTUP_COST)} opstartkost
+                  Incl. {formatEuro(startupCost)} opstartkost
                 </span>
               </div>
               <div style={{ textAlign: "right" }}>
                 <span className={styles.priceBoxAmount}>
                   {formatEuro(total)}
                 </span>
-                {total > STARTUP_COST && (
+                {total > startupCost && (
                   <span className={styles.priceBoxNote}>
-                    ± {formatEuro((total - STARTUP_COST) / Math.max(state.guestCount, 1))}{" "}
+                    ±{" "}
+                    {formatEuro(
+                      (total - startupCost) / Math.max(state.guestCount, 1),
+                    )}{" "}
                     p.p. (excl. opstart)
                   </span>
                 )}
@@ -589,7 +617,8 @@ function ContactStep({
   const isSelectedDateUnavailable = state.datum
     ? unavailableDates.has(state.datum)
     : false;
-  const isBookedDate = (date: Date) => unavailableDates.has(formatDateForApi(date));
+  const isBookedDate = (date: Date) =>
+    unavailableDates.has(formatDateForApi(date));
   const calendarStatusText = availabilityLoading
     ? "Beschikbaarheid wordt geladen…"
     : availabilityError
@@ -721,7 +750,7 @@ function ContactStep({
             required
           >
             <option value="">Kies type event</option>
-            {EVENT_TYPES.map((t) => (
+            {eventTypes.map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
@@ -846,7 +875,9 @@ function ContactStep({
           </div>
 
           <div className={styles.selectedDateCard}>
-            <span className={styles.selectedDateCaption}>Geselecteerde datum</span>
+            <span className={styles.selectedDateCaption}>
+              Geselecteerde datum
+            </span>
             <strong
               className={styles.selectedDateValue}
               role="status"
@@ -876,7 +907,10 @@ function ContactStep({
             formatters={{ formatWeekdayName: getCompactWeekdayName }}
             modifiers={{ booked: isBookedDate }}
             modifiersClassNames={{ booked: styles.bookingCalendarBookedDay }}
-            disabled={[{ before: today }, (date) => availabilityLoading || isBookedDate(date)]}
+            disabled={[
+              { before: today },
+              (date) => availabilityLoading || isBookedDate(date),
+            ]}
             className={styles.bookingCalendar}
             aria-labelledby={dateLabelId}
             aria-describedby={calendarDescribedBy}
@@ -907,13 +941,21 @@ function ContactStep({
           </div>
 
           {availabilityLoading && (
-            <p className={styles.calendarStatus} id={dateStatusId} role="status">
+            <p
+              className={styles.calendarStatus}
+              id={dateStatusId}
+              role="status"
+            >
               Beschikbaarheid wordt geladen…
             </p>
           )}
 
           {availabilityError && (
-            <div className={styles.calendarStatusError} id={dateStatusId} role="alert">
+            <div
+              className={styles.calendarStatusError}
+              id={dateStatusId}
+              role="alert"
+            >
               <span>{availabilityError}</span>
               <Button
                 type="button"
@@ -926,17 +968,29 @@ function ContactStep({
             </div>
           )}
 
-          {!availabilityLoading && !availabilityError && isSelectedDateUnavailable && (
-            <p className={styles.calendarStatusErrorText} id={dateStatusId} role="status">
-              Deze datum is intussen niet meer beschikbaar.
-            </p>
-          )}
+          {!availabilityLoading &&
+            !availabilityError &&
+            isSelectedDateUnavailable && (
+              <p
+                className={styles.calendarStatusErrorText}
+                id={dateStatusId}
+                role="status"
+              >
+                Deze datum is intussen niet meer beschikbaar.
+              </p>
+            )}
 
-          {!availabilityLoading && !availabilityError && !isSelectedDateUnavailable && (
-            <p className={styles.calendarStatus} id={dateStatusId} role="status">
-              {calendarStatusText}
-            </p>
-          )}
+          {!availabilityLoading &&
+            !availabilityError &&
+            !isSelectedDateUnavailable && (
+              <p
+                className={styles.calendarStatus}
+                id={dateStatusId}
+                role="status"
+              >
+                {calendarStatusText}
+              </p>
+            )}
 
           <span id={dateErrorId}>
             <FieldError msg={errors.datum} />
@@ -1026,7 +1080,10 @@ function ConfirmationStep({
     { label: "E-mail", value: contactState.email || "—" },
     { label: "Telefoon", value: contactState.telefoon || "—" },
     { label: "Type event", value: contactState.typeEvent || "—" },
-    { label: "Datum", value: contactState.datum ? formatDateLabel(contactState.datum) : "—" },
+    {
+      label: "Datum",
+      value: contactState.datum ? formatDateLabel(contactState.datum) : "—",
+    },
     { label: "Tijdstip", value: contactState.tijdstip || "—" },
     {
       label: "Locatie",
@@ -1076,14 +1133,19 @@ function ConfirmationStep({
       )}
 
       {availabilityLoading && (
-        <p className={styles.calendarStatus}>Beschikbaarheid wordt opnieuw gecontroleerd…</p>
+        <p className={styles.calendarStatus}>
+          Beschikbaarheid wordt opnieuw gecontroleerd…
+        </p>
       )}
 
-      {availabilityError && <p className={styles.submitError}>{availabilityError}</p>}
+      {availabilityError && (
+        <p className={styles.submitError}>{availabilityError}</p>
+      )}
 
       {isDateUnavailable && (
         <p className={styles.submitError}>
-          Deze datum is niet meer beschikbaar. Ga terug en kies een andere datum.
+          Deze datum is niet meer beschikbaar. Ga terug en kies een andere
+          datum.
         </p>
       )}
 
@@ -1145,7 +1207,7 @@ export function BookingForm() {
     includeApero: false,
     includeMain: true,
     selectedMainOptionId: null,
-    guestCount: MIN_GUESTS,
+    guestCount: minGuests,
   });
 
   const [contactState, setContactState] = useState<ContactState>({
@@ -1168,7 +1230,9 @@ export function BookingForm() {
   const [honeypot, setHoneypot] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
   const [availabilityLoading, setAvailabilityLoading] = useState(true);
-  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(
+    null,
+  );
 
   const unavailableDateSet = useMemo(
     () => new Set(unavailableDates),
@@ -1188,10 +1252,9 @@ export function BookingForm() {
       const json = (await res.json()) as BookingAvailabilityResponse;
 
       if (!res.ok || !json.ok) {
-        const message =
-          !json.ok
-            ? json.message
-            : "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.";
+        const message = !json.ok
+          ? json.message
+          : "Beschikbaarheid kon niet geladen worden. Probeer het opnieuw.";
         setAvailabilityError(message);
         return null;
       }

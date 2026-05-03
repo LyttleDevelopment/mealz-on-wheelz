@@ -1,18 +1,13 @@
 import { z } from "zod";
-import {
-  EXPERIENCE_IDS,
-  EVENT_TYPES,
-  getExperience,
-  getExperienceMaxGuests,
-  MIN_GUESTS,
-} from "./constants";
+import { getExperience, getExperienceMaxGuests } from "./constants";
+import { eventTypes, expirienceIds, minGuests } from "@data/constants";
 
 // ─── Request schema ───────────────────────────────────────────────────────────
 
 export const bookingRequestSchema = z
   .object({
     // Experience selection
-    experienceId: z.enum(EXPERIENCE_IDS, {
+    experienceId: z.enum(expirienceIds, {
       error: () => "Selecteer een geldige experience.",
     }),
     includeApero: z.boolean(),
@@ -21,7 +16,7 @@ export const bookingRequestSchema = z
     guestCount: z
       .number()
       .int()
-      .min(MIN_GUESTS, { message: `Minimum ${MIN_GUESTS} gasten vereist.` })
+      .min(minGuests, { message: `Minimum ${minGuests} gasten vereist.` })
       .max(5000, { message: "Meer dan 5000 gasten is niet toegestaan." }),
 
     // Contact details
@@ -41,7 +36,7 @@ export const bookingRequestSchema = z
       .min(5, { message: "Telefoonnummer is verplicht." })
       .max(30, { message: "Telefoonnummer is te lang." })
       .trim(),
-    eventType: z.enum(EVENT_TYPES, {
+    eventType: z.enum(eventTypes, {
       error: () => "Selecteer een geldig event-type.",
     }),
     eventDate: z
@@ -50,25 +45,29 @@ export const bookingRequestSchema = z
       .refine((d) => new Date(d) > new Date(), {
         message: "De evenementdatum moet in de toekomst liggen.",
       }),
-    eventTime: z
-      .string()
-      .regex(/^([01]\d|2[0-3]):[0-5]\d$/, { message: "Voer een geldig tijdstip in." }),
+    eventTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, {
+      message: "Voer een geldig tijdstip in.",
+    }),
     // Location (Belgium)
     streetName: z
       .string()
       .min(2, { message: "Straatnaam is verplicht." })
       .max(120, { message: "Straatnaam is te lang." })
       .trim(),
-    postalCode: z
-      .string()
-      .regex(/^\d{4}$/, { message: "Voer een geldige Belgische postcode in (4 cijfers)." }),
+    postalCode: z.string().regex(/^\d{4}$/, {
+      message: "Voer een geldige Belgische postcode in (4 cijfers).",
+    }),
     city: z
       .string()
       .min(2, { message: "Gemeente is verplicht." })
       .max(80, { message: "Gemeente is te lang." })
       .trim(),
     province: z.string().max(60).trim().optional(),
-    notes: z.string().max(2000, { message: "Opmerkingen zijn te lang." }).trim().optional(),
+    notes: z
+      .string()
+      .max(2000, { message: "Opmerkingen zijn te lang." })
+      .trim()
+      .optional(),
 
     // Anti-spam fields
     turnstileToken: z.string(), // may be empty when Turnstile is not configured
@@ -111,7 +110,9 @@ export const bookingRequestSchema = z
           path: ["mainOptionId"],
           message: "Kies een formule voor het hoofdgerecht.",
         });
-      } else if (!mainOptions.some((option) => option.id === value.mainOptionId)) {
+      } else if (
+        !mainOptions.some((option) => option.id === value.mainOptionId)
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["mainOptionId"],
@@ -163,4 +164,3 @@ export interface BookingAvailabilityErrorResponse {
 export type BookingAvailabilityResponse =
   | BookingAvailabilitySuccessResponse
   | BookingAvailabilityErrorResponse;
-

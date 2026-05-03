@@ -3,11 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./index.module.scss";
-
-const SOURCE_IMAGES = Array.from({ length: 19 }, (_, i) => ({
-  src: `/media/food-${i + 1}.webp`,
-  alt: `Galerij afbeelding ${i + 1}`,
-}));
+import { galleryImages } from "@data/constants";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -21,7 +17,7 @@ function shuffle<T>(arr: T[]): T[] {
 export function Carousel() {
   // Start with the unshuffled list so server and client render the same HTML.
   // Shuffle only after mount so hydration always matches.
-  const [images, setImages] = useState(SOURCE_IMAGES);
+  const [images, setImages] = useState(galleryImages);
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -32,7 +28,7 @@ export function Carousel() {
   // Shuffle once on the client after hydration
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      setImages(shuffle(SOURCE_IMAGES));
+      setImages(shuffle(galleryImages));
       setCurrent(0);
     }, 0);
 
@@ -127,7 +123,6 @@ export function Carousel() {
 
   return (
     <div className={styles.carouselWrapper}>
-
       {/* ── Main carousel box ── */}
       <div
         ref={regionRef}
@@ -145,7 +140,11 @@ export function Carousel() {
         onTouchEnd={handleTouchEnd}
       >
         {/* ── Slide track ── */}
-        <div className={styles.carouselTrack} aria-live="polite" aria-atomic="true">
+        <div
+          className={styles.carouselTrack}
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {images.map((img, i) => (
             <div
               key={img.src}
@@ -175,21 +174,58 @@ export function Carousel() {
         <div className={styles.carouselOverlayBottom} aria-hidden="true" />
 
         {/* ── Prev button ── */}
-        <button type="button" className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`} onClick={prev} aria-label="Vorige afbeelding">
-          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <button
+          type="button"
+          className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
+          onClick={prev}
+          aria-label="Vorige afbeelding"
+        >
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
 
         {/* ── Next button ── */}
-        <button type="button" className={`${styles.carouselBtn} ${styles.carouselBtnNext}`} onClick={next} aria-label="Volgende afbeelding">
-          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <button
+          type="button"
+          className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
+          onClick={next}
+          aria-label="Volgende afbeelding"
+        >
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
 
         {/* ── Dot indicators (mobile only) ── */}
-        <div ref={dotsRef} className={styles.carouselDots} role="tablist" aria-label="Selecteer afbeelding">
+        <div
+          ref={dotsRef}
+          className={styles.carouselDots}
+          role="tablist"
+          aria-label="Selecteer afbeelding"
+        >
           {images.map((_, i) => (
             <button
               key={i}
@@ -213,10 +249,16 @@ export function Carousel() {
         >
           {current + 1} <span aria-hidden="true">/</span> {total}
         </div>
-      </div>{/* end .carousel */}
+      </div>
+      {/* end .carousel */}
 
       {/* ── Thumbnail strip — outside carousel, always visible on desktop ── */}
-      <div ref={thumbsRef} className={styles.carouselThumbs} role="tablist" aria-label="Selecteer afbeelding">
+      <div
+        ref={thumbsRef}
+        className={styles.carouselThumbs}
+        role="tablist"
+        aria-label="Selecteer afbeelding"
+      >
         {images.map((img, i) => (
           <button
             key={img.src}
@@ -228,11 +270,17 @@ export function Carousel() {
             onClick={() => goTo(i)}
             data-active={i === current}
           >
-            <Image src={img.src} alt="" fill sizes="80px" className={styles.carouselThumbImage} tabIndex={-1} />
+            <Image
+              src={img.src}
+              alt=""
+              fill
+              sizes="80px"
+              className={styles.carouselThumbImage}
+              tabIndex={-1}
+            />
           </button>
         ))}
       </div>
-
-    </div>/* end .carouselWrapper */
+    </div> /* end .carouselWrapper */
   );
 }
