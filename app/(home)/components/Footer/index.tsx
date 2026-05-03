@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "@lyttle-development/ui";
-import { footerNavigation } from "@data/constants";
+import { footerNavigation } from "../../../../data/constants";
 import styles from "./index.module.scss";
 
 const socialLinks = [

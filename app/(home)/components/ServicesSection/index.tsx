@@ -5,7 +5,7 @@ import {
   Surface,
   Text,
 } from "@lyttle-development/ui";
-import { services } from "@data/constants";
+import { services } from "../../../../data/constants";
 import { SectionHeading } from "../SectionHeading";
 import styles from "./index.module.scss";
 

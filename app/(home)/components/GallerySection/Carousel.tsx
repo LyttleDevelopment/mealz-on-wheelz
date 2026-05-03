@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./index.module.scss";
-import { galleryImages } from "@data/constants";
+import { galleryImages } from "../../../../data/constants";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];

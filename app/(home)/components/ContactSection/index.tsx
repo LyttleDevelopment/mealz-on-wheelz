@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
 } from "@lyttle-development/ui";
-import { contactInfo } from "@data/constants";
+import { contactInfo } from "../../../../data/constants";
 import { ContactForm } from "./ContactForm";
 import styles from "./index.module.scss";
 

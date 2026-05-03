@@ -3,8 +3,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@lyttle-development/ui";
 import { getExperienceTabSections } from "@/_lib/booking/constants";
-import { experiences, minGuests, startupCost } from "@data/constants";
-import type { Experience } from "@data/types";
+import { experiences, minGuests, startupCost } from "../../../../data/constants";
+import type { Experience } from "../../../../data/types";
 import { SectionHeading } from "../SectionHeading";
 import styles from "./index.module.scss";
 
