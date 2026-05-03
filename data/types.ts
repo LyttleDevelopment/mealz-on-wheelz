@@ -1,11 +1,10 @@
-import type { ExperienceDefinition } from "@/_lib/booking/constants";
-import type { LucideIcon } from 'lucide-react';
+import type { ExperienceDefinition } from "app/_lib/booking/constants";
+import type { LucideIcon } from "lucide-react";
 
 export type NavigationItem = {
   label: string;
   href: string;
 };
-
 
 export type Experience = ExperienceDefinition;
 
@@ -25,4 +24,3 @@ export type ContactInfo = {
   value: string;
   icon: LucideIcon;
 };
-

@@ -1,6 +1,19 @@
-import { BOOKING_EXPERIENCES } from "@/_lib/booking/constants";
-import { CalendarDays, Clock, Mail, MapPin, Phone, Store, Truck } from "lucide-react";
-import type { ContactInfo, GalleryTile, NavigationItem, Service } from "./types";
+import { BOOKING_EXPERIENCES } from "app/_lib/booking/constants";
+import {
+  CalendarDays,
+  Clock,
+  Mail,
+  MapPin,
+  Phone,
+  Store,
+  Truck,
+} from "lucide-react";
+import type {
+  ContactInfo,
+  GalleryTile,
+  NavigationItem,
+  Service,
+} from "./types";
 
 export const navigation: NavigationItem[] = [
   { label: "Home", href: "/" },

@@ -1,12 +1,24 @@
 import Link from "next/link";
 import { Container } from "@lyttle-development/ui";
-import { footerNavigation } from "../../data/constants";
+import { footerNavigation } from "@data/constants";
 import styles from "./index.module.scss";
 
 const socialLinks = [
-  { label: "f", href: "https://www.facebook.com/people/Mealzonwheelz/61559672413790/", ariaLabel: "Facebook" },
-  { label: "ig", href: "https://www.instagram.com/mealzonwheelzfoodtruck", ariaLabel: "Instagram" },
-  { label: "TT", href: "https://www.tiktok.com/@mealzonwheelzfoodtruck", ariaLabel: "TikTok" },
+  {
+    label: "f",
+    href: "https://www.facebook.com/people/Mealzonwheelz/61559672413790/",
+    ariaLabel: "Facebook",
+  },
+  {
+    label: "ig",
+    href: "https://www.instagram.com/mealzonwheelzfoodtruck",
+    ariaLabel: "Instagram",
+  },
+  {
+    label: "TT",
+    href: "https://www.tiktok.com/@mealzonwheelzfoodtruck",
+    ariaLabel: "TikTok",
+  },
 ];
 
 export function Footer() {
@@ -28,35 +40,37 @@ export function Footer() {
               <span className={styles.brandText}>Mealz on Wheelz</span>
             </Link>
             <p className={styles.tagline}>
-              Bringing gourmet street food to your neighborhood and events since 2024.
+              Bringing gourmet street food to your neighborhood and events since
+              2024.
             </p>
           </div>
 
           {/* Quick Links column */}
           <div>
             <h3 className={styles.colTitle}>Quick Links</h3>
-              <ul className={styles.linkList}>
-                {footerNavigation.map((item) => (
-                  <li key={item.href}>
-                    {item.href.startsWith("/") ? (
-                      <Link href={item.href} className={styles.link}>
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <a href={item.href} className={styles.link}>
-                        {item.label}
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
+            <ul className={styles.linkList}>
+              {footerNavigation.map((item) => (
+                <li key={item.href}>
+                  {item.href.startsWith("/") ? (
+                    <Link href={item.href} className={styles.link}>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a href={item.href} className={styles.link}>
+                      {item.label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Follow us column */}
           <div>
             <h3 className={styles.colTitle}>Volg ons</h3>
             <p className={styles.socialDesc}>
-              Blijf op de hoogte van onze nieuwste formules en speciale aanbiedingen
+              Blijf op de hoogte van onze nieuwste formules en speciale
+              aanbiedingen
             </p>
             <div className={styles.socialButtons}>
               {socialLinks.map((s) => (
@@ -77,8 +91,12 @@ export function Footer() {
           <p className={styles.copyright}>
             © {year} Mealz on Wheelz. All rights reserved.
           </p>
-          <a className={styles.poweredBy}
-             href={"https://www.lyttledevelopment.com"} target="_blank" rel="noopener noreferrer">
+          <a
+            className={styles.poweredBy}
+            href={"https://www.lyttledevelopment.com"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Powered by LyttleDevelopment
           </a>
         </div>

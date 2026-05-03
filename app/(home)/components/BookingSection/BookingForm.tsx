@@ -20,6 +20,7 @@ import {
   ExperienceId,
   getExperienceMainOption,
   getExperienceMaxGuests,
+  getExperienceTabSections,
   MIN_GUESTS,
   STARTUP_COST,
 } from "@/_lib/booking/constants";
@@ -473,23 +474,39 @@ function ExperienceStep({
               {exp.tabs.map((tab) => (
                 <section key={tab.label} className={styles.experienceDetailGroup}>
                   <h5 className={styles.experienceDetailGroupTitle}>{tab.label}</h5>
-                  <div className={styles.experienceDetailItems}>
-                    {tab.entries.map((entry, index) =>
-                      entry.note ? (
-                        <p key={`${tab.label}-note-${index}`} className={styles.experienceDetailNote}>
-                          {entry.note}
-                        </p>
-                      ) : (
-                        <div
-                          key={`${tab.label}-${entry.name}-${index}`}
-                          className={styles.experienceDetailItem}
-                        >
-                          <span>{entry.name}</span>
-                          {entry.price && <span>{entry.price}</span>}
-                        </div>
-                      ),
-                    )}
-                  </div>
+                  {getExperienceTabSections(tab).map((section, sectionIndex) => (
+                    <div
+                      key={`${tab.label}-section-${section.title ?? sectionIndex}`}
+                      className={styles.experienceDetailSection}
+                    >
+                      {section.title && (
+                        <h6 className={styles.experienceDetailSectionTitle}>
+                          {section.title}
+                        </h6>
+                      )}
+
+                      <div className={styles.experienceDetailItems}>
+                        {section.entries.map((entry, index) =>
+                          entry.note ? (
+                            <p
+                              key={`${tab.label}-${section.title ?? sectionIndex}-note-${index}`}
+                              className={styles.experienceDetailNote}
+                            >
+                              {entry.note}
+                            </p>
+                          ) : (
+                            <div
+                              key={`${tab.label}-${section.title ?? sectionIndex}-${entry.name}-${index}`}
+                              className={styles.experienceDetailItem}
+                            >
+                              <span>{entry.name}</span>
+                              {entry.price && <span>{entry.price}</span>}
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </section>
               ))}
             </div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button, Container } from "@lyttle-development/ui";
-import { navigation } from "../../data/constants";
+import { navigation } from "@data/constants";
 import styles from "./index.module.scss";
 
 export function Header() {
@@ -52,11 +52,7 @@ export function Header() {
       <header className={styles.header}>
         <Container>
           <div className={styles.headerShell}>
-            <Link
-              href="/"
-              className={styles.brand}
-              onClick={handleBrandClick}
-            >
+            <Link href="/" className={styles.brand} onClick={handleBrandClick}>
               <img
                 src="/logo.svg"
                 alt="Mealz on Wheelz logo"
@@ -85,7 +81,12 @@ export function Header() {
               </nav>
 
               <Button asChild variant="secondary" size="lg">
-                <a href="#contact" onClick={(e) => handleNavClick(e, "#contact")}>Contacteer ons</a>
+                <a
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, "#contact")}
+                >
+                  Contacteer ons
+                </a>
               </Button>
             </div>
 
@@ -110,44 +111,47 @@ export function Header() {
       >
         <nav className={styles.mobileNav} aria-label="Mobiele navigatie">
           {navigation.map((item, i) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className={styles.mobileNavLink}
-                style={{ "--i": i } as React.CSSProperties}
-                onClick={(e) => {
-                  setMenuOpen(false);
-                  if (item.href.startsWith("#")) {
-                    e.preventDefault();
-                    setTimeout(() => {
-                      const target = document.querySelector(item.href);
-                      if (target) target.scrollIntoView({ behavior: "smooth" });
-                    }, 320);
-                  } else if (item.href === "/" && pathname === "/") {
-                    e.preventDefault();
-                    setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }, 320);
-                  }
-                }}
-              >
-                {item.label}
-              </a>
-            ))}
+            <a
+              key={item.href}
+              href={item.href}
+              className={styles.mobileNavLink}
+              style={{ "--i": i } as React.CSSProperties}
+              onClick={(e) => {
+                setMenuOpen(false);
+                if (item.href.startsWith("#")) {
+                  e.preventDefault();
+                  setTimeout(() => {
+                    const target = document.querySelector(item.href);
+                    if (target) target.scrollIntoView({ behavior: "smooth" });
+                  }, 320);
+                } else if (item.href === "/" && pathname === "/") {
+                  e.preventDefault();
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }, 320);
+                }
+              }}
+            >
+              {item.label}
+            </a>
+          ))}
 
           <div
             className={styles.mobileNavCta}
             style={{ "--i": navigation.length } as React.CSSProperties}
           >
             <Button asChild variant="secondary" size="lg">
-              <a href="#contact" onClick={(e) => {
+              <a
+                href="#contact"
+                onClick={(e) => {
                   e.preventDefault();
                   setMenuOpen(false);
                   setTimeout(() => {
                     const target = document.querySelector("#contact");
                     if (target) target.scrollIntoView({ behavior: "smooth" });
                   }, 320);
-                }}>
+                }}
+              >
                 Contacteer ons
               </a>
             </Button>

@@ -52,9 +52,23 @@ export interface ExperienceMenuEntry {
   note?: string;
 }
 
+export interface ExperienceMenuSection {
+  title?: string;
+  entries: readonly ExperienceMenuEntry[];
+}
+
 export interface ExperienceTab {
   label: string;
-  entries: readonly ExperienceMenuEntry[];
+  entries?: readonly ExperienceMenuEntry[];
+  sections?: readonly ExperienceMenuSection[];
+}
+
+export function getExperienceTabSections(tab: ExperienceTab): readonly ExperienceMenuSection[] {
+  if (tab.sections && tab.sections.length > 0) {
+    return tab.sections;
+  }
+
+  return [{ entries: tab.entries ?? [] }];
 }
 
 export const BOOKING_EXPERIENCES: readonly ExperienceDefinition[] = [
@@ -206,29 +220,86 @@ export const BOOKING_EXPERIENCES: readonly ExperienceDefinition[] = [
       },
       {
         label: "Classic",
-        entries: [
-          { name: "Groentenbuffet", price: "Sla, tomaat, komkommer, wortel, pastasalade, aardappelsalade, witloof en boontjes" },
-          { name: "Versgebakken stokbrood met boter" },
-          { name: "Sauzen", price: "Mayo, cocktail, ketchup (curry & normaal) en andalouse" },
-          { name: "3 stukken vlees", price: "€22,95 p.p." },
-          { name: "4 stukken vlees", price: "€25,95 p.p." },
-          { name: "Papillot met zalm & kabeljauw + scampibrochette", price: "€27,95 p.p." },
+        sections: [
+          {
+            title: "Groentenbuffet",
+            entries: [
+              { name: "Sla" },
+              { name: "Tomaat" },
+              { name: "Komkommer" },
+              { name: "Wortel" },
+              { name: "Pastasalade" },
+              { name: "Aardappelsalade" },
+              { name: "Witloof" },
+              { name: "Boontjes" },
+            ],
+          },
+          {
+            title: "Brood",
+            entries: [{ name: "Versgebakken stokbrood met boter" }],
+          },
+          {
+            title: "Sauzen",
+            entries: [
+              { name: "Mayo" },
+              { name: "Cocktail" },
+              { name: "Ketchup (curry & normaal)" },
+              { name: "Andalouse" },
+            ],
+          },
+          {
+            title: "Formules",
+            entries: [
+              { name: "3 stukken vlees", price: "€22,95 p.p." },
+              { name: "4 stukken vlees", price: "€25,95 p.p." },
+              {
+                name: "Papillot met zalm & kabeljauw + scampibrochette",
+                price: "€27,95 p.p.",
+              },
+            ],
+          },
         ],
       },
       {
         label: "Deluxe",
-        entries: [
-          { name: "Libanese tabouleh" },
-          { name: "Griekse salade met orzo" },
-          { name: "Gegrilde groentensalade met pijnboompitten en basilicumdressing" },
-          { name: "Gegrilde pêche met burrata" },
-          { name: "Coleslaw" },
-          { name: "Italiaanse pastasalade met pesto" },
-          { name: "Assortiment rauwe groentjes" },
-          { name: "Scampibrochette" },
-          { name: "Varkenshaassaté" },
-          { name: "Gemarineerde kipfilet" },
-          { name: "Versgebakken stokbrood met boter + diverse sauzen", price: "€35 p.p." },
+        sections: [
+          {
+            title: "Salades",
+            entries: [
+              { name: "Libanese tabouleh" },
+              { name: "Griekse salade met orzo" },
+              { name: "Gegrilde groentensalade met pijnboompitten en basilicumdressing" },
+              { name: "Gegrilde pêche met burrata" },
+              { name: "Coleslaw" },
+              { name: "Italiaanse pastasalade met pesto" },
+              { name: "Assortiment rauwe groentjes" },
+            ],
+          },
+          {
+            title: "Vlees/vis",
+            entries: [
+              { name: "Scampibrochette" },
+              { name: "Varkenshaassaté" },
+              { name: "Gemarineerde kipfilet" },
+            ],
+          },
+          {
+            title: "Brood",
+            entries: [{ name: "Versgebakken stokbrood met boter" }],
+          },
+          {
+            title: "Sauzen",
+            entries: [
+              { name: "Mayo" },
+              { name: "Cocktail" },
+              { name: "Ketchup (curry & normaal)" },
+              { name: "Andalouse" },
+            ],
+          },
+          {
+            title: "Prijs",
+            entries: [{ name: "Deluxe formule", price: "€35 p.p." }],
+          },
         ],
       },
     ],
