@@ -20,23 +20,23 @@
   },
   "dependencies": {
     "@lyttle-development/ui": "file:packages/design-framework/packages/ui",
-    "@marsidev/react-turnstile": "^1.5.0",
+    "@marsidev/react-turnstile": "^1.5.1",
     "googleapis": "^171.4.0",
-    "lucide-react": "^1.8.0",
-    "next": "^16.2.3",
-    "prettier": "^3.8.2",
+    "lucide-react": "^1.14.0",
+    "next": "^16.2.4",
+    "prettier": "^3.8.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "resend": "^6.12.2",
-    "zod": "^4.3.6"
+    "zod": "^4.4.2"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^9.39.0",
-    "eslint-config-next": "^16.2.3",
+    "eslint": "^9",
+    "eslint-config-next": "^16.2.4",
     "sass": "^1.99.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }
