@@ -15,7 +15,6 @@ export const EVENT_TYPES = [
   "Festival",
   "Andere",
 ] as const;
-export type EventType = (typeof EVENT_TYPES)[number];
 
 export interface ExperienceDefinition {
   id: ExperienceId;
