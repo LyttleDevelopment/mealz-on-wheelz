@@ -345,6 +345,8 @@
   border-radius: 1rem;
   background: #fff;
   border: 1px solid rgb(31 58 59 / 0.08);
+  align-items: start;
+  align-content: start;
 }
 
 .experienceDetailGroupTitle {
@@ -384,8 +386,9 @@
   font-size: 0.86rem;
   color: #1e2939;
 
-  span:last-child {
+  span:nth-child(2) {
     text-align: right;
+    text-wrap: nowrap;
     color: #6b7280;
   }
 }

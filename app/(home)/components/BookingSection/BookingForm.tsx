@@ -265,6 +265,7 @@ function ExperienceStep({
   const [showOptionError, setShowOptionError] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
   const exp = state.experience;
   const maxGuests = exp ? getExperienceMaxGuests(exp.id) : undefined;
   const hasSelectableMainOptions = Boolean(exp?.mainOptions?.length);
@@ -468,6 +469,15 @@ function ExperienceStep({
                   );
                   setGuestInput(String(clamped));
                   onChange({ ...state, guestCount: clamped });
+                  // On mobile, scroll to the next button so it's easy to tap
+                  if (isMobileViewport()) {
+                    setTimeout(() => {
+                      nextButtonRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                      });
+                    }, 50);
+                  }
                 }}
                 className={styles.guestInput}
               />
@@ -575,7 +585,7 @@ function ExperienceStep({
             overleg.
           </p>
 
-          <Button className={styles.nextButton} onClick={handleNext}>
+          <Button ref={nextButtonRef} className={styles.nextButton} onClick={handleNext}>
             Verder naar uw gegevens <ArrowRight size={16} />
           </Button>
         </>
