@@ -12,6 +12,12 @@
     "docker:build": "docker build -t mealz-on-weelz .",
     "update": "npm update --save && npx npm-check-updates -u && npm install"
   },
+  "volta": {
+    "node": "24.15.0"
+  },
+  "engines": {
+    "node": "24.15.0"
+  },
   "dependencies": {
     "@lyttle-development/ui": "file:packages/design-framework/packages/ui",
     "@marsidev/react-turnstile": "^1.5.0",
