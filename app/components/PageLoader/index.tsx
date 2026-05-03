@@ -315,7 +315,36 @@ export function PageLoader() {
       {/* Inline script — runs synchronously, sets up the hide-on-load handler */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `(function(){var b=document.body,l=document.getElementById('page-loader');if(!l)return;b.classList.add('page-loading');function hide(){l.classList.add('page-loader--hidden');b.classList.remove('page-loading');setTimeout(function(){l.style.display='none';},700);}if(document.readyState==='complete'){hide();}else{window.addEventListener('load',hide);}})();`,
+          __html: `
+            (function() {
+              var body = document.body;
+              var loader = document.getElementById('page-loader');
+              if (!loader) return;
+              
+              var startTime = Date.now();
+              body.classList.add('page-loading');
+              
+              function hide() {
+                var elapsed = Date.now() - startTime;
+                var delay = Math.max(0, 500 - elapsed);
+                
+                setTimeout(function() {
+                  loader.classList.add('page-loader--hidden');
+                  body.classList.remove('page-loading');
+                  
+                  setTimeout(function() {
+                    loader.style.display = 'none';
+                  }, 700);
+                }, delay);
+              }
+              
+              if (document.readyState === 'complete') {
+                hide();
+              } else {
+                window.addEventListener('load', hide);
+              }
+            })();
+          `,
         }}
       />
 
