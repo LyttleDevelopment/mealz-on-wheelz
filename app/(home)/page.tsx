@@ -19,8 +19,8 @@ export default function HomePage() {
       <FormulasSection />
       <ServicesSection />
       <GallerySection />
-      <BookingSection />
-      <ContactSection />
+      {/*<BookingSection />*/}
+      {/*<ContactSection />*/}
       <Footer />
     </main>
   );
