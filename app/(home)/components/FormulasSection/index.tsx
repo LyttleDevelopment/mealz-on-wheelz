@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@lyttle-development/ui";
 import { getExperienceTabSections } from "@/_lib/booking/constants";
-import { experiences, minGuests, startupCost } from "@data/constants";
+import { experiences } from "@data/constants";
 import type { Experience } from "@data/types";
 import { SectionHeading } from "../SectionHeading";
 import styles from "./index.module.scss";
@@ -46,18 +46,13 @@ export function FormulasSection() {
     <section id="menu" className={styles.section}>
       <Container>
         <SectionHeading
-          title="Onze formules"
-          description="Ontdek onze selectie vers bereide gerechten, gemaakt met ingrediënten van topkwaliteit."
+          title="Oude foodtruckmenu's"
+          description="Een terugblik op gerechten en prijzen uit onze foodtruckperiode; dit is niet het menu van het toekomstige restaurant."
         />
 
-        <div className={styles.metaRow}>
-          <p className={styles.metaHint}>
-            Klik op een experience voor meer info
-          </p>
-          <p className={styles.metaInfo}>
-            Min. {minGuests} pers. · €{startupCost} opstartkost
-          </p>
-        </div>
+        <p className={styles.metaHint}>
+          Klik op een concept voor meer menu-informatie
+        </p>
 
         <div className={styles.experienceGrid}>
           {experiences.map((experience) => {
@@ -182,9 +177,6 @@ export function FormulasSection() {
                 )}
               </div>
 
-              <div className={styles.noticeBox}>
-                <p className={styles.noticeText}>{selectedExperience.notice}</p>
-              </div>
             </div>
           </div>
         )}

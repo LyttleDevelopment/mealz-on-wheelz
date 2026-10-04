@@ -14,8 +14,8 @@ export function ServicesSection() {
     <section id="diensten" className={styles.section}>
       <Container>
         <SectionHeading
-          title="Onze diensten"
-          description="Alles voor een snelle hap of een volledig event!"
+          title="Foodtruckconcepten van toen"
+          description="Een overzicht van de concepten uit onze foodtruckperiode."
         />
 
         <Grid columns={1} mdColumns={3} gap="lg">

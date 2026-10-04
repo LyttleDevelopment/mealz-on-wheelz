@@ -1,25 +1,8 @@
 import Link from "next/link";
 import { Container } from "@lyttle-development/ui";
+import { ArrowUpRight } from "lucide-react";
 import { footerNavigation } from "@data/constants";
 import styles from "./index.module.scss";
-
-const socialLinks = [
-  {
-    label: "f",
-    href: "https://www.facebook.com/people/Mealzonwheelz/61559672413790/",
-    ariaLabel: "Facebook",
-  },
-  {
-    label: "ig",
-    href: "https://www.instagram.com/mealzonwheelzfoodtruck",
-    ariaLabel: "Instagram",
-  },
-  {
-    label: "TT",
-    href: "https://www.tiktok.com/@mealzonwheelzfoodtruck",
-    ariaLabel: "TikTok",
-  },
-];
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -40,8 +23,8 @@ export function Footer() {
               <span className={styles.brandText}>Mealz on Wheelz</span>
             </Link>
             <p className={styles.tagline}>
-              Bringing gourmet street food to your neighborhood and events since
-              2024.
+              De foodtruckactiviteiten stoppen. Binnenkort starten we als
+              restaurant in Moerbeke.
             </p>
           </div>
 
@@ -65,39 +48,19 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Follow us column */}
-          <div>
-            <h3 className={styles.colTitle}>Volg ons</h3>
-            <p className={styles.socialDesc}>
-              Blijf op de hoogte van onze nieuwste formules en speciale
-              aanbiedingen
-            </p>
-            <div className={styles.socialButtons}>
-              {socialLinks.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  className={styles.socialBtn}
-                  aria-label={s.ariaLabel}
-                >
-                  {s.label}
-                </a>
-              ))}
-            </div>
-          </div>
         </div>
 
         <div className={styles.footerBottom}>
           <p className={styles.copyright}>
-            © {year} Mealz on Wheelz. All rights reserved.
+            © {year} Mealz on Wheelz.
           </p>
           <a
-            className={styles.poweredBy}
-            href={"https://www.lyttledevelopment.com"}
+            className={styles.restaurantLink}
+            href="https://www.trattorialanonna.be/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Powered by LyttleDevelopment
+            Trattoria La Nonna <ArrowUpRight size={16} aria-hidden="true" />
           </a>
         </div>
       </Container>

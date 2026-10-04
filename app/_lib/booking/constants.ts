@@ -10,7 +10,6 @@ export interface ExperienceDefinition {
   cardSubtitle: string;
   priceBadges: string[];
   detailSubtitle: string;
-  notice: string;
   basePrice: number;
   maxGuests: number;
   hasApero: boolean;

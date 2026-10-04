@@ -1,15 +1,5 @@
-"use client";
-
 import { Button, Heading, Text } from "@lyttle-development/ui";
 import styles from "./index.module.scss";
-
-function scrollTo(href: string) {
-  return (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const target = document.querySelector(href);
-    if (target) target.scrollIntoView({ behavior: "smooth" });
-  };
-}
 
 export function HeroSection() {
   return (
@@ -19,16 +9,13 @@ export function HeroSection() {
           Mealz on Wheelz
         </Heading>
         <Text as="p" size="lg" className={styles.heroText}>
-          Mealz on Wheelz is jouw go-to foodtruck in het Oost-Vlaamse
-          Moerbeke-Waas. Wij bieden concepten aan zoals pasta&apos;s, BBQ en nog
-          meer. Kom langs of vraag een offerte en ontdek het zelf!
+          Mealz on Wheelz was een foodtruck uit Moerbeke-Waas met pasta&apos;s,
+          streetfood en BBQ. De foodtruckactiviteiten stoppen; binnenkort starten
+          we als restaurant in Moerbeke.
         </Text>
         <div className={styles.heroActions}>
-          <Button asChild variant="default" size="lg">
-            <a href="#reserveren" onClick={scrollTo("#reserveren")}>Boek ons</a>
-          </Button>
           <Button asChild variant="secondary" size="lg">
-            <a href="#menu" onClick={scrollTo("#menu")}>Ontdek menu</a>
+            <a href="#menu">Bekijk het oude menu</a>
           </Button>
         </div>
       </article>

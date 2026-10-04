@@ -1,6 +1,4 @@
 import { AboutSection } from "./components/AboutSection";
-import { BookingSection } from "./components/BookingSection";
-import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
 import { FormulasSection } from "./components/FormulasSection";
 import { GallerySection } from "./components/GallerySection";
@@ -19,8 +17,6 @@ export default function HomePage() {
       <FormulasSection />
       <ServicesSection />
       <GallerySection />
-      {/*<BookingSection />*/}
-      {/*<ContactSection />*/}
       <Footer />
     </main>
   );

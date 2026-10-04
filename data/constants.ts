@@ -1,13 +1,9 @@
 import {
   CalendarDays,
-  Clock,
-  Mail,
-  MapPin,
-  Phone,
   Store,
   Truck,
 } from "lucide-react";
-import type { ContactInfo, NavigationItem, Service } from "./types";
+import type { NavigationItem, Service } from "./types";
 import { ExperienceDefinition } from "@/_lib/booking/constants";
 
 export const navigation: NavigationItem[] = [
@@ -16,7 +12,6 @@ export const navigation: NavigationItem[] = [
   { label: "Menu", href: "#menu" },
   { label: "Diensten", href: "#diensten" },
   { label: "Galerij", href: "#galerij" },
-  { label: "Reservatie", href: "#reserveren" },
 ];
 
 export const footerNavigation: NavigationItem[] = [
@@ -24,50 +19,26 @@ export const footerNavigation: NavigationItem[] = [
   { label: "Over ons", href: "#over-ons" },
   { label: "Menu", href: "#menu" },
   { label: "Diensten", href: "#diensten" },
-  { label: "Algemene voorwaarden", href: "/algemene-voorwaarden" },
 ];
 
 export const services: Service[] = [
   {
     title: "Food truck service",
     description:
-      "Je vindt ons op lokale evenementen, festivals en buurtfeesten, waar we verse, heerlijke maaltijden serveren.",
+      "We stonden op lokale evenementen, festivals en buurtfeesten en serveerden daar verse maaltijden.",
     icon: Truck,
   },
   {
     title: "Event catering",
     description:
-      "Full-service catering voor bruiloften, bedrijfsevenementen en privéfeesten.",
+      "We verzorgden catering voor bruiloften, bedrijfsevenementen en privéfeesten.",
     icon: CalendarDays,
   },
   {
     title: "Food bar concept",
     description:
-      "Aanpasbare bar naar wens, kan gebruikt worden als charcuterie/chocolade bar (of andere).",
+      "Een aanpasbare bar die werd ingezet als charcuterie-, chocolade- of ander concept.",
     icon: Store,
-  },
-];
-
-export const contactInfo: ContactInfo[] = [
-  {
-    icon: MapPin,
-    label: "Plaats",
-    value: "Gent & heel Oost-Vlaanderen",
-  },
-  {
-    icon: Phone,
-    label: "Telefoonnummer",
-    value: "+32 (0)499/41.03.75",
-  },
-  {
-    icon: Mail,
-    label: "E-mail",
-    value: "mealzonwheelz-foodtruck@outlook.com",
-  },
-  {
-    icon: Clock,
-    label: "Contacttijden",
-    value: "24/7 bereikbaar, snelle reactie binnen 24u",
   },
 ];
 
@@ -107,9 +78,7 @@ export const experiences: readonly ExperienceDefinition[] = [
     icon: "🍝",
     cardSubtitle: "Apéro €15,95 · Hoofd v.a. €8",
     priceBadges: ["Apéro €15,95", "Pasta v.a. €8"],
-    detailSubtitle: "Apéro €15,95 p.p. · Pasta v.a. €8 p.p. · Apart te boeken",
-    notice:
-      "Min. 20 personen · Max. 300 personen per boeking · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden",
+    detailSubtitle: "Apéro €15,95 p.p. · Pasta v.a. €8 p.p.",
     basePrice: 0,
     maxGuests: 300,
     hasApero: true,
@@ -158,9 +127,7 @@ export const experiences: readonly ExperienceDefinition[] = [
     icon: "🌮",
     cardSubtitle: "Apéro €11,95 · Burgers v.a. €10",
     priceBadges: ["Apéro €11,95", "Burgers v.a. €10"],
-    detailSubtitle: "Apéro €11,95 p.p. · Burgers v.a. €10 · Apart te boeken",
-    notice:
-      "Min. 20 personen · Max. 120 personen per boeking · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden · Min. 10 stuks per burgertype",
+    detailSubtitle: "Apéro €11,95 p.p. · Burgers v.a. €10",
     basePrice: 0,
     maxGuests: 120,
     hasApero: true,
@@ -208,9 +175,7 @@ export const experiences: readonly ExperienceDefinition[] = [
     cardSubtitle: "Apéro €11,95 · Formules v.a. €22,95",
     priceBadges: ["Apéro €11,95", "Classic v.a. €22,95", "Deluxe €35"],
     detailSubtitle:
-      "Apéro €11,95 p.p. · BBQ-formules vanaf €22,95 p.p. · Apart te boeken",
-    notice:
-      "Min. 20 personen · Max. 80 personen per boeking · Opstartkost €150 · Apéro en hoofdgerecht kunnen apart geboekt worden",
+      "Apéro €11,95 p.p. · BBQ-formules vanaf €22,95 p.p.",
     basePrice: 0,
     maxGuests: 80,
     hasApero: true,
@@ -357,9 +322,7 @@ export const experiences: readonly ExperienceDefinition[] = [
     icon: "🍮",
     cardSubtitle: "€10,95 p.p.",
     priceBadges: ["€10,95 p.p."],
-    detailSubtitle: "€10,95 p.p. · Dessertbuffet · Apart te boeken",
-    notice:
-      "Min. 20 personen · Opstartkost €150 · Apart te boeken als dessertbuffet",
+    detailSubtitle: "€10,95 p.p. · Dessertbuffet",
     basePrice: 10.95,
     maxGuests: defaultMaxGuests,
     hasApero: false,

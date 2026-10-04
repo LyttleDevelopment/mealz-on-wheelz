@@ -6,8 +6,8 @@
   justify-content: center;
   align-items: center;
 
-  /* Mobile: use svh to avoid browser-chrome clipping; compensate for shell (4rem) + mobile nav (~3.5rem) */
-  min-height: calc(100svh - 4rem);
+  /* Keep the hero within the viewport beneath the sticky notice and navigation. */
+  min-height: calc(100svh - 7rem);
   background: linear-gradient(180deg, rgb(18 33 34 / 0.6), rgb(18 33 34 / 0.6)), url("/media/working-in-truck.webp");
   background-repeat: no-repeat;
   background-size: cover;
@@ -21,7 +21,7 @@
 @media (min-width: 768px) {
   .heroShell {
     background-attachment: fixed;
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 7rem);
     min-height: unset;
   }
 }
@@ -160,4 +160,3 @@
   }
   }
 }
-
