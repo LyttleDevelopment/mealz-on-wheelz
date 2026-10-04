@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Container } from "@lyttle-development/ui";
-import { ArrowUpRight } from "lucide-react";
 import { footerNavigation } from "@data/constants";
 import styles from "./index.module.scss";
 
@@ -55,12 +54,12 @@ export function Footer() {
             © {year} Mealz on Wheelz.
           </p>
           <a
-            className={styles.restaurantLink}
-            href="https://www.trattorialanonna.be/"
+            className={styles.poweredBy}
+            href="https://www.lyttledevelopment.com"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Trattoria La Nonna <ArrowUpRight size={16} aria-hidden="true" />
+            Powered by Lyttle Development
           </a>
         </div>
       </Container>
