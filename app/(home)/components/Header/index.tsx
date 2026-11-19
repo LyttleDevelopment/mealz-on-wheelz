@@ -80,7 +80,6 @@ export function Header() {
               >
                 Trattoria La Nonna <ArrowUpRight size={16} aria-hidden="true" />
               </a>
-              <span className={styles.websiteNote}>Website in ontwikkeling</span>
             </div>
           </Container>
         </div>
@@ -150,7 +149,6 @@ export function Header() {
             De foodtruckactiviteiten van Mealz on Wheelz stoppen. Binnenkort
             starten we als restaurant in Moerbeke.
           </p>
-          <p className={styles.dialogWebsiteNote}>Website in ontwikkeling</p>
           <a
             className={styles.dialogLink}
             href="https://www.trattorialanonna.be/"
