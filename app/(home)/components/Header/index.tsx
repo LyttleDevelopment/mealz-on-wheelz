@@ -71,7 +71,8 @@ export function Header() {
             <div className={styles.announcementContent}>
               <p>
                 <strong>Belangrijke mededeling:</strong> Mealz on Wheelz stopt
-                als foodtruck. Binnenkort starten we als restaurant in Moerbeke.
+                als foodtruck. Trattoria La Nonna opent op 4 december 2026 in
+                Moerbeke.
               </p>
               <a
                 href="https://www.trattorialanonna.be/"
@@ -147,7 +148,7 @@ export function Header() {
           <h2 id="transition-title">We slaan een nieuwe weg in</h2>
           <p>
             De foodtruckactiviteiten van Mealz on Wheelz stoppen. Binnenkort
-            starten we als restaurant in Moerbeke.
+            opent Trattoria La Nonna op 4 december 2026 in Moerbeke.
           </p>
           <a
             className={styles.dialogLink}
